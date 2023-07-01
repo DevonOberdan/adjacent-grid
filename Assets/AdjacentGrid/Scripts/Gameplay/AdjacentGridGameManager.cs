@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AdjacentGridGameManager : MonoBehaviour
 {
@@ -10,10 +11,16 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     [SerializeField] bool debug;
 
+    [SerializeField] UnityEvent OnGameWon;
+    bool wonGame;
+
+
     List<GridPiece> activeGrouping;
     GridPiece activelyHeldPiece;
 
     Dictionary<GridPiece, int> nonActivelyHeldPieceOffsets;
+
+    bool WinCondition => gridManager.ActivePieces == 1;
 
     private void Awake()
     {
@@ -28,6 +35,15 @@ public class AdjacentGridGameManager : MonoBehaviour
         gridManager.OnPieceDropped += (piece) => PlaceGroupedPieces();
         gridManager.OnPieceIndicatorMoved += MoveGroupedPieces;
         //gridManager.OnPointerLeftGrid += HandleGridExit;
+    }
+
+    private void Update()
+    {
+        if(!wonGame && WinCondition)
+        {
+            wonGame = true;
+            OnGameWon.Invoke();
+        }
     }
 
     public void HandleGridExit()

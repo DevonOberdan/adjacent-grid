@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GridManager : MonoBehaviour
@@ -20,6 +21,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Transform pieceParent;
 
     [SerializeField] LayerMask gridLayer;
+    [SerializeField] Button historyButton;
 
     [Space]
     [Header("Grid Generation")]
@@ -38,6 +40,10 @@ public class GridManager : MonoBehaviour
     public Transform PieceParent => pieceParent;
 
     public List<Cell> Cells => cells;
+    public List<GridPiece> Pieces => gridPieces;
+
+    public int ActivePieces => gridPieces.Count;
+
     public int Width => width;
     public int Height => height;
 
@@ -102,6 +108,8 @@ public class GridManager : MonoBehaviour
 
         if (!PointerInGrid)
             HoveredOverCell = null;
+
+        historyButton.interactable = gridHistory.Count > 1;
     }
 
     void GrabCells()
