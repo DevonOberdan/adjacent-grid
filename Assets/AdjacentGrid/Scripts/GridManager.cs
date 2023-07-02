@@ -109,7 +109,8 @@ public class GridManager : MonoBehaviour
         if (!PointerInGrid)
             HoveredOverCell = null;
 
-        historyButton.interactable = gridHistory.Count > 1;
+        if(historyButton != null)
+            historyButton.interactable = gridHistory.Count > 1;
     }
 
     void GrabCells()

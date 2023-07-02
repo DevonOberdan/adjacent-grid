@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: SceneManagement
+  m_EditorClassIdentifier: 
+  m_GroupName: SceneManagement
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 729b0b0e35a0b7549a7552df88ca4958
+  m_SerializeEntries:
+  - m_GUID: bf79c7d386f4e734e980c0eaa2254302
+    m_Address: Assets/SceneManagement/ScriptableObjects/Events
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df75591a06f53e94bb5960f6398446bc
+    m_Address: Assets/SceneManagement/Scenes/GameScenes
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bebd925253faab4384b6464c96613d0
+    m_Address: Assets/AdjacentGrid/Levels
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d62f0d67859c7ad45b86288486d8ae9d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 06654f726e0873b42b9ee530dac6cc28, type: 2}
+    - {fileID: 11400000, guid: 5c7a726ffaeaa1547b2cbb8f619957cc, type: 2}
