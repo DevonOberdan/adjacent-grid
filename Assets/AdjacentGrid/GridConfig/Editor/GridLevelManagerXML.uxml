@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="Default_Inspector" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);" />
+    <ui:Button text="Generate Grid" display-tooltip-when-elided="true" name="Generate_Config_Button" focusable="false" />
+</ui:UXML>

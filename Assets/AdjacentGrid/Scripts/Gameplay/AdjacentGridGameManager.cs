@@ -7,25 +7,27 @@ using UnityEngine.Events;
 
 public class AdjacentGridGameManager : MonoBehaviour
 {
-    [SerializeField] GridManager gridManager;
-
     [SerializeField] bool debug;
 
-    [SerializeField] UnityEvent OnGameWon;
-    bool wonGame;
+    [SerializeField] UnityEvent OnLevelComplete;
 
+    GridManager gridManager;
 
     List<GridPiece> activeGrouping;
     GridPiece activelyHeldPiece;
 
     Dictionary<GridPiece, int> nonActivelyHeldPieceOffsets;
+    bool levelComplete;
 
     bool WinCondition => gridManager.ActivePieces == 1;
+
 
     private void Awake()
     {
         nonActivelyHeldPieceOffsets = new Dictionary<GridPiece, int>();
         activeGrouping = new List<GridPiece>();
+
+        gridManager = GetComponent<GridManager>();
     }
 
     void Start()
@@ -39,10 +41,10 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private void Update()
     {
-        if(!wonGame && WinCondition)
+        if(WinCondition)
         {
-            wonGame = true;
-            OnGameWon.Invoke();
+            //levelComplete = true;
+            OnLevelComplete.Invoke();
         }
     }
 

@@ -2,11 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+using UnityEditor;
+#endif
 
 public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
@@ -35,15 +38,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             if (!value.AddPiece(this))
                 return;
 
-
             currentCell = value;
 
             gameObject.SetActive(true);
 
-
             // set position.. DOTween later
             transform.position = currentCell.transform.position;   
-            
         }
     }
 
@@ -88,12 +88,10 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         grid = transform.root.GetComponent<GridManager>();
         sprite = GetComponent<SpriteRenderer>();
         pieceColor = sprite.color;
-
     }
 
     void Start()
     {
-        // give grid this piece so the grid has a full list??
         SpawnIndicator();
     }
 
@@ -166,6 +164,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void SetHeld(bool held) => isHeld = held;
 
+    public void SetColor(Color color) => pieceColor = color;
+
     public void OnPointerDown(PointerEventData eventData)
     {
         isHeld = true;
@@ -179,6 +179,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         grid.OnPieceDropped?.Invoke(this);
     }
 
+    #region Editor Functions
     private void OnValidate()
     {
         HandleDroppedInPieces();
@@ -186,11 +187,14 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     void HandleDroppedInPieces()
     {
+#if UNITY_EDITOR
         if (PrefabStageUtility.GetCurrentPrefabStage() == null && !PrefabUtility.IsPartOfPrefabAsset(gameObject))
         {
             GameObject parent = GameObject.FindGameObjectWithTag("GridPieceParent");
             if (parent != null)
                 transform.parent = parent.transform;
         }
+#endif
     }
+    #endregion
 }

@@ -34,7 +34,7 @@ public class GridInspector : Editor
         Button populateButton = inspector.Q<Button>("Populate_Grid");
         populateButton.clicked += () =>
         {
-            manager.GeneratePieces();
+            manager.GenerateRandomPieces();
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         };
 
