@@ -113,7 +113,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
 
         IndicatorCell = CurrentCell;
-        canPlaceOnIndicator = true;
+        //canPlaceOnIndicator = true;
     }
 
     void SpawnIndicator()
@@ -147,18 +147,20 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
         Cell hoveredCell = grid.HoveredOverCell;
 
-        if(grid.HoveredOverCell == CurrentCell || CurrentCell.AdjacentCells.Contains(grid.HoveredOverCell))
+        if(ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
         {
             IndicatorCell = hoveredCell;
             grid.OnPieceIndicatorMoved?.Invoke(indicatorCell);
 
-            if (grid.HoveredOverCell == CurrentCell && !grid.PointerInGrid)
+            if (hoveredCell == CurrentCell && !grid.PointerInGrid)
             {
                 CanPlaceOnIndicator = false;
                 ShowIndicator(true);
             }
         }
     }
+
+    bool ValidCell(Cell cell) => cell == CurrentCell || CurrentCell.AdjacentCells.Contains(cell);
 
     public void SetIndicatorCell(Cell newIndicatorCell) => indicatorCell = newIndicatorCell;
 
@@ -175,8 +177,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnPointerUp(PointerEventData eventData)
     {
         PlaceOnIndicator();
-
-        grid.OnPieceDropped?.Invoke(this);
+        grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
     }
 
     #region Editor Functions

@@ -56,11 +56,14 @@ public class GridManager : MonoBehaviour
     //public bool PointInGrid(Vector3 mousePos) => board.GetComponent<Collider2D>().bounds.Contains(mousePos);
 
     public Action<GridPiece> OnPiecePickedUp;
-    public Action<GridPiece> OnPieceDropped;
+    public Action<GridPiece, bool> OnPieceDropped;
     public Action<Cell> OnPieceIndicatorMoved;
     public Action OnPointerLeftGrid;
 
     public Cell HoveredOverCell { get; set; }
+
+    private GridPiece selectedPiece;
+    public GridPiece SelectedPiece => selectedPiece;
 
     public GridPuzzleConfigSO PuzzleConfig {
         get => puzzleConfig;
@@ -95,6 +98,8 @@ public class GridManager : MonoBehaviour
 
         SetPiecesToGrid();
         RecordPiecePlacement();
+
+        OnPiecePickedUp += (piece) => selectedPiece = piece;
     }
 
     public void SetPuzzleConfig(GridPuzzleConfigSO newConfig)

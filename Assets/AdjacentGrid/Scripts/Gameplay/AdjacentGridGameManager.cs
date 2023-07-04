@@ -34,7 +34,7 @@ public class AdjacentGridGameManager : MonoBehaviour
     {
         gridManager.OnPiecePickedUp += FindGroupedPieces;
 
-        gridManager.OnPieceDropped += (piece) => PlaceGroupedPieces();
+        gridManager.OnPieceDropped += (piece, canDrop) => PlaceGroupedPieces();
         gridManager.OnPieceIndicatorMoved += MoveGroupedPieces;
         //gridManager.OnPointerLeftGrid += HandleGridExit;
     }
@@ -69,7 +69,7 @@ public class AdjacentGridGameManager : MonoBehaviour
                 
             }
             activelyHeldPiece.PlaceOnIndicator();
-            gridManager.OnPieceDropped?.Invoke(activelyHeldPiece);
+            gridManager.OnPieceDropped?.Invoke(activelyHeldPiece, activelyHeldPiece.CanPlaceOnIndicator);
         }
     }
 
