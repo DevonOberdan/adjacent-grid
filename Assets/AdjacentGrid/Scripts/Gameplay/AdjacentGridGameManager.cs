@@ -82,6 +82,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         if (validMovement)
         {
+            print("valid");
             foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
             {
                 int newIndicatorIndex = activeIndicatorCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
@@ -92,6 +93,7 @@ public class AdjacentGridGameManager : MonoBehaviour
         }
         else
         {
+            print("invalid");
             // override the normal GridPiece Indicator handling 
             activelyHeldPiece.IndicatorCell = activelyHeldPiece.CurrentCell;
         }
@@ -120,10 +122,16 @@ public class AdjacentGridGameManager : MonoBehaviour
                 ShowAsInvalid();
                 allValid = false;
             }
-            else if (!gridManager.PointerInGrid)
+            else
             {
-
+                // valid piece, hide it
+                piece.IndicatorCell = piece.CurrentCell;
             }
+
+            //else if (!gridManager.PointerInGrid)
+            //{
+
+            //}
 
             void ShowAsInvalid()
             {
@@ -132,19 +140,22 @@ public class AdjacentGridGameManager : MonoBehaviour
                 piece.ShowIndicator(true);
             }
         }
-        //print("even getting to this?");
-        //if (!gridManager.PointerInGrid && allValid)//&& !gridManager.HoveredOverCell)
-        //{
-        //    print("reset indicators");
-        //    foreach (GridPiece piece in activeGrouping)
-        //    {
-        //        piece.IndicatorCell = piece.CurrentCell;
-        //    }
-        //    //activelyHeldPiece.PlaceOnIndicator();
-        //    //gridManager.OnPieceDropped?.Invoke(activelyHeldPiece);
-        //    // print("not in grid");
-        //    allValid = false;
-        //}
+
+
+
+            //print("even getting to this?");
+            //if (!gridManager.PointerInGrid && allValid)//&& !gridManager.HoveredOverCell)
+            //{
+            //    print("reset indicators");
+            //    foreach (GridPiece piece in activeGrouping)
+            //    {
+            //        piece.IndicatorCell = piece.CurrentCell;
+            //    }
+            //    //activelyHeldPiece.PlaceOnIndicator();
+            //    //gridManager.OnPieceDropped?.Invoke(activelyHeldPiece);
+            //    // print("not in grid");
+            //    allValid = false;
+            //}
 
 
 

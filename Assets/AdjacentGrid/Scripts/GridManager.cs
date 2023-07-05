@@ -269,6 +269,7 @@ public class GridManager : MonoBehaviour
                     gridPieces.Add(previousGridConfig[i]);
 
                 previousGridConfig[i].CurrentCell = Cells[i];
+                previousGridConfig[i].IndicatorCell = previousGridConfig[i].CurrentCell;
             }
         }
     }
