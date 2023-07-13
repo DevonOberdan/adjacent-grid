@@ -95,7 +95,10 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             print("invalid");
             // override the normal GridPiece Indicator handling 
-            activelyHeldPiece.IndicatorCell = activelyHeldPiece.CurrentCell;
+            //activelyHeldPiece.IndicatorCell = activelyHeldPiece.CurrentCell;
+            activelyHeldPiece.IndicatorCell = activeIndicatorCell;
+            activelyHeldPiece.CanPlaceOnIndicator = false;
+            activelyHeldPiece.ShowIndicator(false);
         }
     }
     

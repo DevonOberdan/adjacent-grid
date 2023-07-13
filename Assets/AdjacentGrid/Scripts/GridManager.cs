@@ -65,6 +65,18 @@ public class GridManager : MonoBehaviour
     private GridPiece selectedPiece;
     public GridPiece SelectedPiece => selectedPiece;
 
+    public Cell CurrentHoveredCell()
+    {
+        Cell hoveredCell = null;
+        
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        
+        if(PointerInGrid)
+            hoveredCell = GetClosestCell(mouseWorldPos);
+
+        return hoveredCell;
+    }
+
     public GridPuzzleConfigSO PuzzleConfig {
         get => puzzleConfig;
         set {

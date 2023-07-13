@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -55,15 +51,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
             indicator.transform.position = indicatorCell.transform.position;
 
-            if (indicatorCell != CurrentCell)
-            {
-                //indicator.transform.position = indicatorCell.transform.position;
-                ShowIndicator(true);
-            }
-            else
-            {
-                ShowIndicator(false);
-            }
+            ShowIndicator(indicatorCell != CurrentCell);
         }
     }
 
@@ -81,7 +69,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
 
     public bool IsOfSameType(GridPiece newPiece) => this.PieceColor.Equals(newPiece.PieceColor);
-
 
     private void Awake()
     {
@@ -144,8 +131,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     void HandleIndicator()
     {
         //Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        
-        Cell hoveredCell = grid.HoveredOverCell;
+
+        //Cell hoveredCell = grid.HoveredOverCell;
+        Cell hoveredCell = grid.CurrentHoveredCell();
 
         if(ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
         {
@@ -160,7 +148,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
-    bool ValidCell(Cell cell) => cell == CurrentCell || CurrentCell.AdjacentCells.Contains(cell);
+    bool ValidCell(Cell cell) => cell != null && cell == CurrentCell || CurrentCell.AdjacentCells.Contains(cell);
 
     public void SetIndicatorCell(Cell newIndicatorCell) => indicatorCell = newIndicatorCell;
 

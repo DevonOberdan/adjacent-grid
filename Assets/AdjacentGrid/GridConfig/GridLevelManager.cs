@@ -1,33 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class GridLevelManager : MonoBehaviour
 {
-    [SerializeField] GridManager gridManager;
+    [SerializeField] private GridManager gridManager;
 
-    [SerializeField]
-    GridPuzzleConfigSO[] puzzleConfigs;
+    [SerializeField] private GridPuzzleConfigSO[] puzzleConfigs;
 
-    [SerializeField] UnityEvent OnNewLevel;
-    [SerializeField] UnityEvent OnWonGame;
+    [SerializeField] private UnityEvent<int> OnNewLevel;
+    [SerializeField] private UnityEvent OnWonGame;
 
-    [SerializeField] bool startingCustom;
+    [SerializeField] private bool startingCustom;
+
+    [SerializeField] private TMP_Text levelText;
 
     [Space]
     [Header("Config Generation")]
 
-    [SerializeField] string newPuzzleName;
+    [SerializeField] private string newPuzzleName;
 
-    int levelIndex;
+    private int levelIndex;
 
     public GridManager GridManager => gridManager;
     public string NewPuzzleName => newPuzzleName;
 
-    bool LastLevelComplete => levelIndex == puzzleConfigs.Length;
+    private bool LastLevelComplete => levelIndex == puzzleConfigs.Length;
 
+
+    const string LEVEL_TEXT = "Level ";
 
     int LevelIndex 
     {
@@ -43,7 +47,7 @@ public class GridLevelManager : MonoBehaviour
             else
             {
                 gridManager.PuzzleConfig = puzzleConfigs[levelIndex];
-                OnNewLevel.Invoke();
+                OnNewLevel.Invoke(levelIndex);
             }
         }
     }
@@ -66,4 +70,6 @@ public class GridLevelManager : MonoBehaviour
 
     public void Decrement() => LevelIndex--;
     public void Increment() => LevelIndex++;
+
+    public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level+1}/{puzzleConfigs.Length}";
 }
