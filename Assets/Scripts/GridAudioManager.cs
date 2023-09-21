@@ -1,67 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GridAudioManager : MonoBehaviour
 {
-    [SerializeField] GridManager gridManager;
+    [SerializeField] private GridManager gridManager;
 
     [Header("Clips")]
-    [SerializeField] AudioClip pickupSound;
-    [SerializeField] AudioClip dropSound;
-    [SerializeField] AudioClip failDropSound;
-    [SerializeField] AudioClip indicatorSound;
+    [SerializeField] private AudioClip pickupSound;
+    [SerializeField] private AudioClip dropSound;
+    [SerializeField] private AudioClip failDropSound;
+    [SerializeField] private AudioClip indicatorSound;
 
-    AudioSource source;
-
-    GridPiece selectedPiece;
-
-    bool pieceMoved;
+    private AudioSource source;
+    private bool pieceMoved;
 
     private void Awake()
     {
         source = GetComponent<AudioSource>();
     }
 
-    void Start()
+    private void Start()
     {
         gridManager.OnPiecePickedUp += (piece) => PlayClip(pickupSound);
-        gridManager.OnPieceDropped += (piece, canDrop) =>
-        {
-            if (!pieceMoved)
-                return;
-
-            if (canDrop)
-                PlayClip(dropSound);
-            else
-                PlayClip(failDropSound);
-
-            pieceMoved = false;
-        };
-
-
-        gridManager.OnPieceIndicatorMoved += (cell) =>
-        {
-            if(cell != gridManager.SelectedPiece.CurrentCell)
-            {
-                PlayClip(indicatorSound);
-                pieceMoved = true;
-            }
-            else
-            {
-                pieceMoved = false;
-            }
-
-        };
-
-
+        gridManager.OnPieceDropped += HandlePieceDropped;
+        gridManager.OnPieceIndicatorMoved += HandleIndicatorMoved;
     }
 
-    void PlayClip(AudioClip clip)
+
+    private void HandlePieceDropped(GridPiece piece, bool canDrop)
+    {
+        if (!pieceMoved)
+            return;
+
+        if (canDrop)
+            PlayClip(dropSound);
+        else
+            PlayClip(failDropSound);
+
+        pieceMoved = false;
+    }
+
+
+    private void HandleIndicatorMoved(Cell cell)
+    {
+        if (cell != gridManager.SelectedPiece.CurrentCell)
+        {
+            PlayClip(indicatorSound);
+            pieceMoved = true;
+        }
+        else
+        {
+            pieceMoved = false;
+        }
+    }
+
+    private void PlayClip(AudioClip clip)
     {
         if (clip == null)
             return;
-        print("playing "+clip.name);
         source.PlayOneShot(clip);
     }
 }

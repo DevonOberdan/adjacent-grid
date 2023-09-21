@@ -39,6 +39,15 @@ public class GridManager : MonoBehaviour
     private List<GridPiece> gridPiecePool;
     private Vector2 POOL_POSITION = new Vector2(100, 100);
 
+    private GridPiece selectedPiece;
+    private bool previouslyInGrid;
+
+    public Action<GridPiece> OnPiecePickedUp;
+    public Action<GridPiece, bool> OnPieceDropped;
+    public Action<Cell> OnPieceIndicatorMoved;
+    public Action OnPointerLeftGrid;
+
+    #region Properties
     public List<GridPiece> PiecePrefabs => piecePrefabs;
 
     public Transform PieceParent => pieceParent;
@@ -46,23 +55,16 @@ public class GridManager : MonoBehaviour
     public List<Cell> Cells => cells;
     public List<GridPiece> Pieces => gridPieces;
 
+    public Cell HoveredOverCell { get; set; }
+    public GridPiece SelectedPiece => selectedPiece;
+
     public int ActivePieces => gridPieces.Count;
 
     public int Width => width;
     public int Height => height;
 
-    public bool PointerInGrid { get; set; } //board.GetComponent<Collider2D>().bounds.Contains(Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()));
-    //public bool PointInGrid(Vector3 mousePos) => board.GetComponent<Collider2D>().bounds.Contains(mousePos);
-
-    public Action<GridPiece> OnPiecePickedUp;
-    public Action<GridPiece, bool> OnPieceDropped;
-    public Action<Cell> OnPieceIndicatorMoved;
-    public Action OnPointerLeftGrid;
-
-    public Cell HoveredOverCell { get; set; }
-
-    private GridPiece selectedPiece;
-    public GridPiece SelectedPiece => selectedPiece;
+    public bool PointerInGrid { get; set; }
+    #endregion
 
     public Cell CurrentHoveredCell()
     {
@@ -120,41 +122,43 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, 100);//, gridLayer.value);
+        HandlePointerInGrid();
 
-        if (hit.collider != null)
-            PointerInGrid = hit.collider.CompareTag("Background");
+        if (historyButton != null)
+            historyButton.interactable = gridHistory.Count > 1;
+    }
 
+
+    private void HandlePointerInGrid()
+    {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         Vector3 boardMousePos = board.transform.InverseTransformDirection(mousePos);
 
         bool validX = boardMousePos.x.Between(-Width / 2, Width / 2);
         bool validY = boardMousePos.y.Between(-Height / 2, Height / 2);
 
-        if (PointerInGrid && (!validX || !validY))
-            OnPointerLeftGrid?.Invoke();
-
         PointerInGrid = validX && validY;
+
+        if (!PointerInGrid && previouslyInGrid)
+        {
+            OnPointerLeftGrid?.Invoke();
+        }
+
+        previouslyInGrid = PointerInGrid;
 
         if (!PointerInGrid)
             HoveredOverCell = null;
-
-        if (historyButton != null)
-            historyButton.interactable = gridHistory.Count > 1;
     }
 
     public void GrabCells()
     {
         cells = new();
-        //List<Cell> existingCells = new List<Cell>();
         for (int i = 0; i < cellParent.childCount; i++)
         {
             Cell cell = cellParent.GetChild(i).GetComponent<Cell>();
             cells.Add(cell);
             cell.Init(this, i);
         }
-        //return cells;
     }
 
     public void GrabPieces()
@@ -168,11 +172,6 @@ public class GridManager : MonoBehaviour
             gridPieces.Add(piece);
             gridPiecePool.Add(piece);
         }
-
-        //if(gridPieces.Count == 0)
-        //{
-        //    GenerateRandomPieces();
-        //}
     }
 
     public void SetPiecesToGrid()
@@ -202,8 +201,6 @@ public class GridManager : MonoBehaviour
         if (gridPiecePool == null) gridPiecePool = new();
         else gridPiecePool.Clear();
     }
-
-
 
     public void RemovePiece(GridPiece piece)
     {
@@ -285,7 +282,6 @@ public class GridManager : MonoBehaviour
     }
     #endregion
 
-
     public void ClearPieces()
     {
         if (gridPieces == null)
@@ -314,7 +310,6 @@ public class GridManager : MonoBehaviour
 
         foreach (Cell cell in cells)
         {
-            int randomPiece = Random.Range(0, piecePrefabs.Count);
             GridPiece pieceToSpawn = piecePrefabs[Random.Range(0, piecePrefabs.Count)];
 
             if (pieceToSpawn != null)

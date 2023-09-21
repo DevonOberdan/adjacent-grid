@@ -1,50 +1,21 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Cell : MonoBehaviour, IPointerEnterHandler
 {
+    private GridPiece piece;
+    private GridManager grid;
+    private List<Cell> adjacentCells;
+    private int indexInGrid;
 
-    SpriteRenderer visual;
-    new BoxCollider2D collider;
-    
-    GridPiece piece;
-
-    GridManager grid;
-
-    List<Cell> adjacentCells;
-
-    int indexInGrid;
-
-    public bool Occupied => piece != null;
 
     public GridPiece CurrentPiece => piece;
     public List<Cell> AdjacentCells => adjacentCells;
 
+    public bool Occupied => piece != null;
     public int IndexInGrid => indexInGrid;
 
-
-    private void Awake()
-    {
-        visual = GetComponentInChildren<SpriteRenderer>();
-        collider = GetComponent<BoxCollider2D>();
-        adjacentCells = new List<Cell>();
-    }
-
-    private void GrabAdjacentCells()
-    {
-        bool leftCell  = indexInGrid % grid.Width != 0;
-        bool rightCell = indexInGrid % grid.Width != grid.Width - 1;
-        bool topCell   = indexInGrid / grid.Height != grid.Height - 1;
-        bool bottomCell = indexInGrid / grid.Height != 0;
-
-        if (leftCell)   adjacentCells.Add(grid.Cells[indexInGrid - 1]);
-        if (rightCell)  adjacentCells.Add(grid.Cells[indexInGrid + 1]);
-        if (topCell)    adjacentCells.Add(grid.Cells[indexInGrid + grid.Width]);
-        if (bottomCell) adjacentCells.Add(grid.Cells[indexInGrid - grid.Width]);
-    }
 
     public void Init(GridManager manager, int index)
     {
@@ -52,23 +23,29 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
         indexInGrid = index;
     }
 
-    void Start()
+    private void Awake()
+    {
+        adjacentCells = new List<Cell>();
+    }
+
+    private void Start()
     {
         indexInGrid = grid.Cells.IndexOf(this);
 
         GrabAdjacentCells();
     }
 
-    void Update()
+    private void GrabAdjacentCells()
     {
-        
-    }
+        bool leftCell = indexInGrid % grid.Width != 0;
+        bool rightCell = indexInGrid % grid.Width != grid.Width - 1;
+        bool topCell = indexInGrid / grid.Height != grid.Height - 1;
+        bool bottomCell = indexInGrid / grid.Height != 0;
 
-
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        print("collision");
+        if (leftCell) adjacentCells.Add(grid.Cells[indexInGrid - 1]);
+        if (rightCell) adjacentCells.Add(grid.Cells[indexInGrid + 1]);
+        if (topCell) adjacentCells.Add(grid.Cells[indexInGrid + grid.Width]);
+        if (bottomCell) adjacentCells.Add(grid.Cells[indexInGrid - grid.Width]);
     }
 
     public bool AddPiece(GridPiece newPiece)
@@ -79,8 +56,6 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
         {
             if (!newPiece.IsOfSameType(piece))
                 DestroyPiece();
-            //else
-            //    return false;
         }
 
         piece = newPiece;
@@ -93,18 +68,10 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
             piece = null;
     }
 
-    void DestroyPiece()
+    private void DestroyPiece()
     {
         grid.RemovePiece(piece);
-        //Destroy(piece.gameObject);
         piece = null;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        //Gizmos.color = Color.yellow;
-        //foreach (Cell cell in adjacentCells)
-        //    Gizmos.DrawSphere(cell.transform.position, .25f);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

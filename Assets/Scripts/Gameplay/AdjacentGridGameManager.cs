@@ -12,7 +12,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     private List<GridPiece> activeGrouping;
     private GridPiece activelyHeldPiece;
     private Dictionary<GridPiece, int> nonActivelyHeldPieceOffsets;
-    private bool levelComplete;
 
     private bool WinCondition => gridManager.ActivePieces == 1;
 
@@ -31,6 +30,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         gridManager.OnPieceDropped += (piece, canDrop) => PlaceGroupedPieces();
         gridManager.OnPieceIndicatorMoved += MoveGroupedPieces;
+
         //gridManager.OnPointerLeftGrid += HandleGridExit;
     }
 
@@ -38,45 +38,38 @@ public class AdjacentGridGameManager : MonoBehaviour
     {
         if (WinCondition)
         {
-            //levelComplete = true;
             OnLevelComplete.Invoke();
         }
     }
 
     public void HandleGridExit()
     {
-        print("exit grid");
         if (activelyHeldPiece == null)
             return;
 
         bool valid = true;
+
         foreach (GridPiece piece in activeGrouping)
         {
             if (!piece.CanPlaceOnIndicator)
                 valid = false;
-
         }
+
         if (valid)
         {
             foreach (GridPiece piece in activeGrouping)
             {
                 piece.IndicatorCell = piece.CurrentCell;
-
             }
-            activelyHeldPiece.PlaceOnIndicator();
-            gridManager.OnPieceDropped?.Invoke(activelyHeldPiece, activelyHeldPiece.CanPlaceOnIndicator);
         }
     }
 
     private void MoveGroupedPieces(Cell activeIndicatorCell)
     {
-
         bool validMovement = ValidateMovement(activeIndicatorCell);
-
 
         if (validMovement)
         {
-            print("valid");
             foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
             {
                 int newIndicatorIndex = activeIndicatorCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
@@ -87,9 +80,7 @@ public class AdjacentGridGameManager : MonoBehaviour
         }
         else
         {
-            print("invalid");
             // override the normal GridPiece Indicator handling 
-            //activelyHeldPiece.IndicatorCell = activelyHeldPiece.CurrentCell;
             activelyHeldPiece.IndicatorCell = activeIndicatorCell;
             activelyHeldPiece.CanPlaceOnIndicator = false;
             activelyHeldPiece.ShowIndicator(false);
@@ -107,16 +98,12 @@ public class AdjacentGridGameManager : MonoBehaviour
             // Grouped piece out of bounds
             if (!gridManager.Cells.IsValidIndex(newIndicatorIndex))
             {
-                print("OUT OF GRID INDEX!");
-                ShowAsInvalid();
+                ShowAsInvalid(piece);
                 allValid = false;
             }   // Grouped piece trying to move "out" of the grid left or right
             else if (!(gridManager.Cells[newIndicatorIndex] == piece.CurrentCell || piece.CurrentCell.AdjacentCells.Contains(gridManager.Cells[newIndicatorIndex])))
             {
-                print(newIndicatorIndex);
-                print(piece.name + " CANT MOVE LEFT OR RIGHT!");
-
-                ShowAsInvalid();
+                ShowAsInvalid(piece);
                 allValid = false;
             }
             else
@@ -124,51 +111,26 @@ public class AdjacentGridGameManager : MonoBehaviour
                 // valid piece, hide it
                 piece.IndicatorCell = piece.CurrentCell;
             }
-
-            //else if (!gridManager.PointerInGrid)
-            //{
-
-            //}
-
-            void ShowAsInvalid()
-            {
-                piece.CanPlaceOnIndicator = false;
-                piece.IndicatorCell = piece.CurrentCell;
-                piece.ShowIndicator(true);
-            }
         }
 
-
-
-        //print("even getting to this?");
-        //if (!gridManager.PointerInGrid && allValid)//&& !gridManager.HoveredOverCell)
-        //{
-        //    print("reset indicators");
-        //    foreach (GridPiece piece in activeGrouping)
-        //    {
-        //        piece.IndicatorCell = piece.CurrentCell;
-        //    }
-        //    //activelyHeldPiece.PlaceOnIndicator();
-        //    //gridManager.OnPieceDropped?.Invoke(activelyHeldPiece);
-        //    // print("not in grid");
-        //    allValid = false;
-        //}
-
-
-
         return allValid;
+    }
+
+    private void ShowAsInvalid(GridPiece piece)
+    {
+        piece.CanPlaceOnIndicator = false;
+        piece.IndicatorCell = piece.CurrentCell;
+        piece.ShowIndicator(true);
     }
 
     private void ValidatePlacement()
     {
         bool validPlacement = HitsOpposingPiece() || debug;
 
-
         foreach (GridPiece piece in activeGrouping)
         {
             piece.CanPlaceOnIndicator = validPlacement;
         }
-
     }
 
     private bool HitsOpposingPiece()
@@ -179,9 +141,7 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             // hovering over piece          && is opposing type
             if (piece.IndicatorCell.Occupied && !piece.IndicatorCell.CurrentPiece.IsOfSameType(piece))
-            {
                 hit = true;
-            }
         }
         return hit;
     }
