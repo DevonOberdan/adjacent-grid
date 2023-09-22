@@ -7,26 +7,24 @@ using UnityEditor.SceneManagement;
 using UnityEditor;
 #endif
 
-public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    GridManager grid;
-    Cell currentCell;
+    private GridManager grid;
+    private Cell currentCell;
+    private SpriteRenderer sprite;
+    private Color pieceColor;
+    private bool isHeld;
+    private bool canPlaceOnIndicator;
+    private SpriteRenderer indicator;
+    private Cell indicatorCell;
+    private Color indicatorColor;
 
-    SpriteRenderer sprite;
-    Color pieceColor;
 
-    bool isHeld;
-    bool canPlaceOnIndicator;
 
-    SpriteRenderer indicator;
-    Cell indicatorCell;
-    Color indicatorColor;
 
-    public Cell CurrentCell 
-    {
+    public Cell CurrentCell {
         get => currentCell;
-        set 
-        {
+        set {
             if (currentCell != null)
                 currentCell.RemovePiece(this);
 
@@ -34,35 +32,35 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             if (!value.AddPiece(this))
                 return;
 
+
+            ShowIndicator(value != currentCell);
+
             currentCell = value;
 
             gameObject.SetActive(true);
 
             // set position.. DOTween later
-            transform.position = currentCell.transform.position;   
+            transform.position = currentCell.transform.position;
         }
     }
 
-    public Cell IndicatorCell 
-    {
+    public Cell IndicatorCell {
         get => indicatorCell;
         set {
             indicatorCell = value;
 
             indicator.transform.position = indicatorCell.transform.position;
 
-            ShowIndicator(indicatorCell != CurrentCell);
+            ShowIndicator(true);//indicatorCell != CurrentCell);
         }
     }
 
     public Color IndicatorColor => indicatorColor;
     public Color PieceColor => pieceColor;
 
-    public bool CanPlaceOnIndicator 
-    {
+    public bool CanPlaceOnIndicator {
         get => canPlaceOnIndicator;
-        set 
-        {
+        set {
             canPlaceOnIndicator = value;
             indicator.color = canPlaceOnIndicator ? IndicatorColor : GridInputHandler.Instance.InvalidPlacementColor;
         }
@@ -77,13 +75,13 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         pieceColor = sprite.color;
     }
 
-    void Start()
+    private void Start()
     {
         SpawnIndicator();
     }
 
-    void SetToGrid() => CurrentCell = grid.GetClosestCell(transform);
-    
+    private void SetToGrid() => CurrentCell = grid.GetClosestCell(transform);
+
     public void PlaceOnIndicator()
     {
         isHeld = false;
@@ -100,10 +98,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
 
         IndicatorCell = CurrentCell;
+        ShowIndicator(false);
         //canPlaceOnIndicator = true;
     }
 
-    void SpawnIndicator()
+    private void SpawnIndicator()
     {
         indicator = Instantiate(GridInputHandler.Instance.VisualIndicator, transform);
         indicator.transform.localPosition = Vector3.zero;
@@ -111,7 +110,20 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         ShowIndicator(false);
     }
 
-    public void ShowIndicator(bool show) => indicator.enabled = show;
+    public void ShowIndicator(bool show)
+    {
+        if (indicator == null)
+            return;
+
+        indicator.enabled = show;
+    }
+
+    public void Highlight(bool highlight)
+    {
+        Debug.Log("Highlight: " + highlight);
+        sprite.color = highlight ? IndicatorColor : pieceColor;
+    }
+
 
     private void Update()
     {
@@ -122,20 +134,17 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
-    void FollowMouse()
+    private void FollowMouse()
     {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         transform.position = Vector2.Lerp(transform.position, mouseWorldPos, GridInputHandler.Instance.DragCatchUpSpeed * Time.deltaTime);
     }
 
-    void HandleIndicator()
+    private void HandleIndicator()
     {
-        //Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-
-        //Cell hoveredCell = grid.HoveredOverCell;
         Cell hoveredCell = grid.CurrentHoveredCell();
 
-        if(ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
+        if (ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
         {
             IndicatorCell = hoveredCell;
             grid.OnPieceIndicatorMoved?.Invoke(indicatorCell);
@@ -148,13 +157,22 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
-    bool ValidCell(Cell cell) => cell != null && cell == CurrentCell || CurrentCell.AdjacentCells.Contains(cell);
+    private bool ValidCell(Cell cell) => cell != null && cell == CurrentCell || CurrentCell.AdjacentCells.Contains(cell);
 
     public void SetIndicatorCell(Cell newIndicatorCell) => indicatorCell = newIndicatorCell;
 
     public void SetHeld(bool held) => isHeld = held;
 
     public void SetColor(Color color) => pieceColor = color;
+
+    public void MarkIndicatorCellInvalid()
+    {
+        CanPlaceOnIndicator = false;
+        IndicatorCell = CurrentCell;
+        ShowIndicator(true);
+    }
+
+    #region Input Callbacks
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -168,13 +186,31 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (grid.SelectedPiece != null)
+            return;
+
+        grid.OnPieceHovered?.Invoke(this, true);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (grid.SelectedPiece != null)
+            return;
+
+        grid.OnPieceHovered?.Invoke(this, false);
+
+    }
+    #endregion
+
     #region Editor Functions
     private void OnValidate()
     {
         HandleDroppedInPieces();
     }
 
-    void HandleDroppedInPieces()
+    private void HandleDroppedInPieces()
     {
 #if UNITY_EDITOR
         if (PrefabStageUtility.GetCurrentPrefabStage() == null && !PrefabUtility.IsPartOfPrefabAsset(gameObject))

@@ -22,7 +22,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Transform cellParent;
     [SerializeField] private Transform pieceParent;
 
-    [SerializeField] private LayerMask gridLayer;
     [SerializeField] private Button historyButton;
 
     [Space]
@@ -44,6 +43,9 @@ public class GridManager : MonoBehaviour
 
     public Action<GridPiece> OnPiecePickedUp;
     public Action<GridPiece, bool> OnPieceDropped;
+
+    public Action<GridPiece, bool> OnPieceHovered;
+
     public Action<Cell> OnPieceIndicatorMoved;
     public Action OnPointerLeftGrid;
 
@@ -64,6 +66,7 @@ public class GridManager : MonoBehaviour
     public int Height => height;
 
     public bool PointerInGrid { get; set; }
+    public bool HoldingPiece => SelectedPiece != null;
     #endregion
 
     public Cell CurrentHoveredCell()
@@ -112,7 +115,21 @@ public class GridManager : MonoBehaviour
         SetPiecesToGrid();
         RecordPiecePlacement();
 
-        OnPiecePickedUp += (piece) => selectedPiece = piece;
+        OnPiecePickedUp += PickedUpPiece;
+        OnPieceDropped += (piece, canDrop) => DroppedPiece(piece);
+    }
+
+    private void PickedUpPiece(GridPiece piece)
+    {
+        selectedPiece = piece;
+
+        // selecting cancels hovering
+        OnPieceHovered?.Invoke(piece, false);
+    }
+
+    private void DroppedPiece(GridPiece piece)
+    {
+        selectedPiece = null;
     }
 
     public void SetPuzzleConfig(GridPuzzleConfigSO newConfig)
@@ -277,6 +294,8 @@ public class GridManager : MonoBehaviour
 
                 previousGridConfig[i].CurrentCell = Cells[i];
                 previousGridConfig[i].IndicatorCell = previousGridConfig[i].CurrentCell;
+                previousGridConfig[i].ShowIndicator(false);
+
             }
         }
     }

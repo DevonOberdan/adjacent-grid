@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class AdjacentGridGameManager : MonoBehaviour
 {
     [SerializeField] private bool debug;
+    [SerializeField] private bool highlightGroup;
 
     [SerializeField] private UnityEvent OnLevelComplete;
     private GridManager gridManager;
@@ -31,7 +32,19 @@ public class AdjacentGridGameManager : MonoBehaviour
         gridManager.OnPieceDropped += (piece, canDrop) => PlaceGroupedPieces();
         gridManager.OnPieceIndicatorMoved += MoveGroupedPieces;
 
+        if (highlightGroup)
+            gridManager.OnPieceHovered += HandlePieceHovered;
         //gridManager.OnPointerLeftGrid += HandleGridExit;
+    }
+
+    private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
+    {
+        List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
+
+        foreach (GridPiece piece in pieces)
+        {
+            piece.Highlight(hovered);
+        }
     }
 
     private void Update()
@@ -47,20 +60,15 @@ public class AdjacentGridGameManager : MonoBehaviour
         if (activelyHeldPiece == null)
             return;
 
-        bool valid = true;
-
         foreach (GridPiece piece in activeGrouping)
         {
             if (!piece.CanPlaceOnIndicator)
-                valid = false;
+                return;
         }
 
-        if (valid)
+        foreach (GridPiece piece in activeGrouping)
         {
-            foreach (GridPiece piece in activeGrouping)
-            {
-                piece.IndicatorCell = piece.CurrentCell;
-            }
+            piece.IndicatorCell = piece.CurrentCell;
         }
     }
 
@@ -76,16 +84,34 @@ public class AdjacentGridGameManager : MonoBehaviour
                 piece.IndicatorCell = gridManager.Cells[newIndicatorIndex];
             }
 
-            ValidatePlacement();
+            bool validPlacement = AnyHitOpposingPiece() || debug;
+
+            foreach (GridPiece piece in activeGrouping)
+            {
+                piece.CanPlaceOnIndicator = validPlacement;
+            }
         }
         else
         {
+            DisplayInvalidGrouping();
+
             // override the normal GridPiece Indicator handling 
             activelyHeldPiece.IndicatorCell = activeIndicatorCell;
             activelyHeldPiece.CanPlaceOnIndicator = false;
             activelyHeldPiece.ShowIndicator(false);
         }
     }
+
+    // Hide all connected pieces that were not flagged as invalid
+    private void DisplayInvalidGrouping()
+    {
+        foreach (GridPiece piece in activeGrouping)
+        {
+            if (piece.CanPlaceOnIndicator)
+                piece.ShowIndicator(false);
+        }
+    }
+
 
     private bool ValidateMovement(Cell activeIndicatorCell)
     {
@@ -98,12 +124,12 @@ public class AdjacentGridGameManager : MonoBehaviour
             // Grouped piece out of bounds
             if (!gridManager.Cells.IsValidIndex(newIndicatorIndex))
             {
-                ShowAsInvalid(piece);
+                piece.MarkIndicatorCellInvalid();
                 allValid = false;
             }   // Grouped piece trying to move "out" of the grid left or right
             else if (!(gridManager.Cells[newIndicatorIndex] == piece.CurrentCell || piece.CurrentCell.AdjacentCells.Contains(gridManager.Cells[newIndicatorIndex])))
             {
-                ShowAsInvalid(piece);
+                piece.MarkIndicatorCellInvalid();
                 allValid = false;
             }
             else
@@ -116,34 +142,23 @@ public class AdjacentGridGameManager : MonoBehaviour
         return allValid;
     }
 
-    private void ShowAsInvalid(GridPiece piece)
-    {
-        piece.CanPlaceOnIndicator = false;
-        piece.IndicatorCell = piece.CurrentCell;
-        piece.ShowIndicator(true);
-    }
-
-    private void ValidatePlacement()
-    {
-        bool validPlacement = HitsOpposingPiece() || debug;
-
-        foreach (GridPiece piece in activeGrouping)
-        {
-            piece.CanPlaceOnIndicator = validPlacement;
-        }
-    }
-
-    private bool HitsOpposingPiece()
+    private bool AnyHitOpposingPiece()
     {
         bool hit = false;
 
         foreach (GridPiece piece in activeGrouping)
         {
-            // hovering over piece          && is opposing type
-            if (piece.IndicatorCell.Occupied && !piece.IndicatorCell.CurrentPiece.IsOfSameType(piece))
+            // hits opposing piece       OR held in starting place
+            if (HitsOpposingPiece(piece) || piece.IndicatorCell == piece.CurrentCell)
                 hit = true;
         }
         return hit;
+    }
+
+    private bool HitsOpposingPiece(GridPiece piece)
+    {
+        // hovering over piece          && is opposing type
+        return piece.IndicatorCell.Occupied && !piece.IndicatorCell.CurrentPiece.IsOfSameType(piece);
     }
 
     private void PlaceGroupedPieces()
@@ -160,20 +175,32 @@ public class AdjacentGridGameManager : MonoBehaviour
         gridManager.RecordPiecePlacement();
     }
 
-    public void FindGroupedPieces(GridPiece piece)
+    private void FindGroupedPieces(GridPiece piece)
     {
-        List<GridPiece> groupedPieces = new();
-
-        groupedPieces = GetAdjacentPieces(groupedPieces, piece);
+        List<GridPiece> groupedPieces = GetAdjacentPieces(piece);
 
         activeGrouping = groupedPieces;
         activelyHeldPiece = piece;
 
         ProcessGroupedOffsets();
+
+        groupedPieces.ForEach(piece => piece.ShowIndicator(true));
     }
 
-    private List<GridPiece> GetAdjacentPieces(List<GridPiece> groupedPieces, GridPiece piece)
+    /// <summary>
+    /// Returns list of all "adjacent" connected pieces from the given piece (i.e. the chain of 
+    /// connected pieces of the same color).
+    /// 
+    /// List required to be passed in due to recursive nature of function.
+    /// </summary>
+    /// <param name="groupedPieces"></param>
+    /// <param name="piece"></param>
+    /// <returns></returns>
+    private List<GridPiece> GetAdjacentPieces(GridPiece piece, List<GridPiece> groupedPieces = null)
     {
+        if (groupedPieces == null)
+            groupedPieces = new();
+
         groupedPieces.Add(piece);
         Cell currentPieceCell = piece.CurrentCell;
 
@@ -183,7 +210,7 @@ public class AdjacentGridGameManager : MonoBehaviour
                 continue;
 
             if (adjacentCell.Occupied && adjacentCell.CurrentPiece.IsOfSameType(piece))
-                groupedPieces = GetAdjacentPieces(groupedPieces, adjacentCell.CurrentPiece);
+                groupedPieces = GetAdjacentPieces(adjacentCell.CurrentPiece, groupedPieces);
         }
 
         return groupedPieces;
