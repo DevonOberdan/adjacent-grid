@@ -22,9 +22,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
 
 
-    public Cell CurrentCell {
+    public Cell CurrentCell
+    {
         get => currentCell;
-        set {
+        set
+        {
             if (currentCell != null)
                 currentCell.RemovePiece(this);
 
@@ -44,9 +46,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         }
     }
 
-    public Cell IndicatorCell {
+    public Cell IndicatorCell
+    {
         get => indicatorCell;
-        set {
+        set
+        {
             indicatorCell = value;
 
             indicator.transform.position = indicatorCell.transform.position;
@@ -58,9 +62,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public Color IndicatorColor => indicatorColor;
     public Color PieceColor => pieceColor;
 
-    public bool CanPlaceOnIndicator {
+    public bool CanPlaceOnIndicator
+    {
         get => canPlaceOnIndicator;
-        set {
+        set
+        {
             canPlaceOnIndicator = value;
             indicator.color = canPlaceOnIndicator ? IndicatorColor : GridInputHandler.Instance.InvalidPlacementColor;
         }
@@ -114,6 +120,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         if (indicator == null)
             return;
+
 
         indicator.enabled = show;
     }

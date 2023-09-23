@@ -81,9 +81,11 @@ public class GridManager : MonoBehaviour
         return hoveredCell;
     }
 
-    public GridPuzzleConfigSO PuzzleConfig {
+    public GridPuzzleConfigSO PuzzleConfig
+    {
         get => puzzleConfig;
-        set {
+        set
+        {
             puzzleConfig = value;
 
             SetupCells();
@@ -351,7 +353,10 @@ public class GridManager : MonoBehaviour
 
             if (pieceToSpawn != null)
             {
-                GridPiece newPiece = Instantiate(gridList[i], PieceParent);
+                GridPiece newPiece = Custom.Instantiate(pieceToSpawn, PieceParent);
+
+                GridPiece piece = Instantiate(pieceToSpawn, PieceParent);
+
                 newPiece.transform.position = cells[i].transform.position;
                 gridPieces.Add(newPiece);
                 gridPiecePool.Add(newPiece);
@@ -388,13 +393,14 @@ public class GridManager : MonoBehaviour
         {
             for (int j = 0; j < width; j++)
             {
-                Cell newCell = Instantiate(cellPrefab, cellParent);
+                Cell newCell = Custom.Instantiate(cellPrefab, cellParent);
                 newCell.transform.localPosition = new Vector2(j, i);
                 cells.Add(newCell);
             }
         }
 
-        SpriteRenderer board = Instantiate(boardPrefab, transform);
+        SpriteRenderer board = Custom.Instantiate(boardPrefab, transform);
+
         board.transform.localPosition = center;
         board.size = new Vector2(width, height) + new Vector2(0.1f, 0.1f);
     }
