@@ -5,17 +5,18 @@ using UnityEngine.Events;
 
 public class AdjacentGridGameManager : MonoBehaviour
 {
-    [SerializeField] private bool debug;
     [SerializeField] private bool highlightGroup;
 
     [SerializeField] private UnityEvent OnLevelComplete;
+    [SerializeField] private UnityEvent<bool> OnDoomed;
+
     private GridManager gridManager;
     private List<GridPiece> activeGrouping;
     private GridPiece activelyHeldPiece;
     private Dictionary<GridPiece, int> nonActivelyHeldPieceOffsets;
+    private bool wasDoomed;
 
-    private bool WinCondition => gridManager.ActivePieces == 1;
-
+    private bool WinCondition => gridManager.PieceCount == 1;
 
     private void Awake()
     {
@@ -28,49 +29,124 @@ public class AdjacentGridGameManager : MonoBehaviour
     private void Start()
     {
         gridManager.OnPiecePickedUp += FindGroupedPieces;
+        gridManager.OnPieceDropped += HandlePieceDropped;
+        gridManager.OnGridChanged += HandleGridChanged;
 
-        gridManager.OnPieceDropped += (piece, canDrop) => PlaceGroupedPieces();
         gridManager.OnPieceIndicatorMoved += MoveGroupedPieces;
 
         if (highlightGroup)
             gridManager.OnPieceHovered += HandlePieceHovered;
-        //gridManager.OnPointerLeftGrid += HandleGridExit;
     }
 
-    private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
-    {
-        List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
+    #region Grouping Functions
 
-        foreach (GridPiece piece in pieces)
+    private void FindGroupedPieces(GridPiece piece)
+    {
+        List<GridPiece> groupedPieces = GetAdjacentPieces(piece);
+
+        activeGrouping = groupedPieces;
+        activelyHeldPiece = piece;
+
+        ProcessGroupedOffsets();
+
+        groupedPieces.ForEach(piece => piece.ShowIndicator(true));
+    }
+
+    /// <summary>
+    /// Returns list of all "adjacent" connected pieces from the given piece (i.e. the chain of 
+    /// connected pieces of the same color).
+    /// 
+    /// </summary>
+    private List<GridPiece> GetAdjacentPieces(GridPiece piece, List<GridPiece> groupedPieces = null)
+    {
+        if (groupedPieces == null)
+            groupedPieces = new();
+
+        groupedPieces.Add(piece);
+        Cell currentPieceCell = piece.CurrentCell;
+
+        foreach (Cell adjacentCell in currentPieceCell.AdjacentCells)
         {
-            piece.Highlight(hovered);
+            if (groupedPieces.Contains(adjacentCell.CurrentPiece))
+                continue;
+
+            if (adjacentCell.Occupied && adjacentCell.CurrentPiece.IsOfSameType(piece))
+                groupedPieces = GetAdjacentPieces(adjacentCell.CurrentPiece, groupedPieces);
+        }
+
+        return groupedPieces;
+    }
+
+    private void ProcessGroupedOffsets()
+    {
+        foreach (GridPiece piece in activeGrouping)
+        {
+            if (piece == activelyHeldPiece)
+                continue;
+            nonActivelyHeldPieceOffsets.Add(piece, piece.CurrentCell.IndexInGrid - activelyHeldPiece.CurrentCell.IndexInGrid);
         }
     }
+    #endregion
 
-    private void Update()
+    #region Handle Dropped
+    private void HandlePieceDropped(GridPiece droppedPiece, bool actuallyDropped)
     {
-        if (WinCondition)
-        {
+        PlaceGroupedPieces();
+
+        if (actuallyDropped && WinCondition)
             OnLevelComplete.Invoke();
-        }
     }
 
-    public void HandleGridExit()
+    private void PlaceGroupedPieces()
     {
-        if (activelyHeldPiece == null)
-            return;
-
-        foreach (GridPiece piece in activeGrouping)
+        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
         {
-            if (!piece.CanPlaceOnIndicator)
-                return;
+            piece.PlaceOnIndicator();
         }
 
-        foreach (GridPiece piece in activeGrouping)
-        {
-            piece.IndicatorCell = piece.CurrentCell;
-        }
+        nonActivelyHeldPieceOffsets.Clear();
+        activeGrouping.Clear();
+        activelyHeldPiece = null;
+
+        gridManager.OnGridChanged?.Invoke();
     }
+    #endregion
+
+    #region Doomed
+    private void HandleGridChanged()
+    {
+        CheckDoomed();
+    }
+
+    private void CheckDoomed()
+    {
+        bool isDoomed = !WinCondition && !AnyValidMovements();
+
+        if (isDoomed != wasDoomed)
+            OnDoomed.Invoke(isDoomed);
+
+        wasDoomed = isDoomed;
+    }
+
+    private bool AnyValidMovements()
+    {
+        foreach (GridPiece piece in gridManager.Pieces)
+        {
+            foreach (Cell adjacentCell in piece.CurrentCell.AdjacentCells)
+            {
+                if (adjacentCell.CurrentPiece == null)
+                    continue;
+
+                if (!adjacentCell.CurrentPiece.IsOfSameType(piece))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+    #endregion
+
+    #region Group Movement
 
     private void MoveGroupedPieces(Cell activeIndicatorCell)
     {
@@ -84,7 +160,7 @@ public class AdjacentGridGameManager : MonoBehaviour
                 piece.IndicatorCell = gridManager.Cells[newIndicatorIndex];
             }
 
-            bool validPlacement = AnyHitOpposingPiece() || debug;
+            bool validPlacement = AnyHitOpposingPiece();
 
             foreach (GridPiece piece in activeGrouping)
             {
@@ -101,17 +177,6 @@ public class AdjacentGridGameManager : MonoBehaviour
             activelyHeldPiece.ShowIndicator(false);
         }
     }
-
-    // Hide all connected pieces that were not flagged as invalid
-    private void DisplayInvalidGrouping()
-    {
-        foreach (GridPiece piece in activeGrouping)
-        {
-            if (piece.CanPlaceOnIndicator)
-                piece.ShowIndicator(false);
-        }
-    }
-
 
     private bool ValidateMovement(Cell activeIndicatorCell)
     {
@@ -161,75 +226,26 @@ public class AdjacentGridGameManager : MonoBehaviour
         return piece.IndicatorCell.Occupied && !piece.IndicatorCell.CurrentPiece.IsOfSameType(piece);
     }
 
-    private void PlaceGroupedPieces()
-    {
-        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
-        {
-            piece.PlaceOnIndicator();
-        }
 
-        nonActivelyHeldPieceOffsets.Clear();
-        activeGrouping.Clear();
-        activelyHeldPiece = null;
-
-        gridManager.RecordPiecePlacement();
-    }
-
-    private void FindGroupedPieces(GridPiece piece)
-    {
-        List<GridPiece> groupedPieces = GetAdjacentPieces(piece);
-
-        activeGrouping = groupedPieces;
-        activelyHeldPiece = piece;
-
-        ProcessGroupedOffsets();
-
-        groupedPieces.ForEach(piece => piece.ShowIndicator(true));
-    }
-
-    /// <summary>
-    /// Returns list of all "adjacent" connected pieces from the given piece (i.e. the chain of 
-    /// connected pieces of the same color).
-    /// 
-    /// List required to be passed in due to recursive nature of function.
-    /// </summary>
-    /// <param name="groupedPieces"></param>
-    /// <param name="piece"></param>
-    /// <returns></returns>
-    private List<GridPiece> GetAdjacentPieces(GridPiece piece, List<GridPiece> groupedPieces = null)
-    {
-        if (groupedPieces == null)
-            groupedPieces = new();
-
-        groupedPieces.Add(piece);
-        Cell currentPieceCell = piece.CurrentCell;
-
-        foreach (Cell adjacentCell in currentPieceCell.AdjacentCells)
-        {
-            if (groupedPieces.Contains(adjacentCell.CurrentPiece))
-                continue;
-
-            if (adjacentCell.Occupied && adjacentCell.CurrentPiece.IsOfSameType(piece))
-                groupedPieces = GetAdjacentPieces(adjacentCell.CurrentPiece, groupedPieces);
-        }
-
-        return groupedPieces;
-    }
-
-    private void ProcessGroupedOffsets()
+    // Hide all connected pieces that were not flagged as invalid
+    private void DisplayInvalidGrouping()
     {
         foreach (GridPiece piece in activeGrouping)
         {
-            if (piece == activelyHeldPiece)
-                continue;
-            nonActivelyHeldPieceOffsets.Add(piece, piece.CurrentCell.IndexInGrid - activelyHeldPiece.CurrentCell.IndexInGrid);
+            if (piece.CanPlaceOnIndicator)
+                piece.ShowIndicator(false);
         }
     }
 
-    private void OnDrawGizmos()
+    #endregion
+
+    private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
     {
-        Gizmos.color = Color.red;
-        if (activeGrouping != null)
-            activeGrouping.ForEach(piece => Gizmos.DrawSphere(piece.transform.position, 0.1f));
+        List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
+
+        foreach (GridPiece piece in pieces)
+        {
+            piece.Highlight(hovered);
+        }
     }
 }

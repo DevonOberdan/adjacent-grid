@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -33,7 +31,7 @@ public class GridLevelEditor : Editor
         return inspector;
     }
 
-    void GenerateGridConfig(GridLevelManager levelManager)
+    private void GenerateGridConfig(GridLevelManager levelManager)
     {
         List<GridPiece> gridPieceList = new();
 
@@ -47,11 +45,10 @@ public class GridLevelEditor : Editor
             if (cell.CurrentPiece != null)
             {
                 GridPiece prefabPiece = levelManager.GridManager.PiecePrefabs
-                                        .FirstOrDefault(piece => 
+                                        .FirstOrDefault(piece =>
                                         piece.GetComponent<SpriteRenderer>().color
                                         .Equals(cell.CurrentPiece.GetComponent<SpriteRenderer>().color));
 
-                Debug.Log(prefabPiece);
                 gridPieceList.Add(prefabPiece);
             }
             else
@@ -67,7 +64,7 @@ public class GridLevelEditor : Editor
         SaveAsset(puzzleConfig, name);
     }
 
-    void SaveAsset(GridPuzzleConfigSO puzzleConfig, string name)
+    private void SaveAsset(GridPuzzleConfigSO puzzleConfig, string name)
     {
         string path = "Assets/AdjacentGrid/GridConfig/Configs/";
 

@@ -4,17 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
 
-    [SerializeField] private int width;
-    [SerializeField] private int height;
+    [SerializeField] private int width, height;
 
-    [SerializeField] private SpriteRenderer board;
+    [field: SerializeField] public SpriteRenderer Board { get; private set; }
 
     [SerializeField] private GridPuzzleConfigSO puzzleConfig;
 
@@ -22,18 +19,13 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Transform cellParent;
     [SerializeField] private Transform pieceParent;
 
-    [SerializeField] private Button historyButton;
-
     [Space]
     [Header("Grid Generation")]
-    [SerializeField] private Cell cellPrefab;
-    [SerializeField] private SpriteRenderer boardPrefab;
     [SerializeField] private List<GridPiece> piecePrefabs;
 
 
     private List<Cell> cells;
     private List<GridPiece> gridPieces;
-    private List<GridPiece[]> gridHistory;
 
     private List<GridPiece> gridPiecePool;
     private Vector2 POOL_POSITION = new Vector2(100, 100);
@@ -43,15 +35,18 @@ public class GridManager : MonoBehaviour
 
     public Action<GridPiece> OnPiecePickedUp;
     public Action<GridPiece, bool> OnPieceDropped;
-
     public Action<GridPiece, bool> OnPieceHovered;
+
+    public Action OnGridChanged;
+    public Action OnGridReset;
 
     public Action<Cell> OnPieceIndicatorMoved;
     public Action OnPointerLeftGrid;
 
-    #region Properties
+    #region Getter Properties
     public List<GridPiece> PiecePrefabs => piecePrefabs;
 
+    public Transform CellParent => cellParent;
     public Transform PieceParent => pieceParent;
 
     public List<Cell> Cells => cells;
@@ -60,7 +55,7 @@ public class GridManager : MonoBehaviour
     public Cell HoveredOverCell { get; set; }
     public GridPiece SelectedPiece => selectedPiece;
 
-    public int ActivePieces => gridPieces.Count;
+    public int PieceCount => gridPieces.Count;
 
     public int Width => width;
     public int Height => height;
@@ -91,11 +86,10 @@ public class GridManager : MonoBehaviour
             SetupCells();
 
             ClearPieces();
-            GenerateList(puzzleConfig.Pieces);
+            GenerateFromList(puzzleConfig.Pieces);
 
+            OnGridReset?.Invoke();
             SetPiecesToGrid();
-            ResetHistory();
-            RecordPiecePlacement();
         }
     }
 
@@ -104,9 +98,7 @@ public class GridManager : MonoBehaviour
         Instance = this;
 
         SetupCells();
-
         gridPieces = new();
-        ResetHistory();
     }
 
     private void Start()
@@ -115,10 +107,41 @@ public class GridManager : MonoBehaviour
             GrabPieces();
 
         SetPiecesToGrid();
-        RecordPiecePlacement();
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += (piece, canDrop) => DroppedPiece(piece);
+    }
+
+    private void Update()
+    {
+        HandlePointerInGrid();
+    }
+
+    private void HandlePointerInGrid()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        Vector3 boardMousePos = Board.transform.InverseTransformDirection(mousePos);
+
+        bool validX = boardMousePos.x.Between(-Width / 2, Width / 2);
+        bool validY = boardMousePos.y.Between(-Height / 2, Height / 2);
+
+        PointerInGrid = validX && validY;
+
+        if (!PointerInGrid && previouslyInGrid)
+            OnPointerLeftGrid?.Invoke();
+
+        previouslyInGrid = PointerInGrid;
+
+        if (!PointerInGrid)
+            HoveredOverCell = null;
+    }
+
+    #region Pieces
+
+    public void SetPiecesToGrid()
+    {
+        gridPieces.ForEach(piece => piece.CurrentCell = GetClosestCell(piece.transform));
+        OnGridChanged?.Invoke();
     }
 
     private void PickedUpPiece(GridPiece piece)
@@ -134,39 +157,65 @@ public class GridManager : MonoBehaviour
         selectedPiece = null;
     }
 
-    public void SetPuzzleConfig(GridPuzzleConfigSO newConfig)
+    public void AddPiece(GridPiece piece)
     {
-        ClearPieces();
+        if (!gridPieces.Contains(piece))
+            gridPieces.Add(piece);
     }
 
-    private void Update()
+    public void RemovePiece(GridPiece piece)
     {
-        HandlePointerInGrid();
+        gridPieces.Remove(piece);
 
-        if (historyButton != null)
-            historyButton.interactable = gridHistory.Count > 1;
+        piece.transform.position = POOL_POSITION;
+        piece.gameObject.SetActive(false);
     }
 
+    #endregion
 
-    private void HandlePointerInGrid()
+    private Cell GetClosestCell(Transform givenTransform) => GetClosestCell(givenTransform.position);
+
+    private Cell GetClosestCell(Vector3 pos)
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        Vector3 boardMousePos = board.transform.InverseTransformDirection(mousePos);
+        Cell closestCell = cells.OrderBy(cell => Vector2.Distance(pos, cell.transform.position)).First();
+        return closestCell;
+    }
 
-        bool validX = boardMousePos.x.Between(-Width / 2, Width / 2);
-        bool validY = boardMousePos.y.Between(-Height / 2, Height / 2);
-
-        PointerInGrid = validX && validY;
-
-        if (!PointerInGrid && previouslyInGrid)
+    private void GenerateFromList(List<GridPiece> gridList)
+    {
+        for (int i = 0; i < cells.Count; i++)
         {
-            OnPointerLeftGrid?.Invoke();
+            GridPiece pieceToSpawn = gridList[i];
+
+            if (pieceToSpawn != null)
+            {
+                GridPiece newPiece = Custom.Instantiate(pieceToSpawn, PieceParent);
+
+                newPiece.transform.position = cells[i].transform.position;
+                gridPieces.Add(newPiece);
+                gridPiecePool.Add(newPiece);
+            }
+        }
+    }
+
+
+    #region Grid Setup
+    public void ClearPieces()
+    {
+        if (gridPieces == null)
+        {
+            GrabPieces();
         }
 
-        previouslyInGrid = PointerInGrid;
+        for (int i = pieceParent.childCount - 1; i >= 0; i--)
+        {
+            GridPiece piece = pieceParent.GetChild(i).GetComponent<GridPiece>();
+            gridPieces.Remove(piece);
+            DestroyImmediate(piece.gameObject);
+        }
 
-        if (!PointerInGrid)
-            HoveredOverCell = null;
+        gridPieces = new();
+        gridPiecePool = new();
     }
 
     public void GrabCells()
@@ -177,6 +226,17 @@ public class GridManager : MonoBehaviour
             Cell cell = cellParent.GetChild(i).GetComponent<Cell>();
             cells.Add(cell);
             cell.Init(this, i);
+        }
+    }
+
+    private void SetupCells()
+    {
+        if (cells == null || cells.Count == 0 || Board == null)
+        {
+            if (cellParent.childCount > 0)
+                GrabCells();
+            else
+                this.enabled = false;
         }
     }
 
@@ -192,220 +252,10 @@ public class GridManager : MonoBehaviour
             gridPiecePool.Add(piece);
         }
     }
-
-    public void SetPiecesToGrid()
-    {
-        gridPieces.ForEach(piece => piece.CurrentCell = GetClosestCell(piece.transform));
-    }
-
-    private void SetupCells()
-    {
-        if (cells == null || cells.Count == 0 || board == null)
-        {
-            if (cellParent.childCount > 0)
-                GrabCells();
-            else
-                GenerateGrid();
-        }
-    }
-
-    private void ResetData()
-    {
-        if (gridHistory == null) gridHistory = new();
-        else gridHistory.Clear();
-
-        if (gridPieces == null) gridPieces = new();
-        else gridPieces.Clear();
-
-        if (gridPiecePool == null) gridPiecePool = new();
-        else gridPiecePool.Clear();
-    }
-
-    public void RemovePiece(GridPiece piece)
-    {
-        gridPieces.Remove(piece);
-
-        piece.transform.position = POOL_POSITION;
-        piece.gameObject.SetActive(false);
-    }
-
-    public Cell GetClosestCell(Transform givenTransform) => GetClosestCell(givenTransform.position);
-
-    public Cell GetClosestCell(Vector3 pos)
-    {
-        Cell closestCell = cells.OrderBy(cell => Vector2.Distance(pos, cell.transform.position)).First();
-        return closestCell;
-    }
-
-    #region Grid History
-
-    public void ResetHistory()
-    {
-        if (gridHistory == null)
-            gridHistory = new();
-        else
-            gridHistory.Clear();
-
-        if (historyButton != null)
-            historyButton.interactable = false;
-    }
-    public void RecordPiecePlacement()
-    {
-        // add current configuration to list of lists
-        GridPiece[] currentCells = new GridPiece[Cells.Count];
-
-        for (int i = 0; i < Cells.Count; i++)
-        {
-            currentCells[i] = Cells[i].CurrentPiece;
-        }
-
-        if (!SameAsLastState(currentCells))
-            gridHistory.Add(currentCells);
-    }
-
-    private bool SameAsLastState(GridPiece[] newPieceConfig)
-    {
-        if (gridHistory.Count == 0)
-            return false;
-
-        for (int i = 0; i < gridHistory[^1].Length; i++)
-        {
-            if (newPieceConfig[i] != gridHistory[^1][i])
-                return false;
-        }
-
-        return true;
-    }
-
-
-    public void RewindGrid()
-    {
-        if (gridHistory.Count <= 1)
-            return;
-
-        gridHistory.RemoveAt(gridHistory.Count - 1);
-
-        GridPiece[] previousGridConfig = gridHistory[^1];
-
-        for (int i = 0; i < Cells.Count; i++)
-        {
-            if (previousGridConfig[i] != null)
-            {
-                if (!gridPieces.Contains(previousGridConfig[i]))
-                    gridPieces.Add(previousGridConfig[i]);
-
-                previousGridConfig[i].CurrentCell = Cells[i];
-                previousGridConfig[i].IndicatorCell = previousGridConfig[i].CurrentCell;
-                previousGridConfig[i].ShowIndicator(false);
-
-            }
-        }
-    }
     #endregion
 
-    public void ClearPieces()
-    {
-        if (gridPieces == null)
-        {
-            GrabPieces();
-        }
 
-        for (int i = pieceParent.childCount - 1; i >= 0; i--)
-        {
-            GridPiece piece = pieceParent.GetChild(i).GetComponent<GridPiece>();
-            gridPieces.Remove(piece);
-            DestroyImmediate(piece.gameObject);
-        }
-        gridPieces = new();
-        gridPiecePool = new();
-    }
-
-    public void GenerateRandomPieces()
-    {
-        ClearPieces();
-
-        if (cells == null || cells.Count == 0)
-        {
-            GrabCells();
-        }
-
-        foreach (Cell cell in cells)
-        {
-            GridPiece pieceToSpawn = piecePrefabs[Random.Range(0, piecePrefabs.Count)];
-
-            if (pieceToSpawn != null)
-            {
-                GridPiece spawnedPiece = Instantiate(pieceToSpawn, pieceParent);
-                spawnedPiece.CurrentCell = cell;
-
-                gridPieces.Add(spawnedPiece);
-                gridPiecePool.Add(spawnedPiece);
-            }
-        }
-    }
-
-    public void GenerateList(List<GridPiece> gridList)
-    {
-        print("Generating from config");
-        for (int i = 0; i < cells.Count; i++)
-        {
-            GridPiece pieceToSpawn = gridList[i];
-
-            if (pieceToSpawn != null)
-            {
-                GridPiece newPiece = Custom.Instantiate(pieceToSpawn, PieceParent);
-
-                GridPiece piece = Instantiate(pieceToSpawn, PieceParent);
-
-                newPiece.transform.position = cells[i].transform.position;
-                gridPieces.Add(newPiece);
-                gridPiecePool.Add(newPiece);
-            }
-        }
-    }
-
-    private void ClearGrid()
-    {
-        for (int i = cellParent.childCount - 1; i >= 0; i--)
-        {
-            GridPiece cell = cellParent.GetChild(i).GetComponent<GridPiece>();
-            gridPieces.Remove(cell);
-            DestroyImmediate(cell.gameObject);
-        }
-
-        cells = new List<Cell>();
-
-        if (board != null)
-        {
-            DestroyImmediate(board);
-            board = null;
-        }
-    }
-
-    public void GenerateGrid()
-    {
-        ClearGrid();
-
-        Vector2 center = new Vector2((float)width / 2 - 0.5f, (float)height / 2 - 0.5f);
-        transform.position = -center;
-
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                Cell newCell = Custom.Instantiate(cellPrefab, cellParent);
-                newCell.transform.localPosition = new Vector2(j, i);
-                cells.Add(newCell);
-            }
-        }
-
-        SpriteRenderer board = Custom.Instantiate(boardPrefab, transform);
-
-        board.transform.localPosition = center;
-        board.size = new Vector2(width, height) + new Vector2(0.1f, 0.1f);
-    }
-
-
+    #region Editor Functions
     private void OnValidate()
     {
         if (puzzleConfig != null)
@@ -456,6 +306,7 @@ public class GridManager : MonoBehaviour
         gridPieces = new();
         gridPiecePool = new();
 
-        GenerateList(puzzleConfig.Pieces);
+        GenerateFromList(puzzleConfig.Pieces);
     }
+    #endregion
 }

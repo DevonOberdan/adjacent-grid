@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
+using FinishOne.GeneralUtilities;
 
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
@@ -10,17 +10,17 @@ using UnityEditor;
 public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private GridManager grid;
-    private Cell currentCell;
-    private SpriteRenderer sprite;
-    private Color pieceColor;
-    private bool isHeld;
+    private Cell currentCell, indicatorCell;
+
+    private SpriteRenderer sprite, indicator;
+    private Color pieceColor, indicatorColor;
     private bool canPlaceOnIndicator;
-    private SpriteRenderer indicator;
-    private Cell indicatorCell;
-    private Color indicatorColor;
 
+    #region Properties
 
-
+    public bool IsHeld { get; private set; }
+    public Color IndicatorColor => indicatorColor;
+    public Color PieceColor => pieceColor;
 
     public Cell CurrentCell
     {
@@ -34,13 +34,10 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             if (!value.AddPiece(this))
                 return;
 
-
             ShowIndicator(value != currentCell);
-
             currentCell = value;
 
             gameObject.SetActive(true);
-
             // set position.. DOTween later
             transform.position = currentCell.transform.position;
         }
@@ -54,13 +51,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             indicatorCell = value;
 
             indicator.transform.position = indicatorCell.transform.position;
-
-            ShowIndicator(true);//indicatorCell != CurrentCell);
+            ShowIndicator(true);
         }
     }
-
-    public Color IndicatorColor => indicatorColor;
-    public Color PieceColor => pieceColor;
 
     public bool CanPlaceOnIndicator
     {
@@ -71,8 +64,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             indicator.color = canPlaceOnIndicator ? IndicatorColor : GridInputHandler.Instance.InvalidPlacementColor;
         }
     }
+    #endregion
 
-    public bool IsOfSameType(GridPiece newPiece) => this.PieceColor.Equals(newPiece.PieceColor);
+    #region Callbacks
 
     private void Awake()
     {
@@ -86,65 +80,33 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         SpawnIndicator();
     }
 
-    private void SetToGrid() => CurrentCell = grid.GetClosestCell(transform);
-
-    public void PlaceOnIndicator()
+    private void Update()
     {
-        isHeld = false;
-        indicator.enabled = false;
-
-        if (canPlaceOnIndicator)
+        if (IsHeld)
         {
-            CurrentCell = indicatorCell;
+            HandleIndicator();
         }
-        else
-        {
-            // indicator effect
-            indicator.color = IndicatorColor;
-        }
-
-        IndicatorCell = CurrentCell;
-        ShowIndicator(false);
-        //canPlaceOnIndicator = true;
     }
+
+    #endregion
+
+    #region Public Methods
+
+    public void Highlight(bool highlight) => sprite.color = highlight ? IndicatorColor : pieceColor;
+    public bool IsOfSameType(GridPiece newPiece) => this.PieceColor.Equals(newPiece.PieceColor);
+
+    public void SetColor(Color color) => pieceColor = color;
+    #endregion
+
+    #region Private Helper Methods
 
     private void SpawnIndicator()
     {
         indicator = Instantiate(GridInputHandler.Instance.VisualIndicator, transform);
         indicator.transform.localPosition = Vector3.zero;
-        indicatorColor = new Color(pieceColor.r, pieceColor.g, pieceColor.b, indicator.color.a);
+
+        indicatorColor = pieceColor.AtNewAlpha(indicator.color.a);
         ShowIndicator(false);
-    }
-
-    public void ShowIndicator(bool show)
-    {
-        if (indicator == null)
-            return;
-
-
-        indicator.enabled = show;
-    }
-
-    public void Highlight(bool highlight)
-    {
-        Debug.Log("Highlight: " + highlight);
-        sprite.color = highlight ? IndicatorColor : pieceColor;
-    }
-
-
-    private void Update()
-    {
-        if (isHeld)
-        {
-            //FollowMouse();
-            HandleIndicator();
-        }
-    }
-
-    private void FollowMouse()
-    {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        transform.position = Vector2.Lerp(transform.position, mouseWorldPos, GridInputHandler.Instance.DragCatchUpSpeed * Time.deltaTime);
     }
 
     private void HandleIndicator()
@@ -163,14 +125,39 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             }
         }
     }
+    private bool ValidCell(Cell cell)
+    {
+        if (cell == null)
+            return false;
 
-    private bool ValidCell(Cell cell) => cell != null && cell == CurrentCell || CurrentCell.AdjacentCells.Contains(cell);
+        return cell == CurrentCell || CurrentCell.AdjacentCells.Contains(cell);
+    }
+    #endregion
 
-    public void SetIndicatorCell(Cell newIndicatorCell) => indicatorCell = newIndicatorCell;
+    #region Indicator Methods
 
-    public void SetHeld(bool held) => isHeld = held;
+    public void PlaceOnIndicator()
+    {
+        IsHeld = false;
+        indicator.enabled = false;
 
-    public void SetColor(Color color) => pieceColor = color;
+        if (CanPlaceOnIndicator)
+            CurrentCell = indicatorCell;
+        else
+            indicator.color = IndicatorColor;
+
+
+        IndicatorCell = CurrentCell;
+        ShowIndicator(false);
+    }
+
+    public void ShowIndicator(bool show)
+    {
+        if (indicator == null)
+            return;
+
+        indicator.enabled = show;
+    }
 
     public void MarkIndicatorCellInvalid()
     {
@@ -179,11 +166,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         ShowIndicator(true);
     }
 
-    #region Input Callbacks
+    #endregion
 
+    #region Input Callbacks
     public void OnPointerDown(PointerEventData eventData)
     {
-        isHeld = true;
+        IsHeld = true;
         grid.OnPiecePickedUp?.Invoke(this);
     }
 
@@ -195,19 +183,20 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (grid.SelectedPiece != null)
-            return;
-
-        grid.OnPieceHovered?.Invoke(this, true);
+        HandleHover(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        HandleHover(false);
+    }
+
+    private void HandleHover(bool hover)
+    {
         if (grid.SelectedPiece != null)
             return;
 
-        grid.OnPieceHovered?.Invoke(this, false);
-
+        grid.OnPieceHovered?.Invoke(this, hover);
     }
     #endregion
 
