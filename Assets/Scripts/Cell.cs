@@ -7,20 +7,20 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     private GridPiece piece;
     private GridManager grid;
     private List<Cell> adjacentCells;
-    private int indexInGrid;
+    //private int IndexInGrid;
 
 
     public GridPiece CurrentPiece => piece;
     public List<Cell> AdjacentCells => adjacentCells;
 
     public bool Occupied => piece != null;
-    public int IndexInGrid => indexInGrid;
+    public int IndexInGrid { get; private set; }
 
 
     public void Init(GridManager manager, int index)
     {
         grid = manager;
-        indexInGrid = index;
+        IndexInGrid = index;
     }
 
     private void Awake()
@@ -30,22 +30,22 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
 
     private void Start()
     {
-        indexInGrid = grid.Cells.IndexOf(this);
+        IndexInGrid = grid.Cells.IndexOf(this);
 
         GrabAdjacentCells();
     }
 
     private void GrabAdjacentCells()
     {
-        bool leftCell = indexInGrid % grid.Width != 0;
-        bool rightCell = indexInGrid % grid.Width != grid.Width - 1;
-        bool topCell = indexInGrid / grid.Height != grid.Height - 1;
-        bool bottomCell = indexInGrid / grid.Height != 0;
+        bool leftCell = IndexInGrid % grid.Width != 0;
+        bool rightCell = IndexInGrid % grid.Width != grid.Width - 1;
+        bool topCell = IndexInGrid / grid.Height != grid.Height - 1;
+        bool bottomCell = IndexInGrid / grid.Height != 0;
 
-        if (leftCell) adjacentCells.Add(grid.Cells[indexInGrid - 1]);
-        if (rightCell) adjacentCells.Add(grid.Cells[indexInGrid + 1]);
-        if (topCell) adjacentCells.Add(grid.Cells[indexInGrid + grid.Width]);
-        if (bottomCell) adjacentCells.Add(grid.Cells[indexInGrid - grid.Width]);
+        if (leftCell) adjacentCells.Add(grid.Cells[IndexInGrid - 1]);
+        if (rightCell) adjacentCells.Add(grid.Cells[IndexInGrid + 1]);
+        if (topCell) adjacentCells.Add(grid.Cells[IndexInGrid + grid.Width]);
+        if (bottomCell) adjacentCells.Add(grid.Cells[IndexInGrid - grid.Width]);
     }
 
     public bool AddPiece(GridPiece newPiece)

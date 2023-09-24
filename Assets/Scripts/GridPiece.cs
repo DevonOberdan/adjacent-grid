@@ -125,6 +125,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             }
         }
     }
+
     private bool ValidCell(Cell cell)
     {
         if (cell == null)
