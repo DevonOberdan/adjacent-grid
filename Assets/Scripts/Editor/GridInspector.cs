@@ -124,13 +124,13 @@ public class GridInspector : Editor
         {
             for (int j = 0; j < manager.Width; j++)
             {
-                Cell newCell = Custom.Instantiate(cellPrefab, manager.CellParent);
+                Cell newCell = CustomMethods.Instantiate(cellPrefab, manager.CellParent);
                 newCell.transform.localPosition = new Vector2(j, i);
                 //.Add(newCell);
             }
         }
 
-        SpriteRenderer board = Custom.Instantiate(boardPrefab, manager.transform);
+        SpriteRenderer board = CustomMethods.Instantiate(boardPrefab, manager.transform);
 
         board.transform.localPosition = center;
         board.transform.localScale = new Vector2(manager.Width, manager.Width) + new Vector2(0.1f, 0.1f);

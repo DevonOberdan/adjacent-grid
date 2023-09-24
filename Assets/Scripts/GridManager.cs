@@ -189,7 +189,7 @@ public class GridManager : MonoBehaviour
 
             if (pieceToSpawn != null)
             {
-                GridPiece newPiece = Custom.Instantiate(pieceToSpawn, PieceParent);
+                GridPiece newPiece = CustomMethods.Instantiate(pieceToSpawn, PieceParent);
 
                 newPiece.transform.position = cells[i].transform.position;
                 gridPieces.Add(newPiece);
