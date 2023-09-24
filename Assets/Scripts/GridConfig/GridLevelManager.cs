@@ -1,20 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class GridLevelManager : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
+    [SerializeField] private bool startingCustom;
 
     [SerializeField] private GridPuzzleConfigSO[] puzzleConfigs;
 
     [SerializeField] private UnityEvent<int> OnNewLevel;
     [SerializeField] private UnityEvent OnWonGame;
 
-    [SerializeField] private bool startingCustom;
 
     [SerializeField] private TMP_Text levelText;
 
@@ -30,13 +27,12 @@ public class GridLevelManager : MonoBehaviour
 
     private bool LastLevelComplete => levelIndex == puzzleConfigs.Length;
 
+    private const string LEVEL_TEXT = "Level ";
 
-    const string LEVEL_TEXT = "Level ";
-
-    int LevelIndex 
+    private int LevelIndex
     {
         get => levelIndex;
-        set 
+        set
         {
             levelIndex = Mathf.Clamp(value, 0, puzzleConfigs.Length);
 
@@ -71,5 +67,5 @@ public class GridLevelManager : MonoBehaviour
     public void Decrement() => LevelIndex--;
     public void Increment() => LevelIndex++;
 
-    public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level+1}/{puzzleConfigs.Length}";
+    public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level + 1}/{puzzleConfigs.Length}";
 }
