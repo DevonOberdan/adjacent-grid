@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "7890305f34acecb656ffe0becec92204d5e56495"
+      "hash": "3495a71daa0f98349f593483fd181676cf862c4d"
     },
     "com.finishone.scene-management": {
       "version": "https://github.com/DevonOberdan/scene-management.git",
