@@ -66,7 +66,7 @@ public class GridLevelEditor : Editor
 
     private void SaveAsset(GridPuzzleConfigSO puzzleConfig, string name)
     {
-        string path = "Assets/AdjacentGrid/GridConfig/Configs/";
+        string path = "Assets/ScriptableObjects/GridConfigs/";
 
         if (name.Equals(string.Empty))
             name = "NewGridConfig";
