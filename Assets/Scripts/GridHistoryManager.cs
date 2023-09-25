@@ -14,15 +14,15 @@ public class GridHistoryManager : MonoBehaviour
     private void Awake()
     {
         ResetHistory();
+
+        gridManager = GetComponent<GridManager>();
+
+        gridManager.OnGridChanged += () => RecordPiecePlacement();
+        gridManager.OnGridReset += ResetHistory;
     }
 
     private void Start()
     {
-        gridManager = GetComponent<GridManager>();
-
-        gridManager.OnGridChanged += () => RecordPiecePlacement();
-        gridManager.OnGridReset += () => ResetHistory();
-
         historyButton.onClick.AddListener(RewindGrid);
     }
 

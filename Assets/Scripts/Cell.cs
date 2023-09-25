@@ -7,8 +7,6 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     private GridPiece piece;
     private GridManager grid;
     private List<Cell> adjacentCells;
-    //private int IndexInGrid;
-
 
     public GridPiece CurrentPiece => piece;
     public List<Cell> AdjacentCells => adjacentCells;
@@ -48,34 +46,24 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
         if (bottomCell) adjacentCells.Add(grid.Cells[IndexInGrid - grid.Width]);
     }
 
-    public bool AddPiece(GridPiece newPiece)
+    public void AddPiece(GridPiece newPiece)
     {
-        // if cell is empty or contains piece of another color
-
-        if (Occupied)
-        {
-            if (!newPiece.IsOfSameType(piece))
-                DestroyPiece();
-        }
-
         piece = newPiece;
-        return true;
+
+        // set position.. DOTween later
+        piece.transform.position = transform.position;
     }
 
+    // Piece passed in to ensure that no accidental removal
+    // of a new/unknown piece occurs
     public void RemovePiece(GridPiece pieceToRemove)
     {
         if (piece == pieceToRemove)
             piece = null;
     }
 
-    private void DestroyPiece()
-    {
-        grid.RemovePiece(piece);
-        piece = null;
-    }
-
     public void OnPointerEnter(PointerEventData eventData)
     {
-        grid.HoveredOverCell = this;
+        grid.HoveredCell = this;
     }
 }
