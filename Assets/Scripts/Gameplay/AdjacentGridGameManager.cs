@@ -24,9 +24,11 @@ public class AdjacentGridGameManager : MonoBehaviour
         activeGrouping = new List<GridPiece>();
 
         gridManager = GetComponent<GridManager>();
+
+        SetupGridListeners();
     }
 
-    private void Start()
+    private void SetupGridListeners()
     {
         gridManager.OnPiecePickedUp += FindGroupedPieces;
         gridManager.OnPieceDropped += HandlePieceDropped;

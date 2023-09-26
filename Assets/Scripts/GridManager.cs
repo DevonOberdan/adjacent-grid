@@ -52,7 +52,7 @@ public class GridManager : MonoBehaviour
     public List<Cell> Cells => cells;
     public List<GridPiece> Pieces => gridPieces;
 
-    public Cell HoveredOverCell { get; set; }
+    public Cell HoveredCell { get; set; }
     public GridPiece SelectedPiece => selectedPiece;
 
     public int PieceCount => gridPieces.Count;
@@ -133,7 +133,7 @@ public class GridManager : MonoBehaviour
         previouslyInGrid = PointerInGrid;
 
         if (!PointerInGrid)
-            HoveredOverCell = null;
+            HoveredCell = null;
     }
 
     #region Pieces

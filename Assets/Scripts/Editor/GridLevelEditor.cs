@@ -10,10 +10,9 @@ public class GridLevelEditor : Editor
 {
     public VisualTreeAsset inspectorXML;
     public Material material;
+
     public override VisualElement CreateInspectorGUI()
     {
-        //DrawDefaultInspector();
-
         GridLevelManager levelManager = target as GridLevelManager;
 
         VisualElement inspector = new VisualElement();

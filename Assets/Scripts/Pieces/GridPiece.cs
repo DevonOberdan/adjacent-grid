@@ -30,16 +30,18 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             if (currentCell != null)
                 currentCell.RemovePiece(this);
 
-            // piece cannot be added to this cell
-            if (!value.AddPiece(this))
-                return;
+            if (value.Occupied)
+            {
+                InteractWithPiece(value.CurrentPiece);
+            }
+
+            value.AddPiece(this);
 
             ShowIndicator(value != currentCell);
+
             currentCell = value;
 
             gameObject.SetActive(true);
-            // set position.. DOTween later
-            transform.position = currentCell.transform.position;
         }
     }
 
@@ -90,12 +92,25 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     #endregion
 
+    public void Destroy()
+    {
+        grid.RemovePiece(this);
+    }
+
+    public void InteractWithPiece(GridPiece otherPiece)
+    {
+        if (!otherPiece.IsOfSameType(this))
+            otherPiece.Destroy();
+    }
+
+
     #region Public Methods
 
     public void Highlight(bool highlight) => sprite.color = highlight ? IndicatorColor : pieceColor;
     public bool IsOfSameType(GridPiece newPiece) => this.PieceColor.Equals(newPiece.PieceColor);
 
     public void SetColor(Color color) => pieceColor = color;
+
     #endregion
 
     #region Private Helper Methods
@@ -125,6 +140,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             }
         }
     }
+
     private bool ValidCell(Cell cell)
     {
         if (cell == null)
@@ -206,6 +222,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         HandleDroppedInPieces();
     }
 
+    /// <summary>
+    /// Editor code that allows devs to drag prefabs into the Scene view and have them properly parented.
+    /// </summary>
     private void HandleDroppedInPieces()
     {
 #if UNITY_EDITOR
