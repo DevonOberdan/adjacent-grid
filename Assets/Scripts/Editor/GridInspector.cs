@@ -11,7 +11,7 @@ public class GridInspector : Editor
     public VisualTreeAsset inspectorXML;
 
     [SerializeField] private Cell cellPrefab;
-    [SerializeField] private SpriteRenderer boardPrefab;
+    [SerializeField] private GameObject boardPrefab;
 
     public override VisualElement CreateInspectorGUI()
     {
@@ -130,7 +130,7 @@ public class GridInspector : Editor
             }
         }
 
-        SpriteRenderer board = CustomMethods.Instantiate(boardPrefab, manager.transform);
+        GameObject board = CustomMethods.Instantiate(boardPrefab, manager.transform);
 
         board.transform.localPosition = center;
         board.transform.localScale = new Vector2(manager.Width, manager.Width) + new Vector2(0.1f, 0.1f);

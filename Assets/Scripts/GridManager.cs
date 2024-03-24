@@ -11,7 +11,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private int width, height;
 
-    [field: SerializeField] public SpriteRenderer Board { get; private set; }
+    [field: SerializeField] public GameObject Board { get; private set; }
 
     [SerializeField] private GridPuzzleConfigSO puzzleConfig;
 

@@ -12,7 +12,10 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private GridManager grid;
     private Cell currentCell, indicatorCell;
 
-    private SpriteRenderer sprite, indicator;
+    private Renderer rend;
+
+    private SpriteRenderer sprite;
+    private GameObject indicator;
     private Color pieceColor, indicatorColor;
     private bool canPlaceOnIndicator;
 
@@ -63,18 +66,22 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         set
         {
             canPlaceOnIndicator = value;
-            indicator.color = canPlaceOnIndicator ? IndicatorColor : GridInputHandler.Instance.InvalidPlacementColor;
+            indicator.SetColor(canPlaceOnIndicator ? IndicatorColor : GridInputHandler.Instance.InvalidPlacementColor);
         }
     }
     #endregion
 
     #region Callbacks
 
+
     private void Awake()
     {
         grid = transform.root.GetComponent<GridManager>();
-        sprite = GetComponent<SpriteRenderer>();
-        pieceColor = sprite.color;
+        //sprite = GetComponent<SpriteRenderer>();
+
+        rend = GrabRenderer();
+
+        //pieceColor = rend.;
     }
 
     private void Start()
@@ -91,6 +98,21 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
 
     #endregion
+
+    private Renderer GrabRenderer()
+    {
+        if(!TryGetComponent(out Renderer renderer))
+        {
+            renderer = GetComponentInChildren<Renderer>();
+
+            if(renderer == null)
+            {
+                Debug.LogError("No Renderer in GridPiece", gameObject);
+            }
+        }
+
+        return renderer;
+    }
 
     public void Destroy()
     {
@@ -120,7 +142,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         indicator = Instantiate(GridInputHandler.Instance.VisualIndicator, transform);
         indicator.transform.localPosition = Vector3.zero;
 
-        indicatorColor = pieceColor.AtNewAlpha(indicator.color.a);
+        //indicatorColor = pieceColor.AtNewAlpha(indicator.color.a);
         ShowIndicator(false);
     }
 
@@ -155,12 +177,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void PlaceOnIndicator()
     {
         IsHeld = false;
-        indicator.enabled = false;
+        indicator.gameObject.SetActive(false);
 
         if (CanPlaceOnIndicator)
             CurrentCell = indicatorCell;
         else
-            indicator.color = IndicatorColor;
+            indicator.SetColor(IndicatorColor);
 
 
         IndicatorCell = CurrentCell;
@@ -172,7 +194,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (indicator == null)
             return;
 
-        indicator.enabled = show;
+        indicator.gameObject.SetActive(false);
     }
 
     public void MarkIndicatorCellInvalid()

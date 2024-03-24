@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameSceneConfig
   m_EditorClassIdentifier: 
   sceneRef:
-    m_AssetGUID: 13bf7817fec247147a5fba2e37ae6202
+    m_AssetGUID: d7973a81387271e48be81e3ee0456844
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
