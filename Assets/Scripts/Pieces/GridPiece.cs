@@ -15,7 +15,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private Renderer rend;
 
     private SpriteRenderer sprite;
-    private GameObject indicator;
+    private Renderer indicator;
     private Color pieceColor, indicatorColor;
     private bool canPlaceOnIndicator;
 
@@ -77,11 +77,10 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private void Awake()
     {
         grid = transform.root.GetComponent<GridManager>();
-        //sprite = GetComponent<SpriteRenderer>();
 
-        rend = GrabRenderer();
+        rend = gameObject.GrabRenderer();
 
-        //pieceColor = rend.;
+        pieceColor = rend.GetColor();
     }
 
     private void Start()
@@ -99,20 +98,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     #endregion
 
-    private Renderer GrabRenderer()
-    {
-        if(!TryGetComponent(out Renderer renderer))
-        {
-            renderer = GetComponentInChildren<Renderer>();
 
-            if(renderer == null)
-            {
-                Debug.LogError("No Renderer in GridPiece", gameObject);
-            }
-        }
-
-        return renderer;
-    }
 
     public void Destroy()
     {
@@ -139,10 +125,10 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     private void SpawnIndicator()
     {
-        indicator = Instantiate(GridInputHandler.Instance.VisualIndicator, transform);
+        indicator = Instantiate(GridInputHandler.Instance.VisualIndicator, transform).GrabRenderer();
         indicator.transform.localPosition = Vector3.zero;
 
-        //indicatorColor = pieceColor.AtNewAlpha(indicator.color.a);
+        indicatorColor = pieceColor.AtNewAlpha(indicator.GetColor().a);
         ShowIndicator(false);
     }
 
@@ -194,7 +180,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (indicator == null)
             return;
 
-        indicator.gameObject.SetActive(false);
+        indicator.gameObject.SetActive(show);
     }
 
     public void MarkIndicatorCellInvalid()

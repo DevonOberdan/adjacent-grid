@@ -1,36 +1,51 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public static class ExtensionMethods
 {
-    public static void SetColor(this GameObject go, Color color)
+    public static Renderer GrabRenderer(this GameObject go)
     {
-        MeshRenderer rend = go.GetComponentInChildren<MeshRenderer>();
+        if (!go.TryGetComponent(out Renderer renderer))
+        {
+            renderer = go.GetComponentInChildren<Renderer>();
 
-        if (rend != null)
-        {
-            rend.material.color = color;
-        }
-        else
-        {
-            SpriteRenderer sprite = go.GetComponentInChildren<SpriteRenderer>();
-            if (sprite != null)
+            if (renderer == null)
             {
-                sprite.color = color;
+                Debug.LogError("No Renderer in GridPiece", go);
             }
+        }
+
+        return renderer;
+    }
+
+    public static void SetColor(this Renderer renderer, Color color)
+    {
+        MeshRenderer mesh = renderer as MeshRenderer;
+        SpriteRenderer sprite = renderer as SpriteRenderer;
+
+        if (mesh != null)
+        {
+            mesh.material.color = color;
+        }
+        else if (sprite != null)
+        {
+            sprite.color = color;
         }
     }
 
-    public static Color GetColor(this GameObject go)
+    public static Color GetColor(this Renderer rend)
     {
         Color color = Color.white;
-        MeshRenderer rend = go.GetComponentInChildren<MeshRenderer>();
-        SpriteRenderer sprite = go.GetComponentInChildren<SpriteRenderer>();
 
-        if (rend != null)
+
+        MeshRenderer mesh = rend as MeshRenderer;
+        SpriteRenderer sprite = rend as SpriteRenderer;
+
+        if (mesh != null)
         {
-            color = rend.material.color;
+            color = mesh.material.color;
         }
         else if (sprite != null)
         {
@@ -38,7 +53,7 @@ public static class ExtensionMethods
         }
         else
         {
-            Debug.LogError("Color not found in GameObject " + go.name, go);
+            Debug.LogError("Color not found in GameObject " + rend.name, rend.gameObject);
         }
 
         return color;

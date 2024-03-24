@@ -3898,7 +3898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00bc3bfcfc745c349a57c0f57f250167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visualIndicator: {fileID: 4784107763387273448, guid: ed109c30097e0e44488e48403cdbff0e, type: 3}
+  visualIndicator: {fileID: 89456012526559817, guid: 804c5c4fbf8c81f4e8c729aed8455220, type: 3}
   invalidPlacementColor: {r: 0.9811321, g: 0.43965825, b: 0.43965825, a: 1}
   dragCatchUpSpeed: 5
 --- !u!114 &2596893489609906059
