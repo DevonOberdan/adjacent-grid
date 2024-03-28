@@ -45,8 +45,8 @@ public class GridLevelEditor : Editor
             {
                 GridPiece prefabPiece = levelManager.GridManager.PiecePrefabs
                                         .FirstOrDefault(piece =>
-                                        piece.GetComponent<SpriteRenderer>().color
-                                        .Equals(cell.CurrentPiece.GetComponent<SpriteRenderer>().color));
+                                        piece.GetRenderer().GetColor()
+                                        .Equals(cell.CurrentPiece.GetRenderer().GetColor()));
 
                 gridPieceList.Add(prefabPiece);
             }

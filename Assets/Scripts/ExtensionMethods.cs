@@ -16,7 +16,7 @@ public static class ExtensionMethods
                 Debug.LogError("No Renderer in GridPiece", go);
             }
         }
-
+        Debug.Log("Renderer: "+renderer.name, renderer.gameObject);
         return renderer;
     }
 
@@ -45,7 +45,7 @@ public static class ExtensionMethods
 
         if (mesh != null)
         {
-            color = mesh.material.color;
+            color = Application.isPlaying ? mesh.material.color : mesh.sharedMaterial.color;
         }
         else if (sprite != null)
         {

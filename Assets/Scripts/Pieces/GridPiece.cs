@@ -9,10 +9,13 @@ using UnityEditor;
 
 public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    [field: SerializeField] public bool Interactable { get; private set; } = true;
+
     private GridManager grid;
     private Cell currentCell, indicatorCell;
 
     private Renderer rend;
+    private new Collider collider;
 
     private SpriteRenderer sprite;
     private Renderer indicator;
@@ -24,6 +27,14 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public bool IsHeld { get; private set; }
     public Color IndicatorColor => indicatorColor;
     public Color PieceColor => pieceColor;
+
+    public Renderer GetRenderer()
+    {
+        if(rend == null)
+            rend = gameObject.GrabRenderer();
+
+        return rend;
+    }
 
     public Cell CurrentCell
     {
@@ -78,9 +89,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         grid = transform.root.GetComponent<GridManager>();
 
+        collider = GetComponentInChildren<Collider>();
         rend = gameObject.GrabRenderer();
 
         pieceColor = rend.GetColor();
+
+        collider.enabled = Interactable;
     }
 
     private void Start()
@@ -195,29 +209,37 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #region Input Callbacks
     public void OnPointerDown(PointerEventData eventData)
     {
+        if(!Interactable) return;
+
         IsHeld = true;
         grid.OnPiecePickedUp?.Invoke(this);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (!Interactable) return;
+
         PlaceOnIndicator();
         grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (!Interactable) return;
+
         HandleHover(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (!Interactable) return;
+
         HandleHover(false);
     }
 
     private void HandleHover(bool hover)
     {
-        if (grid.SelectedPiece != null)
+        if (grid.SelectedPiece != null || !Interactable)
             return;
 
         grid.OnPieceHovered?.Invoke(this, hover);
