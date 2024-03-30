@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D;
 
 public static class ExtensionMethods
 {
@@ -38,7 +37,6 @@ public static class ExtensionMethods
     public static Color GetColor(this Renderer rend)
     {
         Color color = Color.white;
-
 
         MeshRenderer mesh = rend as MeshRenderer;
         SpriteRenderer sprite = rend as SpriteRenderer;

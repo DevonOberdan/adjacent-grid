@@ -83,8 +83,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #endregion
 
     #region Callbacks
-
-
     private void Awake()
     {
         grid = transform.root.GetComponent<GridManager>();
@@ -109,10 +107,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             HandleIndicator();
         }
     }
-
     #endregion
-
-
 
     public void Destroy()
     {
@@ -124,7 +119,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (!otherPiece.IsOfSameType(this))
             otherPiece.Destroy();
     }
-
 
     #region Public Methods
 
@@ -148,7 +142,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     private void HandleIndicator()
     {
-        Cell hoveredCell = grid.CurrentHoveredCell();
+        //Cell hoveredCell = grid.CurrentHoveredCell();
+        Cell hoveredCell = grid.HoveredCell;
 
         if (ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
         {
@@ -184,7 +179,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         else
             indicator.SetColor(IndicatorColor);
 
-
         IndicatorCell = CurrentCell;
         ShowIndicator(false);
     }
@@ -203,7 +197,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         IndicatorCell = CurrentCell;
         ShowIndicator(true);
     }
-
     #endregion
 
     #region Input Callbacks

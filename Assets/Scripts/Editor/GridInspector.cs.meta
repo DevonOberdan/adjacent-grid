@@ -5,7 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - inspectorXML: {fileID: 9197481963319205126, guid: efff1056fc02b314282461c9836bf252, type: 3}
-  - cellPrefab: {fileID: 2265323216766378816, guid: a0214b86f5f6c9e40913f91858e4186b, type: 3}
+  - cellPrefab: {fileID: 7506293347433592000, guid: 7f1a23ea1ffd1904697180486e3325da, type: 3}
   - boardPrefab: {fileID: 5246249784769412811, guid: d7c00a97ade10b546ad6914f0d1ae7cd, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}

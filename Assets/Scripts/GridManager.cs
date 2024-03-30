@@ -114,7 +114,7 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        HandlePointerInGrid();
+       // HandlePointerInGrid();
     }
 
     private void HandlePointerInGrid()
@@ -179,7 +179,7 @@ public class GridManager : MonoBehaviour
 
     private Cell GetClosestCell(Vector3 pos)
     {
-        Cell closestCell = cells.OrderBy(cell => Vector2.Distance(pos, cell.transform.position)).First();
+        Cell closestCell = cells.OrderBy(cell => Vector3.Distance(pos, cell.transform.position)).First();
         return closestCell;
     }
 
