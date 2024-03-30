@@ -1,5 +1,6 @@
 using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -132,7 +133,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private bool AnyValidMovements()
     {
-        foreach (GridPiece piece in gridManager.Pieces)
+        foreach (GridPiece piece in gridManager.Pieces.Where(piece => piece.Interactable))
         {
             foreach (Cell adjacentCell in piece.CurrentCell.AdjacentCells)
             {
@@ -162,11 +163,11 @@ public class AdjacentGridGameManager : MonoBehaviour
                 piece.IndicatorCell = gridManager.Cells[newIndicatorIndex];
             }
 
-            bool validPlacement = AnyHitOpposingPiece();
+            bool consumesOtherPiece = AnyHitOpposingPiece();
 
             foreach (GridPiece piece in activeGrouping)
             {
-                piece.CanPlaceOnIndicator = validPlacement;
+                piece.CanPlaceOnIndicator = consumesOtherPiece;
             }
         }
         else
@@ -218,14 +219,21 @@ public class AdjacentGridGameManager : MonoBehaviour
             // hits opposing piece       OR held in starting place
             if (HitsOpposingPiece(piece) || piece.IndicatorCell == piece.CurrentCell)
                 hit = true;
+
+            // overlaps with piece that cannot be consumed, i.e. "wall"
+            if(piece.IndicatorCell.Occupied && !piece.IndicatorCell.CurrentPiece.Interactable)
+            {
+                return false;
+            }
         }
         return hit;
     }
 
     private bool HitsOpposingPiece(GridPiece piece)
     {
-        // hovering over piece          && is opposing type
-        return piece.IndicatorCell.Occupied && !piece.IndicatorCell.CurrentPiece.IsOfSameType(piece);
+        Cell cell = piece.IndicatorCell;
+        // hovering over piece          && is opposing type            && it's a consumable piece
+        return cell.Occupied && !cell.CurrentPiece.IsOfSameType(piece) && cell.CurrentPiece.Interactable;
     }
 
 

@@ -55,7 +55,7 @@ public class GridManager : MonoBehaviour
     public Cell HoveredCell { get; set; }
     public GridPiece SelectedPiece => selectedPiece;
 
-    public int PieceCount => gridPieces.Count;
+    public int PieceCount => gridPieces.Where(piece => piece.Interactable).Count();
 
     public int Width => width;
     public int Height => height;
@@ -133,7 +133,9 @@ public class GridManager : MonoBehaviour
         previouslyInGrid = PointerInGrid;
 
         if (!PointerInGrid)
+        {
             HoveredCell = null;
+        }
     }
 
     #region Pieces
@@ -197,7 +199,6 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-
 
     #region Grid Setup
     public void ClearPieces()
