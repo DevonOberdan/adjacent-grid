@@ -64,6 +64,7 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        print(gameObject);
         grid.HoveredCell = this;
     }
 }

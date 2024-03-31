@@ -15,7 +15,6 @@ public static class ExtensionMethods
                 Debug.LogError("No Renderer in GridPiece", go);
             }
         }
-        Debug.Log("Renderer: "+renderer.name, renderer.gameObject);
         return renderer;
     }
 

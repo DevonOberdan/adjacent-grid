@@ -763,7 +763,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 2596893489609906058}
-  startingCustom: 0
+  startingCustom: 1
   puzzleConfigs:
   - {fileID: 11400000, guid: 3771c3ca32cd76b48b220e602cd747aa, type: 2}
   - {fileID: 11400000, guid: fd8f57d6158785646be34a0f3e1e2e1a, type: 2}
@@ -3007,6 +3007,7 @@ GameObject:
   - component: {fileID: 2023913249}
   - component: {fileID: 2023913248}
   - component: {fileID: 2023913247}
+  - component: {fileID: 2023913251}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3104,6 +3105,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2023913251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023913246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
 --- !u!1001 &2032529453
 PrefabInstance:
   m_ObjectHideFlags: 0
