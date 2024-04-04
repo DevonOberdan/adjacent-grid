@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using FinishOne.GeneralUtilities;
+using UnityEngine.Events;
+
 
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
@@ -10,6 +12,8 @@ using UnityEditor;
 public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [field: SerializeField] public bool Interactable { get; private set; } = true;
+
+    [SerializeField] private UnityEvent<Cell> OnCellSet;
 
     private PieceIndicator indicatorHandler;
 
@@ -58,6 +62,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             currentCell = value;
 
             gameObject.SetActive(true);
+
+            OnCellSet.Invoke(currentCell);
         }
     }
 
@@ -69,7 +75,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             indicatorCell = value;
 
             indicatorHandler.SetCell(indicatorCell);
-            //indicator.transform.position = indicatorCell.transform.position;
             ShowIndicator(true);
         }
     }
@@ -81,7 +86,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         {
             canPlaceOnIndicator = value;
             indicatorHandler.HandleValidPlacement(canPlaceOnIndicator);
-            //indicator.SetColor(canPlaceOnIndicator ? IndicatorColor : GridInputHandler.Instance.InvalidPlacementColor);
         }
     }
 

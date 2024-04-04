@@ -8,6 +8,8 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     private GridManager grid;
     private List<Cell> adjacentCells;
 
+    private Vector3 startPosition;
+    private Quaternion startRotation;
     public GridPiece CurrentPiece => piece;
     public List<Cell> AdjacentCells => adjacentCells;
 
@@ -24,6 +26,8 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     private void Awake()
     {
         adjacentCells = new List<Cell>();
+        startPosition = transform.position;
+        startRotation = transform.rotation;
     }
 
     private void Start()
@@ -31,6 +35,8 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
         IndexInGrid = grid.Cells.IndexOf(this);
 
         GrabAdjacentCells();
+
+        grid.OnGridReset += () => ResetCell();
     }
 
     private void GrabAdjacentCells()
@@ -60,6 +66,18 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     {
         if (piece == pieceToRemove)
             piece = null;
+    }
+
+
+    public void ResetCell()
+    {
+        transform.position = startPosition;
+        transform.rotation = startRotation;
+        if (TryGetComponent(out Rigidbody rb))
+        {
+            rb.useGravity = false;
+            rb.isKinematic = true;
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
