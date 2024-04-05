@@ -137,10 +137,9 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             foreach (Cell adjacentCell in piece.CurrentCell.AdjacentCells)
             {
-                if (adjacentCell.CurrentPiece == null)
-                    continue;
+                GridPiece adjacentPiece = adjacentCell.CurrentPiece;
 
-                if (!adjacentCell.CurrentPiece.IsOfSameType(piece))
+                if (adjacentPiece && !adjacentPiece.IsOfSameType(piece) && adjacentPiece.Interactable)
                     return true;
             }
         }
