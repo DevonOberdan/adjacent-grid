@@ -11,7 +11,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private int width, height;
 
-    [field: SerializeField] public SpriteRenderer Board { get; private set; }
+    [field: SerializeField] public GameObject Board { get; private set; }
 
     [SerializeField] private GridPuzzleConfigSO puzzleConfig;
 
@@ -55,7 +55,7 @@ public class GridManager : MonoBehaviour
     public Cell HoveredCell { get; set; }
     public GridPiece SelectedPiece => selectedPiece;
 
-    public int PieceCount => gridPieces.Count;
+    public int PieceCount => gridPieces.Where(piece => piece.Interactable).Count();
 
     public int Width => width;
     public int Height => height;
@@ -114,7 +114,7 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        HandlePointerInGrid();
+       // HandlePointerInGrid();
     }
 
     private void HandlePointerInGrid()
@@ -133,7 +133,9 @@ public class GridManager : MonoBehaviour
         previouslyInGrid = PointerInGrid;
 
         if (!PointerInGrid)
+        {
             HoveredCell = null;
+        }
     }
 
     #region Pieces
@@ -177,7 +179,7 @@ public class GridManager : MonoBehaviour
 
     private Cell GetClosestCell(Vector3 pos)
     {
-        Cell closestCell = cells.OrderBy(cell => Vector2.Distance(pos, cell.transform.position)).First();
+        Cell closestCell = cells.OrderBy(cell => Vector3.Distance(pos, cell.transform.position)).First();
         return closestCell;
     }
 
@@ -197,7 +199,6 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-
 
     #region Grid Setup
     public void ClearPieces()
