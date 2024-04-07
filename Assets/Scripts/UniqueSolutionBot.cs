@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,62 +6,122 @@ using UnityEngine.UI;
 public class UniqueSolutionBot : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
-    [SerializeField] private AdjacentGridGameManager gameManager;
-    [SerializeField] private GridHistoryManager historyManager;
+    private AdjacentGridGameManager gameManager;
+    private GridHistoryManager historyManager;
 
-    [SerializeField] private TMP_Text uniqueSolutionText;
+    [Header("UI References")]
+    [SerializeField] private Slider delaySlider;
+    [SerializeField] private Button solveButton;
+    [SerializeField] private TMP_Text uniqueSolutionText, delayTimeText;
+
+    private float MOVE_DELAY = 0.005f;
+    private bool solving;
+    private int uniqueCount;
 
     private void Awake()
     {
-        gridManager.OnGridReset += BeginNewPuzzle;
+        gameManager = gridManager.GetComponent<AdjacentGridGameManager>();
+        historyManager = gridManager.GetComponent<GridHistoryManager>();
+
+        gridManager.OnGridReset += () => SetCount(gridManager.PuzzleConfig.SolutionCount);
+
+        solveButton.onClick.AddListener(HandleButton);
+        delaySlider.onValueChanged.AddListener(SetTimeDelay);
     }
 
-    private void BeginNewPuzzle()
+    private void HandleButton()
     {
-        //uniqueSolutionText.text = ""+0;
-
-        uniqueSolutionText.text = ""+SolvePuzzle();
-    }
-
-    private int SolvePuzzle()
-    {
-        int count = 0;
-        foreach(PieceGroup group in gameManager.CurrentGroups)
+        if (solving)
         {
-            MoveGroup(group);
+            StopAllCoroutines();
+            gridManager.ResetToConfig();
+            historyManager.ResetHistory();
+            SetSolving(false);
+        }
+        else
+        {
+            SolveNewPuzzle();
+        }
+    }
+
+    private void SetCount(int count)
+    {
+        uniqueCount = count;
+        uniqueSolutionText.text = "" + uniqueCount;
+    }
+    private void SetSolving(bool enabled)
+    {
+        solving = enabled;
+        solveButton.GetComponentInChildren<TMP_Text>().text = enabled ? "Reset" : "Find Solutions";
+    }
+
+    private void SetTimeDelay(float value)
+    {
+        delayTimeText.text = "" + value;
+
+        if (!float.TryParse(delayTimeText.text, out MOVE_DELAY))
+        {
+            MOVE_DELAY = 0.05f;
+        }
+    }
+
+    private void SolveNewPuzzle()
+    {
+        SetCount(0);
+        SetSolving(true);
+        StartCoroutine(SolvePuzzle());
+    }
+
+    private IEnumerator SolvePuzzle()
+    {
+        yield return new WaitForSeconds(MOVE_DELAY);
+        yield return StartCoroutine(CheckGroups());
+        uniqueSolutionText.text = "" + uniqueCount;
+        gridManager.PuzzleConfig.SetSolutionCount(uniqueCount);
+        SetSolving(false);
+    }
+
+    private IEnumerator CheckGroups()
+    {
+        if (gameManager.AboutToWin)
+        {
+            SetCount(uniqueCount+1);
+            historyManager.RewindGrid();
+            yield return new WaitForSeconds(MOVE_DELAY);
+            yield break;
+        }
+        else if (gameManager.Doomed)
+        {
+            historyManager.RewindGrid();
+            yield return new WaitForSeconds(MOVE_DELAY);
+            yield break;
         }
 
-        return count;
-    }
-
-    private void MoveGroup(PieceGroup group)
-    {
-        GridPiece drivingPiece = group.Group[0];
-
-        if (drivingPiece == null)
-            return;
-
-        foreach(Cell cell in drivingPiece.CurrentCell.AdjacentCells)
+        foreach (PieceGroup group in gameManager.CurrentGroups)
         {
-            drivingPiece.IndicatorCell = cell;
+            GridPiece drivingPiece = group.Group[0];
 
-            if (drivingPiece.UserDropPiece())
+            if (drivingPiece == null)
+                yield break;
+
+            foreach (Cell cell in drivingPiece.CurrentCell.AdjacentCells)
             {
+                gridManager.OnPiecePickedUp?.Invoke(drivingPiece);
 
+                drivingPiece.IndicatorCell = cell;
+                gridManager.OnPieceIndicatorMoved?.Invoke(drivingPiece.IndicatorCell);
+
+                yield return new WaitForSeconds(MOVE_DELAY);
+                if (drivingPiece.UserDropPiece())
+                {
+                    // let events run, make new CurrentGroups
+                    yield return new WaitForSeconds(MOVE_DELAY);
+                    yield return StartCoroutine(CheckGroups());
+                }
             }
         }
 
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        historyManager.RewindGrid();
+        yield return new WaitForSeconds(MOVE_DELAY);
     }
 }

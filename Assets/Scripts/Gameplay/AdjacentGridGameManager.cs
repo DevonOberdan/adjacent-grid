@@ -30,7 +30,7 @@ public class AdjacentGridGameManager : MonoBehaviour
     private bool WinCondition => gridManager.PieceCount == 1;
 
     public bool AboutToWin => gridManager.PieceCount == 2 && AnyValidMovements();
-
+    public bool Doomed => wasDoomed;
     public List<PieceGroup> CurrentGroups { get; private set; }
 
     private void Awake()

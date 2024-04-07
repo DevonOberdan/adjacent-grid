@@ -23,7 +23,7 @@ public class GridHistoryManager : MonoBehaviour
 
     private void Start()
     {
-        historyButton.onClick.AddListener(RewindGrid);
+        historyButton.onClick.AddListener(() => RewindGrid());
     }
 
     public void ResetHistory()
@@ -80,10 +80,10 @@ public class GridHistoryManager : MonoBehaviour
         return true;
     }
 
-    private void RewindGrid()
+    public bool RewindGrid()
     {
         if (gridHistory.Count <= 1)
-            return;
+            return false;
 
         gridHistory.RemoveAt(gridHistory.Count - 1);
 
@@ -106,5 +106,7 @@ public class GridHistoryManager : MonoBehaviour
         rewindFlag = true;
 
         gridManager.OnGridChanged?.Invoke();
+
+        return true;
     }
 }

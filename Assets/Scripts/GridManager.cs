@@ -183,6 +183,11 @@ public class GridManager : MonoBehaviour
         return closestCell;
     }
 
+    public void ResetToConfig()
+    {
+        PuzzleConfig = puzzleConfig;
+    }
+
     private void GenerateFromList(List<GridPiece> gridList)
     {
         for (int i = 0; i < cells.Count; i++)
