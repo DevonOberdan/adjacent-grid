@@ -24,14 +24,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private new Collider collider;
 
     private SpriteRenderer sprite;
-    private Renderer indicator;
     private Color pieceColor;
     private bool canPlaceOnIndicator;
 
     #region Properties
 
     public bool IsHeld { get; private set; }
-   // public Color IndicatorColor => indicatorColor;
     public Color PieceColor => pieceColor;
 
     public Renderer GetRenderer()
@@ -58,11 +56,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             value.AddPiece(this);
 
             ShowIndicator(value != currentCell);
-
             currentCell = value;
-
             gameObject.SetActive(true);
-
             OnCellSet.Invoke(currentCell);
         }
     }
@@ -110,13 +105,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         indicatorHandler.Setup(pieceColor);
     }
 
-    private void Start()
-    {
-        //SpawnIndicator();
-
-        //indicatorHandler.Setup(pieceColor);
-    }
-
     private void Update()
     {
         if (IsHeld)
@@ -147,16 +135,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #endregion
 
     #region Private Helper Methods
-
-    //private void SpawnIndicator()
-    //{
-    //    indicator = Instantiate(GridInputHandler.Instance.VisualIndicator, transform).GrabRenderer();
-    //    indicator.transform.localPosition = Vector3.zero;
-
-    //    indicatorColor = pieceColor.AtNewAlpha(indicator.GetColor().a);
-    //    ShowIndicator(false);
-    //}
-
     private void HandleIndicator()
     {
         //Cell hoveredCell = grid.CurrentHoveredCell();
@@ -189,7 +167,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void PlaceOnIndicator()
     {
         IsHeld = false;
-        //indicator.gameObject.SetActive(false);
 
         if (CanPlaceOnIndicator)
             CurrentCell = indicatorCell;
@@ -229,8 +206,15 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         if (!Interactable) return;
 
+        UserDropPiece();
+    }
+
+    public bool UserDropPiece()
+    {
+        bool dropped = CanPlaceOnIndicator;
         PlaceOnIndicator();
         grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
+        return dropped;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

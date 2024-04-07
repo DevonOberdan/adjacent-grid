@@ -4,6 +4,16 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
+public struct PieceGroup
+{
+    public List<GridPiece> Group;
+
+    public PieceGroup(List<GridPiece> group)
+    {
+        this.Group = group;
+    }
+}
+
 public class AdjacentGridGameManager : MonoBehaviour
 {
     [SerializeField] private bool highlightGroup;
@@ -19,6 +29,10 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private bool WinCondition => gridManager.PieceCount == 1;
 
+    public bool AboutToWin => gridManager.PieceCount == 2 && AnyValidMovements();
+    public bool Doomed => wasDoomed;
+    public List<PieceGroup> CurrentGroups { get; private set; }
+
     private void Awake()
     {
         nonActivelyHeldPieceOffsets = new Dictionary<GridPiece, int>();
@@ -31,7 +45,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private void SetupGridListeners()
     {
-        gridManager.OnPiecePickedUp += FindGroupedPieces;
+        gridManager.OnPiecePickedUp += PickupGroupedPieces;
         gridManager.OnPieceDropped += HandlePieceDropped;
         gridManager.OnGridChanged += HandleGridChanged;
 
@@ -39,11 +53,13 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         if (highlightGroup)
             gridManager.OnPieceHovered += HandlePieceHovered;
+
+        gridManager.OnGridChanged += FindAllGroups;
     }
 
     #region Grouping Functions
 
-    private void FindGroupedPieces(GridPiece piece)
+    private void PickupGroupedPieces(GridPiece piece)
     {
         List<GridPiece> groupedPieces = GetAdjacentPieces(piece);
 
@@ -53,6 +69,22 @@ public class AdjacentGridGameManager : MonoBehaviour
         ProcessGroupedOffsets();
 
         groupedPieces.ForEach(piece => piece.ShowIndicator(true));
+    }
+
+    private void FindAllGroups()
+    {
+        CurrentGroups = new();
+
+        List<GridPiece> checkedPieces = new List<GridPiece>();
+        foreach (GridPiece piece in gridManager.Pieces)
+        {
+            List<GridPiece> newPieces = GetAdjacentPieces(piece);
+            if(!newPieces.Any(piece => checkedPieces.Contains(piece)))
+            {
+                checkedPieces.AddRange(newPieces);
+                CurrentGroups.Add(new PieceGroup(newPieces));
+            }
+        }
     }
 
     /// <summary>

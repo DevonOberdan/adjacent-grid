@@ -20,11 +20,15 @@ public class GridAudioManager : MonoBehaviour
 
     private void Start()
     {
-        gridManager.OnPiecePickedUp += (piece) => PlayClip(pickupSound);
+        gridManager.OnPiecePickedUp += HandlePiecePickedUp;
         gridManager.OnPieceDropped += HandlePieceDropped;
         gridManager.OnPieceIndicatorMoved += HandleIndicatorMoved;
     }
 
+    private void HandlePiecePickedUp(GridPiece piece)
+    {
+        PlayClip(pickupSound);
+    }
 
     private void HandlePieceDropped(GridPiece piece, bool canDrop)
     {
@@ -42,7 +46,8 @@ public class GridAudioManager : MonoBehaviour
 
     private void HandleIndicatorMoved(Cell cell)
     {
-        if (cell != gridManager.SelectedPiece.CurrentCell)
+        GridPiece selectedPiece = gridManager.SelectedPiece;
+        if (selectedPiece != null && cell != selectedPiece.CurrentCell)
         {
             PlayClip(indicatorSound);
             pieceMoved = true;
