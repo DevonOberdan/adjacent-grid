@@ -144,6 +144,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void SetColor(Color color) => pieceColor = color;
 
+
+    public void CheckSurroundingCells()
+    {
+        CurrentCell.
+    }
+
     #endregion
 
     #region Private Helper Methods
@@ -229,8 +235,15 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         if (!Interactable) return;
 
+        UserDropPiece();
+    }
+
+    public bool UserDropPiece()
+    {
+        bool dropped = CanPlaceOnIndicator;
         PlaceOnIndicator();
         grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
+        return dropped;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
