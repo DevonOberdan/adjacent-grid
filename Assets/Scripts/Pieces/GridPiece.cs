@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using FinishOne.GeneralUtilities;
 using UnityEngine.Events;
+using DG.Tweening;
+
 
 
 #if UNITY_EDITOR
@@ -27,7 +29,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private Color pieceColor;
     private bool canPlaceOnIndicator;
 
+    private float defaultHeight;
+
     #region Properties
+
+    public float DefaultHeight => defaultHeight;
 
     public bool IsHeld { get; private set; }
     public Color PieceColor => pieceColor;
@@ -105,6 +111,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         indicatorHandler.Setup(pieceColor);
     }
 
+    private void Start()
+    {
+        defaultHeight = transform.localPosition.y;
+    }
+
     private void Update()
     {
         if (IsHeld)
@@ -173,6 +184,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         else
             indicatorHandler.SetColor(indicatorHandler.DefaultColor);
 
+        transform.DOLocalMoveY(DefaultHeight, 0.25f);
+
+
         IndicatorCell = CurrentCell;
         ShowIndicator(false);
     }
@@ -193,7 +207,16 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
     #endregion
 
+    public bool UserDropPiece()
+    {
+        bool dropped = CanPlaceOnIndicator;
+        PlaceOnIndicator();
+        grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
+        return dropped;
+    }
+
     #region Input Callbacks
+
     public void OnPointerDown(PointerEventData eventData)
     {
         if(!Interactable) return;
@@ -207,14 +230,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (!Interactable) return;
 
         UserDropPiece();
-    }
-
-    public bool UserDropPiece()
-    {
-        bool dropped = CanPlaceOnIndicator;
-        PlaceOnIndicator();
-        grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
-        return dropped;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

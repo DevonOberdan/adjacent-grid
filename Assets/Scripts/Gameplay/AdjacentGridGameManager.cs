@@ -1,3 +1,4 @@
+using DG.Tweening;
 using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +69,16 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         ProcessGroupedOffsets();
 
-        groupedPieces.ForEach(piece => piece.ShowIndicator(true));
+        PickupEffect(groupedPieces);
+    }
+
+    private void PickupEffect(List<GridPiece> groupedPieces)
+    {
+        foreach (GridPiece piece in groupedPieces)
+        {
+            piece.ShowIndicator(true);
+            piece.transform.DOLocalMoveY(piece.DefaultHeight+0.3f, 0.25f);
+        }
     }
 
     private void FindAllGroups()
@@ -137,6 +147,7 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
         {
             piece.PlaceOnIndicator();
+            //piece.transform.DOLocalMoveY(piece.DefaultHeight, 0.25f);
         }
 
         nonActivelyHeldPieceOffsets.Clear();
