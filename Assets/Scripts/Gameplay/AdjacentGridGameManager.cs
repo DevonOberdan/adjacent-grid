@@ -71,7 +71,11 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         foreach (GridPiece groupedPiece in groupedPieces)
         {
-            groupedPiece.PickupVisual();
+            groupedPiece.HandlePickup();
+            if(TryGetComponent(out PieceVisualFeedback pieceFeedback))
+            {
+                pieceFeedback.HandlePickup();
+            }
         }
     }
 
@@ -286,11 +290,12 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
     {
+        
         List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
 
         foreach (GridPiece piece in pieces)
         {
-            piece.HandleHover(hovered);
+            piece.OnHovered?.Invoke(hovered);
         }
     }
 }

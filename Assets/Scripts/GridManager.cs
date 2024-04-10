@@ -119,9 +119,25 @@ public class GridManager : MonoBehaviour
         foreach(GridPiece piece in gridPieces)
         {
             GridPiece gridPiece = piece;
-            piece.OnPickup += () => OnPiecePickedUp?.Invoke(piece);
-            piece.OnDropped += (value) => OnPieceDropped?.Invoke(piece, value);
+            piece.OnPickup += () => 
+            {
+                if (piece.IsHeld)
+                {
+                    OnPiecePickedUp?.Invoke(piece);
+                }
+            };
+            
+            piece.OnDropSuccessful += (value) => OnPieceDropped?.Invoke(piece, value);
             piece.OnHovered += (hovered) => OnPieceHovered?.Invoke(piece, hovered);
+           
+            piece.OnHovered += (hovered) =>
+            {
+                if (piece.IsHovered)
+                {
+                    OnPieceHovered?.Invoke(piece, hovered);
+                }
+            };
+
             piece.OnIndicatorMoved += (cell) => OnPieceIndicatorMoved?.Invoke(cell);
         }
     }

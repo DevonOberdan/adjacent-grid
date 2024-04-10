@@ -1,12 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using FinishOne.GeneralUtilities;
 using UnityEngine.Events;
-using DG.Tweening;
 using System;
-
-
-
 
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
@@ -17,7 +12,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 {
     [field: SerializeField] public bool Interactable { get; private set; } = true;
 
-    [SerializeField] private UnityEvent<Cell> OnCellSet;
+    public UnityEvent<Cell> OnCellSet;
 
     private PieceIndicator indicatorHandler;
     private PieceVisualFeedback visualFeedback;
@@ -28,21 +23,16 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private Renderer rend;
     private new Collider collider;
 
-    private SpriteRenderer sprite;
     private Color pieceColor;
     private bool canPlaceOnIndicator;
 
-   // private float defaultHeight;
-
     #region Properties
-
-   // public float DefaultHeight => defaultHeight;
-
     public bool IsHeld { get; private set; }
+    public bool IsHovered { get; private set; }
     public Color PieceColor => pieceColor;
 
-    public Action OnPickup;
-    public Action<bool> OnDropped, OnHovered;
+    public Action OnPickup, OnSelected;
+    public Action<bool> OnDropSuccessful, OnHovered;
     public Action<Cell> OnIndicatorMoved;
 
     public Renderer GetRenderer()
@@ -83,7 +73,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         set
         {
             indicatorCell = value;
-
             indicatorHandler.SetCell(indicatorCell);
             ShowIndicator(true);
         }
@@ -124,11 +113,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         visualFeedback = GetComponent<PieceVisualFeedback>();
 
         OnHovered += HandleHover;
-    }
-
-    private void Start()
-    {
-       // defaultHeight = transform.localPosition.y;
     }
 
     private void Update()
@@ -177,13 +161,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
         {
             IndicatorCell = hoveredCell;
-           //grid.OnPieceIndicatorMoved?.Invoke(indicatorCell);
             OnIndicatorMoved?.Invoke(indicatorCell);
 
-            if(visualFeedback != null)
-            {
-                visualFeedback.HandleIndicatorMoved(IndicatorCell);
-            }
+            //if(visualFeedback != null)
+            //{
+            //    visualFeedback.HandleIndicatorMoved(IndicatorCell);
+            //}
 
             if (hoveredCell == CurrentCell && !grid.PointerInGrid)
             {
@@ -203,12 +186,13 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #endregion
 
     #region Indicator Methods
-
-    public void PickupVisual()
+    public void HandlePickup()
     {
         ShowIndicator(true);
 
-        if(visualFeedback != null)
+       // OnPickup?.Invoke();
+
+        if (visualFeedback != null)
             visualFeedback.HandlePickup();
     }
 
@@ -256,10 +240,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public bool UserDropPiece()
     {
-        //bool dropped = CanPlaceOnIndicator;
         PlaceOnIndicator();
-        //grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
-        OnDropped?.Invoke(CanPlaceOnIndicator);
+        OnDropSuccessful?.Invoke(CanPlaceOnIndicator);
         return CanPlaceOnIndicator;
     }
 
@@ -270,8 +252,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if(!Interactable) return;
 
         IsHeld = true;
-        //grid.OnPiecePickedUp?.Invoke(this);
-        OnPickup?.Invoke();
+        HandlePickup();
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -286,8 +267,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (grid.SelectedPiece != null || !Interactable)
             return;
 
-        //grid.OnPieceHovered?.Invoke(this, true);
-        OnHovered?.Invoke(true);
+        IsHovered = true;
+        OnHovered?.Invoke(IsHovered);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -295,8 +276,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (grid.SelectedPiece != null || !Interactable) 
             return;
 
-        //grid.OnPieceHovered?.Invoke(this, false);
-        OnHovered?.Invoke(false);
+        IsHovered = false;
+        OnHovered?.Invoke(IsHovered);
     }
     #endregion
 
