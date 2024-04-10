@@ -69,15 +69,9 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         ProcessGroupedOffsets();
 
-        PickupEffect(groupedPieces);
-    }
-
-    private void PickupEffect(List<GridPiece> groupedPieces)
-    {
-        foreach (GridPiece piece in groupedPieces)
+        foreach (GridPiece groupedPiece in groupedPieces)
         {
-            piece.ShowIndicator(true);
-            piece.transform.DOLocalMoveY(piece.DefaultHeight+0.3f, 0.25f);
+            groupedPiece.PickupVisual();
         }
     }
 
@@ -147,7 +141,6 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
         {
             piece.PlaceOnIndicator();
-            //piece.transform.DOLocalMoveY(piece.DefaultHeight, 0.25f);
         }
 
         nonActivelyHeldPieceOffsets.Clear();
@@ -297,7 +290,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         foreach (GridPiece piece in pieces)
         {
-            piece.Highlight(hovered);
+            piece.HandleHover(hovered);
         }
     }
 }

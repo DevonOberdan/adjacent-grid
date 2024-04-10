@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 using FinishOne.GeneralUtilities;
 using UnityEngine.Events;
 using DG.Tweening;
+using System;
+
 
 
 
@@ -18,6 +20,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     [SerializeField] private UnityEvent<Cell> OnCellSet;
 
     private PieceIndicator indicatorHandler;
+    private PieceVisualFeedback visualFeedback;
 
     private GridManager grid;
     private Cell currentCell, indicatorCell;
@@ -29,14 +32,18 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private Color pieceColor;
     private bool canPlaceOnIndicator;
 
-    private float defaultHeight;
+   // private float defaultHeight;
 
     #region Properties
 
-    public float DefaultHeight => defaultHeight;
+   // public float DefaultHeight => defaultHeight;
 
     public bool IsHeld { get; private set; }
     public Color PieceColor => pieceColor;
+
+    public Action OnPickup;
+    public Action<bool> OnDropped, OnHovered;
+    public Action<Cell> OnIndicatorMoved;
 
     public Renderer GetRenderer()
     {
@@ -65,6 +72,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             currentCell = value;
             gameObject.SetActive(true);
             OnCellSet.Invoke(currentCell);
+
+            HandleNewCell();
         }
     }
 
@@ -107,13 +116,19 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
         collider.enabled = Interactable;
 
-        indicatorHandler = GetComponent<PieceIndicator>();
-        indicatorHandler.Setup(pieceColor);
+        if(TryGetComponent(out indicatorHandler))
+        {
+            indicatorHandler.Setup(pieceColor);
+        }
+
+        visualFeedback = GetComponent<PieceVisualFeedback>();
+
+        OnHovered += HandleHover;
     }
 
     private void Start()
     {
-        defaultHeight = transform.localPosition.y;
+       // defaultHeight = transform.localPosition.y;
     }
 
     private void Update()
@@ -138,7 +153,15 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     #region Public Methods
 
-    public void Highlight(bool highlight) => sprite.color = highlight ? indicatorHandler.DefaultColor : pieceColor;
+    public void HandleNewCell()
+    {
+        visualFeedback = GetComponent<PieceVisualFeedback>();
+        if (visualFeedback != null)
+            visualFeedback.HandleNewCell(CurrentCell);
+        else
+            transform.localPosition = CurrentCell.transform.position;
+    }
+
     public bool IsOfSameType(GridPiece newPiece) => this.PieceColor.Equals(newPiece.PieceColor);
 
     public void SetColor(Color color) => pieceColor = color;
@@ -154,7 +177,13 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
         {
             IndicatorCell = hoveredCell;
-            grid.OnPieceIndicatorMoved?.Invoke(indicatorCell);
+           //grid.OnPieceIndicatorMoved?.Invoke(indicatorCell);
+            OnIndicatorMoved?.Invoke(indicatorCell);
+
+            if(visualFeedback != null)
+            {
+                visualFeedback.HandleIndicatorMoved(IndicatorCell);
+            }
 
             if (hoveredCell == CurrentCell && !grid.PointerInGrid)
             {
@@ -175,6 +204,22 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     #region Indicator Methods
 
+    public void PickupVisual()
+    {
+        ShowIndicator(true);
+
+        if(visualFeedback != null)
+            visualFeedback.HandlePickup();
+    }
+
+    public void HandleHover(bool hover)
+    {
+        if (visualFeedback != null)
+        {
+            visualFeedback.HandleHovered(hover);
+        }
+    }
+
     public void PlaceOnIndicator()
     {
         IsHeld = false;
@@ -184,8 +229,10 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         else
             indicatorHandler.SetColor(indicatorHandler.DefaultColor);
 
-        transform.DOLocalMoveY(DefaultHeight, 0.25f);
-
+        if (visualFeedback != null)
+        {
+            visualFeedback.HandleDropped(CurrentCell);
+        }
 
         IndicatorCell = CurrentCell;
         ShowIndicator(false);
@@ -209,10 +256,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public bool UserDropPiece()
     {
-        bool dropped = CanPlaceOnIndicator;
+        //bool dropped = CanPlaceOnIndicator;
         PlaceOnIndicator();
-        grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
-        return dropped;
+        //grid.OnPieceDropped?.Invoke(this, CanPlaceOnIndicator);
+        OnDropped?.Invoke(CanPlaceOnIndicator);
+        return CanPlaceOnIndicator;
     }
 
     #region Input Callbacks
@@ -222,7 +270,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if(!Interactable) return;
 
         IsHeld = true;
-        grid.OnPiecePickedUp?.Invoke(this);
+        //grid.OnPiecePickedUp?.Invoke(this);
+        OnPickup?.Invoke();
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -234,24 +283,20 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!Interactable) return;
+        if (grid.SelectedPiece != null || !Interactable)
+            return;
 
-        HandleHover(true);
+        //grid.OnPieceHovered?.Invoke(this, true);
+        OnHovered?.Invoke(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!Interactable) return;
-
-        HandleHover(false);
-    }
-
-    private void HandleHover(bool hover)
-    {
-        if (grid.SelectedPiece != null || !Interactable)
+        if (grid.SelectedPiece != null || !Interactable) 
             return;
 
-        grid.OnPieceHovered?.Invoke(this, hover);
+        //grid.OnPieceHovered?.Invoke(this, false);
+        OnHovered?.Invoke(false);
     }
     #endregion
 
