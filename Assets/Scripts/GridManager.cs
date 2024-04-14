@@ -23,7 +23,6 @@ public class GridManager : MonoBehaviour
     [Header("Grid Generation")]
     [SerializeField] private List<GridPiece> piecePrefabs;
 
-
     private List<Cell> cells;
     private List<GridPiece> gridPieces;
 
@@ -84,7 +83,6 @@ public class GridManager : MonoBehaviour
             puzzleConfig = value;
 
             SetupCells();
-
             ClearPieces();
             GenerateFromList(puzzleConfig.Pieces);
 
@@ -119,25 +117,9 @@ public class GridManager : MonoBehaviour
         foreach(GridPiece piece in gridPieces)
         {
             GridPiece gridPiece = piece;
-            piece.OnPickup += () => 
-            {
-                if (piece.IsHeld)
-                {
-                    OnPiecePickedUp?.Invoke(piece);
-                }
-            };
-            
+            piece.OnPickup += () => OnPiecePickedUp?.Invoke(piece);
             piece.OnDropSuccessful += (value) => OnPieceDropped?.Invoke(piece, value);
             piece.OnHovered += (hovered) => OnPieceHovered?.Invoke(piece, hovered);
-           
-            piece.OnHovered += (hovered) =>
-            {
-                if (piece.IsHovered)
-                {
-                    OnPieceHovered?.Invoke(piece, hovered);
-                }
-            };
-
             piece.OnIndicatorMoved += (cell) => OnPieceIndicatorMoved?.Invoke(cell);
         }
     }
@@ -249,19 +231,12 @@ public class GridManager : MonoBehaviour
         {
             GridPiece piece = pieceParent.GetChild(i).GetComponent<GridPiece>();
 
-            RemoveListeners(piece);
-
             gridPieces.Remove(piece);
             DestroyImmediate(piece.gameObject);
         }
 
         gridPieces = new();
         gridPiecePool = new();
-    }
-
-    private void RemoveListeners(GridPiece piece)
-    {
-       // piece.OnPickup -= OnPiecePickedUp;
     }
 
     public void GrabCells()

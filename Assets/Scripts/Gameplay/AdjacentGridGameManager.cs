@@ -71,11 +71,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         foreach (GridPiece groupedPiece in groupedPieces)
         {
-            //groupedPiece.HandlePickup();
-            if(groupedPiece.TryGetComponent(out PieceVisualFeedback pieceFeedback))
-            {
-                pieceFeedback.HandlePickup();
-            }
+            groupedPiece.HandlePickup();
         }
     }
 
@@ -98,7 +94,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     /// <summary>
     /// Returns list of all "adjacent" connected pieces from the given piece (i.e. the chain of 
     /// connected pieces of the same color).
-    /// 
     /// </summary>
     private List<GridPiece> GetAdjacentPieces(GridPiece piece, List<GridPiece> groupedPieces = null)
     {
@@ -112,20 +107,14 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             if (groupedPieces.Contains(adjacentCell.CurrentPiece))
             {
-                Debug.Log("Already have Piece: "+adjacentCell.CurrentPiece, adjacentCell.CurrentPiece);
                 continue;
             }
 
-            if(adjacentCell.Occupied)
-                Debug.Log(adjacentCell.CurrentPiece.gameObject.name, adjacentCell.CurrentPiece);
-
             if (adjacentCell.Occupied && adjacentCell.CurrentPiece.IsOfSameType(piece))
             {
-                Debug.Log("Grabbing piece:"+ adjacentCell.CurrentPiece, adjacentCell.CurrentPiece);
                 groupedPieces = GetAdjacentPieces(adjacentCell.CurrentPiece, groupedPieces);
             }
         }
-
 
         return groupedPieces;
     }
@@ -155,11 +144,6 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
         {
             piece.PlaceOnIndicator();
-
-            if(piece.TryGetComponent(out PieceVisualFeedback feedback))
-            {
-                feedback.HandleDropped(piece.CanPlaceOnIndicator);
-            }
         }
 
         nonActivelyHeldPieceOffsets.Clear();
@@ -290,7 +274,6 @@ public class AdjacentGridGameManager : MonoBehaviour
         return cell.Occupied && !cell.CurrentPiece.IsOfSameType(piece) && cell.CurrentPiece.Interactable;
     }
 
-
     // Hide all connected pieces that were not flagged as invalid
     private void DisplayInvalidGrouping()
     {
@@ -300,21 +283,15 @@ public class AdjacentGridGameManager : MonoBehaviour
                 piece.ShowIndicator(false);
         }
     }
-
     #endregion
 
     private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
-    {
-        
+    {        
         List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
 
         foreach (GridPiece piece in pieces)
         {
-            if(piece.TryGetComponent(out PieceVisualFeedback feedback))
-            {
-                feedback.HandleHovered(hovered);
-            }
-            //piece.OnHovered?.Invoke(hovered);
+            piece.HandleHover(hovered);
         }
     }
 }

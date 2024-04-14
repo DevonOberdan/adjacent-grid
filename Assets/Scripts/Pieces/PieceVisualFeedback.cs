@@ -1,20 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class PieceVisualFeedback : MonoBehaviour
 {
-    protected GridPiece piece;
-
     protected virtual void Awake()
     {
-        piece = GetComponent<GridPiece>();
-
-        piece.OnPickup += HandlePickup;
-        piece.OnDropSuccessful += HandleDropped;
-        piece.OnHovered += HandleHovered;
-        piece.OnIndicatorMoved += HandleIndicatorMoved;
-        piece.OnCellSet.AddListener(HandleNewCell);
 
     }
 
@@ -22,7 +11,6 @@ public abstract class PieceVisualFeedback : MonoBehaviour
     {
 
     }
-
 
     public abstract void HandlePickup();
     public abstract void HandleDropped(bool success);

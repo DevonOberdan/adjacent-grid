@@ -53,7 +53,6 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
         LowerPiece();
     }
 
-
     public override void HandlePickup()
     {
         if (dropTween.IsActive())
@@ -71,8 +70,7 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 
     public override void HandleHovered(bool hovered)
     {
-        Color newColor = hovered ? piece.PieceColor.AtNewAlpha(0.75f) : piece.PieceColor;
-        piece.SetColor(newColor);
+        
     }
 
     public override void HandleIndicatorMoved(Cell newCell)
