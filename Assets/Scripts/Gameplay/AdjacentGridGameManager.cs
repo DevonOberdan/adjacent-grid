@@ -71,8 +71,8 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         foreach (GridPiece groupedPiece in groupedPieces)
         {
-            groupedPiece.HandlePickup();
-            if(TryGetComponent(out PieceVisualFeedback pieceFeedback))
+            //groupedPiece.HandlePickup();
+            if(groupedPiece.TryGetComponent(out PieceVisualFeedback pieceFeedback))
             {
                 pieceFeedback.HandlePickup();
             }
@@ -111,11 +111,21 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (Cell adjacentCell in currentPieceCell.AdjacentCells)
         {
             if (groupedPieces.Contains(adjacentCell.CurrentPiece))
+            {
+                Debug.Log("Already have Piece: "+adjacentCell.CurrentPiece, adjacentCell.CurrentPiece);
                 continue;
+            }
+
+            if(adjacentCell.Occupied)
+                Debug.Log(adjacentCell.CurrentPiece.gameObject.name, adjacentCell.CurrentPiece);
 
             if (adjacentCell.Occupied && adjacentCell.CurrentPiece.IsOfSameType(piece))
+            {
+                Debug.Log("Grabbing piece:"+ adjacentCell.CurrentPiece, adjacentCell.CurrentPiece);
                 groupedPieces = GetAdjacentPieces(adjacentCell.CurrentPiece, groupedPieces);
+            }
         }
+
 
         return groupedPieces;
     }
@@ -145,6 +155,11 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
         {
             piece.PlaceOnIndicator();
+
+            if(piece.TryGetComponent(out PieceVisualFeedback feedback))
+            {
+                feedback.HandleDropped(piece.CanPlaceOnIndicator);
+            }
         }
 
         nonActivelyHeldPieceOffsets.Clear();
@@ -295,7 +310,11 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         foreach (GridPiece piece in pieces)
         {
-            piece.OnHovered?.Invoke(hovered);
+            if(piece.TryGetComponent(out PieceVisualFeedback feedback))
+            {
+                feedback.HandleHovered(hovered);
+            }
+            //piece.OnHovered?.Invoke(hovered);
         }
     }
 }

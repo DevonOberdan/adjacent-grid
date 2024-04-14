@@ -112,7 +112,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
         visualFeedback = GetComponent<PieceVisualFeedback>();
 
-        OnHovered += HandleHover;
+        //OnHovered += HandleHover;
     }
 
     private void Update()
@@ -146,7 +146,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             transform.localPosition = CurrentCell.transform.position;
     }
 
-    public bool IsOfSameType(GridPiece newPiece) => this.PieceColor.Equals(newPiece.PieceColor);
+    public bool IsOfSameType(GridPiece newPiece) => this.gameObject.name.Equals(newPiece.gameObject.name);//this.PieceColor.Equals(newPiece.PieceColor);
 
     public void SetColor(Color color) => pieceColor = color;
 
@@ -190,19 +190,19 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         ShowIndicator(true);
 
-       // OnPickup?.Invoke();
+        OnPickup?.Invoke();
 
-        if (visualFeedback != null)
-            visualFeedback.HandlePickup();
+        //if (visualFeedback != null)
+        //    visualFeedback.HandlePickup();
     }
 
-    public void HandleHover(bool hover)
-    {
-        if (visualFeedback != null)
-        {
-            visualFeedback.HandleHovered(hover);
-        }
-    }
+    //public void HandleHover(bool hover)
+    //{
+    //    if (visualFeedback != null)
+    //    {
+    //        visualFeedback.HandleHovered(hover);
+    //    }
+    //}
 
     public void PlaceOnIndicator()
     {
@@ -213,10 +213,10 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         else
             indicatorHandler.SetColor(indicatorHandler.DefaultColor);
 
-        if (visualFeedback != null)
-        {
-            visualFeedback.HandleDropped(CurrentCell);
-        }
+        //if (visualFeedback != null)
+        //{
+        //    visualFeedback.HandleDropped(CurrentCell);
+        //}
 
         IndicatorCell = CurrentCell;
         ShowIndicator(false);

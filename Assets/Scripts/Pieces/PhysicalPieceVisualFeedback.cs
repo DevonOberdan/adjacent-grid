@@ -27,6 +27,16 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
         return LIFT_TIME;
     }
 
+    private void LowerPiece()
+    {
+        if (pickupTween.IsActive())
+        {
+            pickupTween.Kill();
+        }
+
+        dropTween = transform.DOLocalMoveY(defaultHeight, GetLiftTime());
+    }
+
     public override void HandleNewCell(Cell cell)
     {
         if (currentCell == null)
@@ -40,12 +50,7 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 
 
         transform.position = cell.transform.position.NewY(defaultHeight + LIFTED_HEIGHT);
-        if (pickupTween.IsActive())
-        {
-            pickupTween.Kill();
-        }
-
-        dropTween = transform.DOLocalMoveY(defaultHeight, GetLiftTime());
+        LowerPiece();
     }
 
 
@@ -61,7 +66,7 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 
     public override void HandleDropped(bool success)
     {
-        // todo
+        LowerPiece();
     }
 
     public override void HandleHovered(bool hovered)
