@@ -1,3 +1,4 @@
+using DG.Tweening;
 using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +69,10 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         ProcessGroupedOffsets();
 
-        groupedPieces.ForEach(piece => piece.ShowIndicator(true));
+        foreach (GridPiece groupedPiece in groupedPieces)
+        {
+            groupedPiece.HandlePickup();
+        }
     }
 
     private void FindAllGroups()
@@ -90,7 +94,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     /// <summary>
     /// Returns list of all "adjacent" connected pieces from the given piece (i.e. the chain of 
     /// connected pieces of the same color).
-    /// 
     /// </summary>
     private List<GridPiece> GetAdjacentPieces(GridPiece piece, List<GridPiece> groupedPieces = null)
     {
@@ -103,10 +106,14 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (Cell adjacentCell in currentPieceCell.AdjacentCells)
         {
             if (groupedPieces.Contains(adjacentCell.CurrentPiece))
+            {
                 continue;
+            }
 
             if (adjacentCell.Occupied && adjacentCell.CurrentPiece.IsOfSameType(piece))
+            {
                 groupedPieces = GetAdjacentPieces(adjacentCell.CurrentPiece, groupedPieces);
+            }
         }
 
         return groupedPieces;
@@ -267,7 +274,6 @@ public class AdjacentGridGameManager : MonoBehaviour
         return cell.Occupied && !cell.CurrentPiece.IsOfSameType(piece) && cell.CurrentPiece.Interactable;
     }
 
-
     // Hide all connected pieces that were not flagged as invalid
     private void DisplayInvalidGrouping()
     {
@@ -277,16 +283,15 @@ public class AdjacentGridGameManager : MonoBehaviour
                 piece.ShowIndicator(false);
         }
     }
-
     #endregion
 
     private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
-    {
+    {        
         List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
 
         foreach (GridPiece piece in pieces)
         {
-            piece.Highlight(hovered);
+            piece.HandleHover(hovered);
         }
     }
 }

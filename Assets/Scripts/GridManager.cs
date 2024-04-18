@@ -23,7 +23,6 @@ public class GridManager : MonoBehaviour
     [Header("Grid Generation")]
     [SerializeField] private List<GridPiece> piecePrefabs;
 
-
     private List<Cell> cells;
     private List<GridPiece> gridPieces;
 
@@ -84,12 +83,12 @@ public class GridManager : MonoBehaviour
             puzzleConfig = value;
 
             SetupCells();
-
             ClearPieces();
             GenerateFromList(puzzleConfig.Pieces);
 
             OnGridReset?.Invoke();
             SetPiecesToGrid();
+            SetupPieceEvents();
         }
     }
 
@@ -107,10 +106,24 @@ public class GridManager : MonoBehaviour
             GrabPieces();
 
         SetPiecesToGrid();
+        SetupPieceEvents();
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += (piece, canDrop) => DroppedPiece(piece);
     }
+
+    private void SetupPieceEvents()
+    {
+        foreach(GridPiece piece in gridPieces)
+        {
+            GridPiece gridPiece = piece;
+            piece.OnPickup += () => OnPiecePickedUp?.Invoke(piece);
+            piece.OnDropSuccessful += (value) => OnPieceDropped?.Invoke(piece, value);
+            piece.OnHovered += (hovered) => OnPieceHovered?.Invoke(piece, hovered);
+            piece.OnIndicatorMoved += (cell) => OnPieceIndicatorMoved?.Invoke(cell);
+        }
+    }
+
 
     private void Update()
     {
@@ -198,7 +211,8 @@ public class GridManager : MonoBehaviour
             {
                 GridPiece newPiece = CustomMethods.Instantiate(pieceToSpawn, PieceParent);
 
-                newPiece.transform.position = cells[i].transform.position;
+                newPiece.CurrentCell = cells[i];
+                //newPiece.transform.position = cells[i].transform.position;
                 gridPieces.Add(newPiece);
                 gridPiecePool.Add(newPiece);
             }
@@ -216,6 +230,7 @@ public class GridManager : MonoBehaviour
         for (int i = pieceParent.childCount - 1; i >= 0; i--)
         {
             GridPiece piece = pieceParent.GetChild(i).GetComponent<GridPiece>();
+
             gridPieces.Remove(piece);
             DestroyImmediate(piece.gameObject);
         }

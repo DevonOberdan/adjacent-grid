@@ -56,8 +56,7 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     {
         piece = newPiece;
 
-        // set position.. DOTween later
-        piece.transform.position = transform.position;
+        //piece.transform.position = transform.position;
     }
 
     // Piece passed in to ensure that no accidental removal
