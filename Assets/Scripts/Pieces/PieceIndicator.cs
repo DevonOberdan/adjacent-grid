@@ -10,11 +10,12 @@ public abstract class PieceIndicator : MonoBehaviour
 
     private Color currentColor;
 
-    public Color CurrentColor {
+    public Color CurrentColor 
+    {
         get => currentColor;
-        set {
+        set 
+        {
             currentColor = value;
-
         }
     }
 
