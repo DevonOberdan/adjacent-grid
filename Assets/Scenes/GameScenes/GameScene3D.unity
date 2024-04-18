@@ -376,16 +376,15 @@ MonoBehaviour:
   gridManager: {fileID: 4157748453854324709}
   startingCustom: 0
   puzzleConfigs:
-  - {fileID: 11400000, guid: 3771c3ca32cd76b48b220e602cd747aa, type: 2}
   - {fileID: 11400000, guid: fd8f57d6158785646be34a0f3e1e2e1a, type: 2}
-  - {fileID: 11400000, guid: db50d7e0d94bd9d45b90fdb91613bc72, type: 2}
-  - {fileID: 11400000, guid: a292238db47dd034e9999ef8c2adfd94, type: 2}
+  - {fileID: 11400000, guid: 87bf4903820d63f4abaf9ead7b575eaf, type: 2}
+  - {fileID: 11400000, guid: 22ecfb29421413d408320762498b09f3, type: 2}
+  - {fileID: 11400000, guid: 94f02ab0024aa8d45aee653ddd4493e5, type: 2}
   - {fileID: 11400000, guid: 4f6cbf774cf7b5442a92022b2d2df39b, type: 2}
   - {fileID: 11400000, guid: cec8da960f35b854db9b48521ffe58f9, type: 2}
-  - {fileID: 11400000, guid: 3441f10ab36ffd748b033c85108703f7, type: 2}
-  - {fileID: 11400000, guid: 45525a9067dfd46498e875c53b9bbf63, type: 2}
-  - {fileID: 11400000, guid: 94f02ab0024aa8d45aee653ddd4493e5, type: 2}
   - {fileID: 11400000, guid: 8287b9f6126581a4588a03e486eacfd1, type: 2}
+  - {fileID: 11400000, guid: ee7b6c2b01400964cbebca0b751b822f, type: 2}
+  - {fileID: 11400000, guid: 3441f10ab36ffd748b033c85108703f7, type: 2}
   - {fileID: 11400000, guid: e0689c1a63419184686038cd0660e34c, type: 2}
   - {fileID: 11400000, guid: 2de97f37f04228348bc69cc3748c6eef, type: 2}
   - {fileID: 11400000, guid: 3732f5a8daf555c4389b7997b71cbb9f, type: 2}
@@ -395,7 +394,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6cc664f08c6172349bb499293f58f0dc, type: 2}
   - {fileID: 11400000, guid: 07d7476805652a84ab49926eb81441f1, type: 2}
   - {fileID: 11400000, guid: cc30e079b55ac5642806d2342521d47c, type: 2}
-  - {fileID: 11400000, guid: f5e850977a703ff409f45d9337992a23, type: 2}
   OnNewLevel:
     m_PersistentCalls:
       m_Calls:
