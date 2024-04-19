@@ -1,18 +1,23 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UniqueSolutionBot : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
-    private AdjacentGridGameManager gameManager;
-    private GridHistoryManager historyManager;
+
+    [SerializeField] private UnityEvent<bool> OnSetSolving;
 
     [Header("UI References")]
     [SerializeField] private Slider delaySlider;
     [SerializeField] private Button solveButton;
     [SerializeField] private TMP_Text uniqueSolutionText, delayTimeText;
+
+    private AdjacentGridGameManager gameManager;
+    private GridHistoryManager historyManager;
 
     private float MOVE_DELAY = 0.005f;
     private bool solving;
@@ -65,6 +70,11 @@ public class UniqueSolutionBot : MonoBehaviour
     {
         solving = enabled;
         solveButton.GetComponentInChildren<TMP_Text>().text = enabled ? "Reset" : "Find Solutions";
+        if(Camera.main.TryGetComponent(out BaseRaycaster raycaster))
+        {
+            raycaster.enabled = !solving;
+        }
+        OnSetSolving.Invoke(solving);
     }
 
     private void SetTimeDelay(float value)
