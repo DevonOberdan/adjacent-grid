@@ -10,12 +10,11 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
 
     private Vector3 startPosition;
     private Quaternion startRotation;
+
     public GridPiece CurrentPiece => piece;
     public List<Cell> AdjacentCells => adjacentCells ??= GrabAdjacentCells();
-
     public bool Occupied => piece != null;
     public int IndexInGrid { get; private set; }
-
 
     public void Init(GridManager manager, int index)
     {
@@ -54,8 +53,6 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     public void AddPiece(GridPiece newPiece)
     {
         piece = newPiece;
-
-        //piece.transform.position = transform.position;
     }
 
     // Piece passed in to ensure that no accidental removal
@@ -65,7 +62,6 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
         if (piece == pieceToRemove)
             piece = null;
     }
-
 
     public void ResetCell()
     {

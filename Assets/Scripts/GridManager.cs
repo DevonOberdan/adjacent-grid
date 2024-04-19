@@ -140,7 +140,6 @@ public class GridManager : MonoBehaviour
         }
     }
 
-
     private void Update()
     {
        // HandlePointerInGrid();
@@ -371,7 +370,6 @@ public class GridManager : MonoBehaviour
         }
     }
 
-
     public bool GridSameAsConfig()
     {
         for (int i = 0; i < cells.Count; i++)
@@ -397,13 +395,10 @@ public class GridManager : MonoBehaviour
 
         ClearPieces();
 
-
-
         if (puzzleConfig == null || puzzleConfig.Pieces == null || puzzleConfig.Pieces.Count == 0)
             return;
 
         GenerateFromList(puzzleConfig.Pieces);
-
     }
     #endregion
 }

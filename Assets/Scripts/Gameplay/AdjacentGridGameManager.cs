@@ -163,8 +163,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     private void CheckDoomed()
     {
         bool isDoomed = !WinCondition && !AnyValidMovements();
-        Debug.LogError("Win: " + WinCondition);
-        Debug.LogError("Pieces: " + gridManager.PieceCount);
         if (isDoomed != wasDoomed)
             OnDoomed.Invoke(isDoomed);
 
