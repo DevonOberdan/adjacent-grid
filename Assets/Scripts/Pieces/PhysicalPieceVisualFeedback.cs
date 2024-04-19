@@ -15,13 +15,23 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 
     private const float LIFTED_HEIGHT = 0.3f;
     private const float LIFT_TIME = 0.25f;
+
     protected override void Start()
     {
         base.Start();
         defaultHeight = 0;
     }
 
-    // try returning Random range surrounding LIFT_TIME
+    private void OnDestroy()
+    {
+        if (pickupTween.IsActive())
+            pickupTween.Kill();
+
+        if (dropTween.IsActive())
+            dropTween.Kill();
+    }
+
+    // TODO: try returning Random range surrounding LIFT_TIME
     private float GetLiftTime()
     {
         return LIFT_TIME;
@@ -29,12 +39,17 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 
     private void LowerPiece()
     {
+        // ensure this never runs from editor-time code
+        if (!Application.isPlaying)
+            return;
+
         if (pickupTween.IsActive())
         {
             pickupTween.Kill();
         }
-
+        print("Droppuing piece");
         dropTween = transform.DOLocalMoveY(defaultHeight, GetLiftTime());
+        dropTween.ForceInit();
     }
 
     public override void HandleNewCell(Cell cell)
@@ -61,6 +76,7 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
         }
 
         pickupTween = transform.DOLocalMoveY(defaultHeight + LIFTED_HEIGHT, GetLiftTime());
+        pickupTween.ForceInit();
     }
 
     public override void HandleDropped(bool success)
