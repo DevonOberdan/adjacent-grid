@@ -1,6 +1,4 @@
 using FinishOne.GeneralUtilities;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PieceIndicatorObject : PieceIndicator
@@ -8,13 +6,13 @@ public class PieceIndicatorObject : PieceIndicator
     [SerializeField] private GameObject indicatorPrefab;
 
     private GameObject indicator;
-    private new Renderer renderer;
+    private Renderer rend;
     private Color indicatorColor;
     public Color IndicatorColor => indicatorColor;
 
     public override void HandleValidPlacement(bool valid)
     {
-        renderer.SetColor(valid ? DefaultColor : GridInputHandler.Instance.InvalidPlacementColor);
+        rend.SetColor(valid ? DefaultColor : GridInputHandler.Instance.InvalidPlacementColor);
     }
 
     public override void SetCell(Cell cell)
@@ -25,16 +23,16 @@ public class PieceIndicatorObject : PieceIndicator
 
     public override void SetColor(Color color)
     {
-        renderer.SetColor(color);
+        rend.SetColor(color);
     }
 
     public override void Setup(Color color)
     {
         indicator = Instantiate(indicatorPrefab, transform);
-        renderer = indicator.GrabRenderer();
+        rend = indicator.GrabRenderer();
         indicator.transform.localPosition = Vector3.zero;
 
-        DefaultColor = color.AtNewAlpha(renderer.GetColor().a);
+        DefaultColor = color.AtNewAlpha(rend.GetColor().a);
         ShowIndicator(false);
     }
 

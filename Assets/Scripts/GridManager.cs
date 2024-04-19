@@ -69,6 +69,8 @@ public class GridManager : MonoBehaviour
     public bool PointerInGrid { get; set; }
     public bool HoldingPiece => SelectedPiece != null;
 
+    private bool PiecesNotSet => gridPieces.Any(piece => piece.CurrentCell == null);
+
    // public AXES GridAxes => axes;
     #endregion
 
@@ -106,7 +108,9 @@ public class GridManager : MonoBehaviour
         Instance = this;
 
         SetupCells();
-        gridPieces = new();
+
+        if(gridPieces == null)
+            gridPieces = new();
     }
 
     private void Start()
@@ -114,8 +118,11 @@ public class GridManager : MonoBehaviour
         if (Pieces.Count == 0)
             GrabPieces();
 
-        SetPiecesToGrid();
-        SetupPieceEvents();
+        if (PiecesNotSet)
+        {
+            SetPiecesToGrid();
+            SetupPieceEvents();
+        }
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += (piece, canDrop) => DroppedPiece(piece);
@@ -132,7 +139,6 @@ public class GridManager : MonoBehaviour
             piece.OnIndicatorMoved += (cell) => OnPieceIndicatorMoved?.Invoke(cell);
         }
     }
-
 
     private void Update()
     {
@@ -189,6 +195,11 @@ public class GridManager : MonoBehaviour
 
     public void RemovePiece(GridPiece piece)
     {
+        if(piece.CurrentCell != null)
+        {
+            piece.CurrentCell.RemovePiece(piece);
+        }
+
         gridPieces.Remove(piece);
 
         piece.transform.position = POOL_POSITION;
@@ -214,6 +225,9 @@ public class GridManager : MonoBehaviour
     {
         for (int i = 0; i < cells.Count; i++)
         {
+            if (cells[i] == null)
+                continue;
+
             GridPiece pieceToSpawn = gridList[i];
 
             if (pieceToSpawn != null)
@@ -222,7 +236,6 @@ public class GridManager : MonoBehaviour
                 newPiece.gameObject.name = pieceToSpawn.gameObject.name;
 
                 newPiece.CurrentCell = cells[i];
-                //newPiece.transform.position = cells[i].transform.position;
                 gridPieces.Add(newPiece);
                 gridPiecePool.Add(newPiece);
             }
@@ -232,21 +245,37 @@ public class GridManager : MonoBehaviour
     #region Grid Setup
     public void ClearPieces()
     {
+        if(cellParent == null || pieceParent == null)
+            return;
+
         if (gridPieces == null)
         {
             GrabPieces();
         }
 
-        for (int i = pieceParent.childCount - 1; i >= 0; i--)
+        foreach(Cell cell in cellParent.GetComponentsInChildren<Cell>())
         {
-            GridPiece piece = pieceParent.GetChild(i).GetComponent<GridPiece>();
-
-            gridPieces.Remove(piece);
-            DestroyImmediate(piece.gameObject);
+            if(cell.CurrentPiece != null)
+            {
+                cell.RemovePiece(cell.CurrentPiece);
+            }
         }
 
+        for (int i = pieceParent.childCount - 1; i >= 0; i--)
+        {
+            if(pieceParent.GetChild(i).TryGetComponent(out GridPiece piece))
+            {
+                gridPieces.Remove(piece);
+
+                if(Application.isPlaying)
+                    Destroy(piece.gameObject);
+                else
+                    DestroyImmediate(piece.gameObject);
+            }
+        }
+
+        gridPieces.Clear();
         gridPieces = new();
-        gridPiecePool = new();
     }
 
     public void GrabCells()
@@ -341,14 +370,12 @@ public class GridManager : MonoBehaviour
         }
     }
 
-
     public bool GridSameAsConfig()
     {
         for (int i = 0; i < cells.Count; i++)
         {
             if (cells[i].Occupied != (puzzleConfig.Pieces[i] != null))
             {
-                print("Occupied status wrong in cell: " + i);
                 return false;
             }
 
@@ -366,15 +393,10 @@ public class GridManager : MonoBehaviour
         if (Application.isPlaying)
             return;
 
-        for (int i = pieceParent.childCount - 1; i >= 0; i--)
-        {
-            GridPiece piece = pieceParent.GetChild(i).GetComponent<GridPiece>();
-            gridPieces.Remove(piece);
+        ClearPieces();
 
-            DestroyImmediate(piece.gameObject);
-        }
-        gridPieces = new();
-        gridPiecePool = new();
+        if (puzzleConfig == null || puzzleConfig.Pieces == null || puzzleConfig.Pieces.Count == 0)
+            return;
 
         GenerateFromList(puzzleConfig.Pieces);
     }

@@ -47,7 +47,7 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
         {
             pickupTween.Kill();
         }
-        print("Droppuing piece");
+
         dropTween = transform.DOLocalMoveY(defaultHeight, GetLiftTime());
         dropTween.ForceInit();
     }
