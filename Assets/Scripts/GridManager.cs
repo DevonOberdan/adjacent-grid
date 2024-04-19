@@ -142,13 +142,17 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-       // HandlePointerInGrid();
+       //HandlePointerInGrid();
+
+        //Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        //RaycastHit[] hits = Physics.RaycastAll()
     }
 
     private void HandlePointerInGrid()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        Vector3 boardMousePos = Board.transform.InverseTransformDirection(mousePos);
+        Vector3 boardMousePos = pieceParent.transform.InverseTransformDirection(mousePos);
 
         bool validX = boardMousePos.x.Between(-Width / 2, Width / 2);
         bool validY = boardMousePos.y.Between(-Height / 2, Height / 2);
