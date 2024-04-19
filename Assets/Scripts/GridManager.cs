@@ -23,6 +23,13 @@ public class GridManager : MonoBehaviour
     [Header("Grid Generation")]
     [SerializeField] private List<GridPiece> piecePrefabs;
 
+    //public enum AXES { XY, XZ };
+    //[SerializeField] private AXES axes;
+
+    [field: SerializeField] public float CellSpacing { get; private set; }
+
+    public float CellParentPositionValue => -1 * CellSpacing * 1.5f;
+
     private List<Cell> cells;
     private List<GridPiece> gridPieces;
 
@@ -61,6 +68,8 @@ public class GridManager : MonoBehaviour
 
     public bool PointerInGrid { get; set; }
     public bool HoldingPiece => SelectedPiece != null;
+
+   // public AXES GridAxes => axes;
     #endregion
 
     public Cell CurrentHoveredCell()
@@ -279,28 +288,33 @@ public class GridManager : MonoBehaviour
     #region Editor Functions
     private void OnValidate()
     {
+        if (cells != null && cells.Count >0 && CellParentPositionValue != cellParent.transform.localPosition.x)
+        {
+            SpaceOutCells();
+        }
+
+        //if (GridAxes == AXES.XY)
+        //{
+        //    cellParent.transform.localPosition = new Vector2(CellParentPositionValue, CellParentPositionValue);
+        //    transform.eulerAngles = transform.eulerAngles.NewX(-90);
+        //}
+        //else
+        //{
+        //    cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
+        //    transform.eulerAngles = Vector3.zero;
+        //}
+
+        cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
+        transform.eulerAngles = Vector3.zero;
+
+
         if (puzzleConfig != null)
         {
-            bool sameAsExisting = true;
-
             SetupCells();
             GrabPieces();
             SetPiecesToGrid();
 
-            for (int i = 0; i < cells.Count; i++)
-            {
-                if (cells[i].Occupied != (puzzleConfig.Pieces[i] != null))
-                {
-                    sameAsExisting = false;
-                    break;
-                }
-
-                if (cells[i].Occupied && (cells[i].CurrentPiece.PieceColor != puzzleConfig.Pieces[i].PieceColor))
-                {
-                    sameAsExisting = false;
-                    break;
-                }
-            }
+            bool sameAsExisting = GridSameAsConfig();
 
 #if UNITY_EDITOR
             if (!sameAsExisting)
@@ -310,6 +324,39 @@ public class GridManager : MonoBehaviour
             }
 #endif
         }
+    }
+
+    public void SpaceOutCells()
+    {
+        for (int i = 0; i < Height; i++)
+        {
+            for (int j = 0; j < Width; j++)
+            {
+                float width = j * CellSpacing;
+                float height = i * CellSpacing;
+
+                cells[(i*Height)+j].transform.localPosition = new Vector3(width, 0, height);
+            }
+        }
+    }
+
+
+    public bool GridSameAsConfig()
+    {
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if (cells[i].Occupied != (puzzleConfig.Pieces[i] != null))
+            {
+                return false;
+            }
+
+            if (cells[i].Occupied && (cells[i].CurrentPiece.PieceColor != puzzleConfig.Pieces[i].PieceColor))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void ConfigOnValidate()
