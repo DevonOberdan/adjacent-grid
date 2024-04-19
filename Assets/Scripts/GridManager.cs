@@ -142,11 +142,27 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-       //HandlePointerInGrid();
+        //HandlePointerInGrid();
+        FindHoveredCell();
+    }
 
-        //Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+    private void FindHoveredCell()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        //RaycastHit[] hits = Physics.RaycastAll()
+        RaycastHit[] hits = Physics.RaycastAll(ray);
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider.TryGetComponent(out Cell cell))
+            {
+                if(HoveredCell != null && HoveredCell != cell)
+                {
+                    HoveredCell.Hovered = false;
+                }
+                HoveredCell = cell;
+            }
+        }
     }
 
     private void HandlePointerInGrid()
