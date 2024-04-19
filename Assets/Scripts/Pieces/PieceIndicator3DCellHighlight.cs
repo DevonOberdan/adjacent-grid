@@ -4,20 +4,29 @@ using UnityEngine;
 
 public class PieceIndicator3DCellHighlight : PieceIndicator
 {
-    //[SerializeField] private Material indicatorMat;
-
-    private Color startingIndicatorColor = Color.black;
+    private Color startingColor;
     private Cell currentCell;
 
-    private void Awake()
-    {
-        
-    }
+    private bool startingColorSet;
 
     private void ResetCurrentCell() 
     {
         if (currentCell == null) return;
-        SetColor(startingIndicatorColor);
+        SetColor(startingColor);
+    }
+
+    private Material GrabCellMat(Cell cell)
+    {
+        if (cell == null)
+            return null;
+
+        Renderer rend = cell.gameObject.GrabRenderer();
+        if (rend != null && rend.materials.Length > 1)
+        {
+            return rend.materials[1];
+        }
+
+        return null;
     }
 
     public override void HandleValidPlacement(bool valid)
@@ -27,7 +36,17 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
 
     public override void SetCell(Cell cell)
     {
-        SetColor(startingIndicatorColor);
+        Material mat = GrabCellMat(cell);
+
+        if (!startingColorSet && mat != null)
+        {
+            startingColor = mat.color;
+            startingColorSet = true;
+        }
+        
+        //set previous Cell's color back to normal
+        SetColor(startingColor);
+        
         currentCell = cell;
         SetColor(DefaultColor);
     }
@@ -36,10 +55,11 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
     {
         if (currentCell == null) return;
 
-        Renderer rend = currentCell.gameObject.GrabRenderer();
-        if (rend != null && rend.materials.Length > 1)
+        Material material = GrabCellMat(currentCell);
+
+        if(material != null)
         {
-            rend.materials[1].color = color;
+            material.color = color;
         }
     }
 
@@ -50,6 +70,6 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
 
     public override void ShowIndicator(bool show)
     {
-        SetColor(show ? DefaultColor : startingIndicatorColor);
+        SetColor(show ? DefaultColor : startingColor);
     }
 }
