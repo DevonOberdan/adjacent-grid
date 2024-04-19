@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Cell : MonoBehaviour, IPointerEnterHandler
+public class Cell : MonoBehaviour
 {
     private GridPiece piece;
     private GridManager grid;
@@ -15,6 +15,8 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
     public List<Cell> AdjacentCells => adjacentCells ??= GrabAdjacentCells();
     public bool Occupied => piece != null;
     public int IndexInGrid { get; private set; }
+
+    public bool Hovered { get; set; }
 
     public void Init(GridManager manager, int index)
     {
@@ -72,10 +74,5 @@ public class Cell : MonoBehaviour, IPointerEnterHandler
             rb.useGravity = false;
             rb.isKinematic = true;
         }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        grid.HoveredCell = this;
     }
 }
