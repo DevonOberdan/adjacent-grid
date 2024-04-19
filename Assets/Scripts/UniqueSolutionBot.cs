@@ -29,6 +29,12 @@ public class UniqueSolutionBot : MonoBehaviour
         delaySlider.onValueChanged.AddListener(SetTimeDelay);
     }
 
+    public void SolveSlowly()
+    {
+        SetTimeDelay(1.75f);
+        SolveNewPuzzle();
+    }
+
     private void HandleButton()
     {
         if (solving)
