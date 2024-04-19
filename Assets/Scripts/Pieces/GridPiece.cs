@@ -26,7 +26,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private Cell currentCell, indicatorCell;
 
     private Renderer rend;
-    private new Collider collider;
+    private Collider pieceCollider;
 
     private Color pieceColor;
     private bool canPlaceOnIndicator;
@@ -103,12 +103,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         grid = transform.root.GetComponent<GridManager>();
 
-        if(!TryGetComponent(out collider))
-            collider = GetComponentInChildren<Collider>();
+        if(!TryGetComponent(out pieceCollider))
+            pieceCollider = GetComponentInChildren<Collider>();
 
         rend = gameObject.GrabRenderer();
         pieceColor = rend.GetColor();
-        collider.enabled = Interactable;
+        pieceCollider.enabled = Interactable;
 
         if(TryGetComponent(out indicatorHandler))
         {
