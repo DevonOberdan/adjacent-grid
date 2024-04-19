@@ -10,11 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07f3cf1005ecbcc48b92ff9cc3306be5, type: 3}
-  m_Name: Tutorial_Level1
+  m_Name: Brendan_Zigzag
   m_EditorClassIdentifier: 
   pieceConfig:
+  - {fileID: 2966422860832937793, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
+  - {fileID: 2966422860832937793, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 6062230035942996689, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -22,11 +26,7 @@ MonoBehaviour:
   - {fileID: 2966422860832937793, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 2966422860832937793, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
+  - {fileID: 0}
   - {fileID: 6062230035942996689, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  solutionCount: 8
+  solutionCount: 6

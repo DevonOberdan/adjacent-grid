@@ -219,6 +219,7 @@ public class GridManager : MonoBehaviour
             if (pieceToSpawn != null)
             {
                 GridPiece newPiece = CustomMethods.Instantiate(pieceToSpawn, PieceParent);
+                newPiece.gameObject.name = pieceToSpawn.gameObject.name;
 
                 newPiece.CurrentCell = cells[i];
                 //newPiece.transform.position = cells[i].transform.position;
@@ -347,10 +348,11 @@ public class GridManager : MonoBehaviour
         {
             if (cells[i].Occupied != (puzzleConfig.Pieces[i] != null))
             {
+                print("Occupied status wrong in cell: " + i);
                 return false;
             }
 
-            if (cells[i].Occupied && (cells[i].CurrentPiece.PieceColor != puzzleConfig.Pieces[i].PieceColor))
+            if (cells[i].Occupied && !cells[i].CurrentPiece.IsOfSameType(puzzleConfig.Pieces[i]))
             {
                 return false;
             }
