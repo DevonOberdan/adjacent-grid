@@ -77,7 +77,12 @@ public class UniqueSolutionBot : MonoBehaviour
         yield return new WaitForSeconds(MOVE_DELAY);
         yield return StartCoroutine(CheckGroups());
         uniqueSolutionText.text = "" + uniqueCount;
-        gridManager.PuzzleConfig.SetSolutionCount(uniqueCount);
+
+        if (gridManager.GridSameAsConfig())
+        {
+            gridManager.PuzzleConfig.SetSolutionCount(uniqueCount);
+        }
+
         SetSolving(false);
     }
 
@@ -101,8 +106,8 @@ public class UniqueSolutionBot : MonoBehaviour
         {
             GridPiece drivingPiece = group.Group[0];
 
-            if (drivingPiece == null)
-                yield break;
+            if (drivingPiece == null || !drivingPiece.Interactable)
+                continue;
 
             foreach (Cell cell in drivingPiece.CurrentCell.AdjacentCells)
             {
