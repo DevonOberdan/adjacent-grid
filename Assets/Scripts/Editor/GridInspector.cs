@@ -79,7 +79,6 @@ public class GridInspector : Editor
         manager.SetPiecesToGrid();
     }
 
-
     private void ClearGrid(GridManager manager)
     {
         manager.ClearPieces();
@@ -102,8 +101,6 @@ public class GridInspector : Editor
             DestroyImmediate(manager.transform.GetChild(i).gameObject);
         }
 
-
-
         if (manager.Board != null)
         {
             DestroyImmediate(manager.Board);
@@ -117,18 +114,17 @@ public class GridInspector : Editor
     {
         ClearGrid(manager);
 
-        Vector3 center; new Vector2(Offset(manager.Width), Offset(manager.Height));
+        Vector3 center = new Vector3(Offset(manager.Width), 0, Offset(manager.Height));
 
-        if (manager.GridAxes == GridManager.AXES.XY)
-        {
-            center = new Vector3(Offset(manager.Width), Offset(manager.Height), 0);
-        }
-        else
-        {
-            center = new Vector3(Offset(manager.Width), 0, Offset(manager.Height));
-        }
+        //if (manager.GridAxes == GridManager.AXES.XY)
+        //{
+        //    center = new Vector3(Offset(manager.Width), Offset(manager.Height), 0);
+        //}
+        //else
+        //{
+        //    center = new Vector3(Offset(manager.Width), 0, Offset(manager.Height));
+        //}
 
-        //Vector2 center = new Vector2(Offset(manager.Width), Offset(manager.Height));
         manager.transform.position = -center;
 
         for (int i = 0; i < manager.Height; i++)
@@ -139,10 +135,7 @@ public class GridInspector : Editor
 
                 float width = j * manager.CellSpacing;
                 float height = i * manager.CellSpacing;
-                newCell.transform.localPosition = (manager.GridAxes == GridManager.AXES.XY) ? new Vector2(width, height) : new Vector3(width,0,height);
-
-                //newCell.transform.localPosition = new Vector2(j, i);
-                //.Add(newCell);
+                newCell.transform.localPosition = new Vector3(width, 0, height);// (manager.GridAxes == GridManager.AXES.XY) ? new Vector2(width, height) : new Vector3(width,0,height);
             }
         }
 

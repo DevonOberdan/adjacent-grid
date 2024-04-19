@@ -131,6 +131,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void Destroy()
     {
+        if (grid == null)
+            grid = transform.root.GetComponent<GridManager>();
+
         grid.RemovePiece(this);
     }
 

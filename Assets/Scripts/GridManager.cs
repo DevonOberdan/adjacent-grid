@@ -23,10 +23,12 @@ public class GridManager : MonoBehaviour
     [Header("Grid Generation")]
     [SerializeField] private List<GridPiece> piecePrefabs;
 
-    public enum AXES { XY, XZ };
+    //public enum AXES { XY, XZ };
+    //[SerializeField] private AXES axes;
 
-    [SerializeField] private AXES axes;
     [field: SerializeField] public float CellSpacing { get; private set; }
+
+    public float CellParentPositionValue => -1 * CellSpacing * 1.5f;
 
     private List<Cell> cells;
     private List<GridPiece> gridPieces;
@@ -67,7 +69,7 @@ public class GridManager : MonoBehaviour
     public bool PointerInGrid { get; set; }
     public bool HoldingPiece => SelectedPiece != null;
 
-    public AXES GridAxes => axes;
+   // public AXES GridAxes => axes;
     #endregion
 
     public Cell CurrentHoveredCell()
@@ -286,10 +288,25 @@ public class GridManager : MonoBehaviour
     #region Editor Functions
     private void OnValidate()
     {
-        if (cells != null && cells.Count >0 && CellSpacing != cellParent.transform.localPosition.x)
+        if (cells != null && cells.Count >0 && CellParentPositionValue != cellParent.transform.localPosition.x)
         {
             SpaceOutCells();
         }
+
+        //if (GridAxes == AXES.XY)
+        //{
+        //    cellParent.transform.localPosition = new Vector2(CellParentPositionValue, CellParentPositionValue);
+        //    transform.eulerAngles = transform.eulerAngles.NewX(-90);
+        //}
+        //else
+        //{
+        //    cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
+        //    transform.eulerAngles = Vector3.zero;
+        //}
+
+        cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
+        transform.eulerAngles = Vector3.zero;
+
 
         if (puzzleConfig != null)
         {
@@ -311,9 +328,6 @@ public class GridManager : MonoBehaviour
 
     public void SpaceOutCells()
     {
-        float parentSpace = -1 * CellSpacing * 1.5f;
-        cellParent.transform.localPosition = (GridAxes == GridManager.AXES.XY) ? new Vector2(parentSpace, parentSpace) : new Vector3(parentSpace, 0, parentSpace);
-
         for (int i = 0; i < Height; i++)
         {
             for (int j = 0; j < Width; j++)
@@ -321,7 +335,7 @@ public class GridManager : MonoBehaviour
                 float width = j * CellSpacing;
                 float height = i * CellSpacing;
 
-                cells[(i*Height)+j].transform.localPosition = (GridAxes == GridManager.AXES.XY) ? new Vector2(width, height) : new Vector3(width, 0, height);
+                cells[(i*Height)+j].transform.localPosition = new Vector3(width, 0, height);
             }
         }
     }
