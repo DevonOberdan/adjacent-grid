@@ -23,7 +23,7 @@ public class UniqueSolutionBot : MonoBehaviour
         gameManager = gridManager.GetComponent<AdjacentGridGameManager>();
         historyManager = gridManager.GetComponent<GridHistoryManager>();
 
-        gridManager.OnGridReset += () => SetCount(gridManager.PuzzleConfig.SolutionCount);
+        gridManager.OnGridReset += HandleGridReset;
 
         solveButton.onClick.AddListener(HandleButton);
         delaySlider.onValueChanged.AddListener(SetTimeDelay);
@@ -44,11 +44,17 @@ public class UniqueSolutionBot : MonoBehaviour
         }
     }
 
+    private void HandleGridReset()
+    {
+        SetCount(gridManager.PuzzleConfig.SolutionCount);
+    }
+
     private void SetCount(int count)
     {
         uniqueCount = count;
         uniqueSolutionText.text = "" + uniqueCount;
     }
+
     private void SetSolving(bool enabled)
     {
         solving = enabled;
