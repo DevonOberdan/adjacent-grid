@@ -154,14 +154,13 @@ public class GridManager : MonoBehaviour
 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.TryGetComponent(out Cell cell))
-            {
-                if(HoveredCell != null && HoveredCell != cell)
-                {
-                    HoveredCell.Hovered = false;
-                }
-                HoveredCell = cell;
-            }
+            if (!hit.collider.TryGetComponent(out Cell cell))
+                continue;
+
+            if (HoveredCell != null && HoveredCell != cell)
+                HoveredCell.Hovered = false;
+
+            HoveredCell = cell;
         }
     }
 
