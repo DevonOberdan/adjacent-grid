@@ -9,6 +9,9 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
 
+    [SerializeField] private InputActionAsset gameActions;
+    private InputAction pointerAction;
+
     [SerializeField] private int width, height;
 
     [field: SerializeField] public GameObject Board { get; private set; }
@@ -111,6 +114,9 @@ public class GridManager : MonoBehaviour
 
         if(gridPieces == null)
             gridPieces = new();
+
+        gameActions.Enable();
+        pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");
     }
 
     private void Start()
@@ -143,7 +149,25 @@ public class GridManager : MonoBehaviour
     private void Update()
     {
         //HandlePointerInGrid();
-        FindHoveredCell();
+        FindHoveredCell(pointerAction.ReadValue<Vector2>());
+    }
+
+    private void FindHoveredCell(Vector2 pointerPosition)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(pointerPosition);
+
+        RaycastHit[] hits = Physics.RaycastAll(ray);
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (!hit.collider.TryGetComponent(out Cell cell))
+                continue;
+
+            if (HoveredCell != null && HoveredCell != cell)
+                HoveredCell.Hovered = false;
+
+            HoveredCell = cell;
+        }
     }
 
     private void FindHoveredCell()
@@ -303,6 +327,7 @@ public class GridManager : MonoBehaviour
         for (int i = 0; i < cellParent.childCount; i++)
         {
             Cell cell = cellParent.GetChild(i).GetComponent<Cell>();
+            cell.gameObject.name = "Tile"+(i+1);
             cells.Add(cell);
             cell.Init(this, i);
         }
