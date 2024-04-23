@@ -42,6 +42,8 @@ public class GridManager : MonoBehaviour
     private GridPiece selectedPiece;
     private bool previouslyInGrid;
 
+    private GridLevelVisuals gridLevelVisuals;
+
     public Action<GridPiece> OnPiecePickedUp;
     public Action<GridPiece, bool> OnPieceDropped;
     public Action<GridPiece, bool> OnPieceHovered;
@@ -114,6 +116,8 @@ public class GridManager : MonoBehaviour
 
         if(gridPieces == null)
             gridPieces = new();
+
+        gridLevelVisuals = GetComponent<GridLevelVisuals>();
 
         gameActions.Enable();
         pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");
@@ -241,6 +245,9 @@ public class GridManager : MonoBehaviour
         if(piece.CurrentCell != null)
         {
             piece.CurrentCell.RemovePiece(piece);
+
+            if(gridLevelVisuals != null)
+                gridLevelVisuals.HandlePieceRemoved(piece.CurrentCell);
         }
 
         gridPieces.Remove(piece);
