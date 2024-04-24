@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class GridHistoryManager : MonoBehaviour
 {
     [SerializeField] private Button historyButton;
+    [SerializeField] private bool rewindable = true;
 
     private List<GridPiece[]> gridHistory;
     private GridManager gridManager;
@@ -24,6 +25,20 @@ public class GridHistoryManager : MonoBehaviour
     private void Start()
     {
         historyButton.onClick.AddListener(() => RewindGrid());
+    }
+
+    public void DisableRewindable(bool disable) => SetRewindable(!disable);
+    public void SetRewindable(bool allow)
+    {
+        rewindable = allow;
+
+        if (historyButton != null)
+            historyButton.interactable = gridHistory.Count > 1 && rewindable;
+    }
+
+    public void SetFlag(bool set)
+    {
+        rewindFlag = set;
     }
 
     public void ResetHistory()
@@ -61,7 +76,7 @@ public class GridHistoryManager : MonoBehaviour
         }
 
         if (historyButton != null)
-            historyButton.interactable = gridHistory.Count > 1;
+            historyButton.interactable = gridHistory.Count > 1 && rewindable;
 
         return needToRecord;
     }

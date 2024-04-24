@@ -246,7 +246,6 @@ public class GridManager : MonoBehaviour
         gridPieces.Remove(piece);
 
         piece.transform.position = POOL_POSITION;
-        piece.gameObject.SetActive(false);
     }
 
     #endregion

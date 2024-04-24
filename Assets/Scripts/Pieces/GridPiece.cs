@@ -12,6 +12,7 @@ using UnityEditor;
 public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [field: SerializeField] public bool Interactable { get; private set; } = true;
+    [field: SerializeField] public bool Consumable { get; private set; } = true;
 
     public UnityEvent<Cell> OnCellSet;
 
@@ -21,6 +22,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     private PieceIndicator indicatorHandler;
     private PieceVisualFeedback visualFeedback;
+    private PieceDestroyedFeedback destroyedFeedback;
 
     private GridManager grid;
     private Cell currentCell, indicatorCell;
@@ -35,6 +37,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public bool IsHeld { get; private set; }
     public bool IsHovered { get; private set; }
     public Color PieceColor => pieceColor;
+
+    public GridManager Grid => grid;
 
     public Renderer GetRenderer()
     {
@@ -116,6 +120,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         }
 
         visualFeedback = GetComponent<PieceVisualFeedback>();
+        destroyedFeedback = GetComponent<PieceDestroyedFeedback>();
 
         OnHovered += HandleHover;
     }
@@ -129,18 +134,23 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
     #endregion
 
-    public void Destroy()
+    public void Destroy(GridPiece destroyer = null)
     {
         if (grid == null)
             grid = transform.root.GetComponent<GridManager>();
 
         grid.RemovePiece(this);
+
+        if (destroyedFeedback)
+            destroyedFeedback.HandleDestroyed(destroyer);
     }
 
     public void InteractWithPiece(GridPiece otherPiece)
     {
         if (!otherPiece.IsOfSameType(this))
-            otherPiece.Destroy();
+        {
+            otherPiece.Destroy(this);
+        }
     }
 
     #region Public Methods
@@ -245,6 +255,20 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         PlaceOnIndicator();
         OnDropSuccessful?.Invoke(CanPlaceOnIndicator);
         return CanPlaceOnIndicator;
+    }
+
+    public void PlaceOnCell(Cell cell)
+    {
+        IsHeld = false;
+
+        CurrentCell = cell;
+
+        indicatorHandler.SetColor(indicatorHandler.DefaultColor);
+
+        if (visualFeedback != null)
+            visualFeedback.HandleDropped(CurrentCell);
+
+        ShowIndicator(false);
     }
 
     #region Input Callbacks
