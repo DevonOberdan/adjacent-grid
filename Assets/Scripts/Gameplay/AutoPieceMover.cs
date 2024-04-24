@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -43,9 +42,6 @@ public class AutoPieceMover : MonoBehaviour
             OnMovingChanged.Invoke(true);
             yield return new WaitForSeconds(movementYieldTime);
 
-            //if(!adjacentManager.GroupPickedUp)
-            //    adjacentManager.PickupGroupedPieces(piece);
-
             yield return null;
 
             print(nextCell.gameObject.name);
@@ -54,22 +50,15 @@ public class AutoPieceMover : MonoBehaviour
             adjacentManager.PlaceGroupFromActiveCell(nextCell);
 
             nextCell = nextCell.AdjacentCells[(int)direction];
-            // yield return new WaitForSeconds(movementYieldTime);
 
             if (nextCell != null && adjacentManager.ValidMovement(nextCell))
                 adjacentManager.PickupGroupedPieces(piece);
             else
                 break;
-            // adjacentManager.PickupGroupedPieces(piece);
-
-            //adjacentManager.PickupGroupedPieces(piece);
         }
 
         piece.PlaceOnIndicator();
         adjacentManager.PlaceGroupFromActiveCell(piece.CurrentCell);
-
-        //piece.PlaceOnCell(nextCell);
-        //adjacentManager.PlaceGroupFromActiveCell(nextCell);
 
         OnMovingChanged.Invoke(false);
     }
