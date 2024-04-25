@@ -118,6 +118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1853768808398797446}
   - component: {fileID: 3334273963769824493}
+  - component: {fileID: 4429075513357316174}
   m_Layer: 0
   m_Name: ArrowPiece
   m_TagString: Untagged
@@ -133,7 +134,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6116081955350915101}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.165, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -158,6 +159,19 @@ MonoBehaviour:
   OnCellSet:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4429075513357316174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116081955350915101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19f1d37d3efed804d812d9d4a829d6d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  direction: 0
 --- !u!1 &7501049803919530693
 GameObject:
   m_ObjectHideFlags: 0

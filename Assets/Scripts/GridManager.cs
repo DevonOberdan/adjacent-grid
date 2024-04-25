@@ -124,11 +124,14 @@ public class GridManager : MonoBehaviour
         if (Pieces.Count == 0)
             GrabPieces();
 
-        if (PiecesNotSet)
-        {
-            SetPiecesToGrid();
-            SetupPieceEvents();
-        }
+        SetPiecesToGrid();
+        SetupPieceEvents();
+
+        //if (PiecesNotSet)
+        //{
+        //    SetPiecesToGrid();
+        //    SetupPieceEvents();
+        //}
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += (piece, canDrop) => DroppedPiece(piece);
@@ -242,7 +245,7 @@ public class GridManager : MonoBehaviour
         {
             piece.CurrentCell.RemovePiece(piece);
         }
-
+        Debug.Log("Removing", piece);
         gridPieces.Remove(piece);
 
         piece.transform.position = POOL_POSITION;

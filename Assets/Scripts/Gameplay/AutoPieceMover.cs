@@ -37,29 +37,40 @@ public class AutoPieceMover : MonoBehaviour
 
         yield return null;
 
-        while(true)
+        Cell previousCell = nextCell;
+
+        while(nextCell != null && adjacentManager.ValidMovementDirection(nextCell))
         {
             OnMovingChanged.Invoke(true);
             yield return new WaitForSeconds(movementYieldTime);
 
             yield return null;
 
-            print(nextCell.gameObject.name);
+            //print(nextCell.gameObject.name);
 
-            piece.PlaceOnCell(nextCell);
-            adjacentManager.PlaceGroupFromActiveCell(nextCell);
+            //piece.PlaceOnCell(nextCell);
+            //adjacentManager.PlaceGroupFromActiveCell(nextCell);
+            piece.IndicatorCell = nextCell;
+            adjacentManager.MoveGroupIndicators(nextCell);
 
+            previousCell = nextCell;
             nextCell = nextCell.AdjacentCells[(int)direction];
 
-            if (nextCell != null && adjacentManager.ValidMovement(nextCell))
-                adjacentManager.PickupGroupedPieces(piece);
-            else
-                break;
+            yield return new WaitForSeconds(movementYieldTime);
+
+            //if (nextCell != null && adjacentManager.ValidMovement(nextCell))
+            //    adjacentManager.PickupGroupedPieces(piece);
+            //else
+            //    break;
         }
 
-        piece.PlaceOnIndicator();
-        adjacentManager.PlaceGroupFromActiveCell(piece.CurrentCell);
-
         OnMovingChanged.Invoke(false);
+
+        piece.PlaceOnIndicator();
+        adjacentManager.PlaceGroupedPieces(true);
+
+        //piece.PlaceOnCell(previousCell);
+        //adjacentManager.PlaceGroupFromActiveCell(previousCell);
+
     }
 }

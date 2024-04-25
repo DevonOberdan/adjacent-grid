@@ -308,6 +308,12 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
     #endregion
 
+    private void OnDestroy()
+    {
+        print("HUH");
+        grid.RemovePiece(this);
+    }
+
     #region Editor Functions
     private void OnValidate()
     {
