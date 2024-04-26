@@ -34,43 +34,62 @@ public class AutoPieceMover : MonoBehaviour
         Cell nextCell = piece.CurrentCell.AdjacentCells[(int)direction];
         adjacentManager.PickupGroupedPieces(piece);
 
-
         yield return null;
 
-        Cell previousCell = nextCell;
-
-        while(nextCell != null && adjacentManager.ValidMovementDirection(nextCell))
+        while(nextCell != null && adjacentManager.GroupStaysInGrid(nextCell))
         {
             OnMovingChanged.Invoke(true);
             yield return new WaitForSeconds(movementYieldTime);
 
-            yield return null;
-
-            //print(nextCell.gameObject.name);
-
-            //piece.PlaceOnCell(nextCell);
-            //adjacentManager.PlaceGroupFromActiveCell(nextCell);
             piece.IndicatorCell = nextCell;
-            adjacentManager.MoveGroupIndicators(nextCell);
+            piece.ShowIndicator(false);
 
-            previousCell = nextCell;
+            adjacentManager.MoveGroupIndicators(nextCell);
+            //adjacentManager.ShowGroupIndicators(false);
+
             nextCell = nextCell.AdjacentCells[(int)direction];
 
             yield return new WaitForSeconds(movementYieldTime);
-
-            //if (nextCell != null && adjacentManager.ValidMovement(nextCell))
-            //    adjacentManager.PickupGroupedPieces(piece);
-            //else
-            //    break;
         }
+
+        Cell finalCell = piece.IndicatorCell;
+        DIR oppositeDir = GetOppositeDir(direction);
+
+        // see if we end up trying to land on pieces we cant land on.. go back until we can
+        while(finalCell != null && finalCell != piece.CurrentCell && (!adjacentManager.PieceCanLand(piece, finalCell) || !adjacentManager.GroupCanLand(finalCell)))
+        {
+            OnMovingChanged.Invoke(true);
+            piece.IndicatorCell = finalCell;
+            piece.ShowIndicator(false);
+
+            adjacentManager.MoveGroupIndicators(finalCell);
+
+            finalCell = finalCell.AdjacentCells[(int)oppositeDir];
+        }
+
+        piece.IndicatorCell = finalCell;
+        piece.ShowIndicator(false);
+
+        adjacentManager.MoveGroupIndicators(finalCell);
 
         OnMovingChanged.Invoke(false);
 
+        yield return new WaitForSeconds(movementYieldTime);
+        piece.ShowIndicator(true);
+
         piece.PlaceOnIndicator();
         adjacentManager.PlaceGroupedPieces(true);
+    }
 
-        //piece.PlaceOnCell(previousCell);
-        //adjacentManager.PlaceGroupFromActiveCell(previousCell);
-
+    private DIR GetOppositeDir(DIR dir)
+    {
+        if (dir == DIR.UP)
+            return DIR.DOWN;
+        else if(dir == DIR.DOWN)
+            return DIR.UP;
+        else if (dir == DIR.LEFT)
+            return DIR.RIGHT;
+        
+        return DIR.LEFT;
     }
 }

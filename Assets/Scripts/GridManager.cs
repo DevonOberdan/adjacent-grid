@@ -9,14 +9,12 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager Instance;
 
+    [SerializeField] private GridPuzzleConfigSO puzzleConfig;
+
+    [Space]
+    [Header("Input System")]
     [SerializeField] private InputActionAsset gameActions;
     private InputAction pointerAction;
-
-    [SerializeField] private int width, height;
-
-    [field: SerializeField] public GameObject Board { get; private set; }
-
-    [SerializeField] private GridPuzzleConfigSO puzzleConfig;
 
     [Header("Containers")]
     [SerializeField] private Transform cellParent;
@@ -24,6 +22,10 @@ public class GridManager : MonoBehaviour
 
     [Space]
     [Header("Grid Generation")]
+    [SerializeField] private int width;
+    [SerializeField] private int height;
+    [field: SerializeField] public GameObject Board { get; private set; }
+
     [SerializeField] private List<GridPiece> piecePrefabs;
 
     //public enum AXES { XY, XZ };
@@ -245,7 +247,6 @@ public class GridManager : MonoBehaviour
         {
             piece.CurrentCell.RemovePiece(piece);
         }
-        Debug.Log("Removing", piece);
         gridPieces.Remove(piece);
 
         piece.transform.position = POOL_POSITION;
@@ -429,6 +430,27 @@ public class GridManager : MonoBehaviour
             {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    public bool PieceCanLandOnCell(GridPiece piece, Cell cell)
+    {
+        GridPiece cellPiece = cell.CurrentPiece;
+        if (cellPiece != null)
+            print($"cellPiece: {cellPiece}");
+
+        // Grouped piece trying to move "out" of the grid left or right 
+        if (!(cell == piece.CurrentCell || piece.IndicatorCell.AdjacentCells.Contains(cell))) //piece.CurrentCell.AdjacentCells.Contains(gridManager.Cells[newIndicatorIndex])))
+        {
+            return false;
+        }
+        // new cell has blocking piece OR a piece of the same type
+        else if (cellPiece != null && (cellPiece.Consumable == false || cellPiece.IsOfSameType(piece)))
+        {
+            Debug.Log("Piece would land on invalid piece, ", piece.gameObject);
+            return false;
         }
 
         return true;

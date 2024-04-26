@@ -310,7 +310,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     private void OnDestroy()
     {
-        print("HUH");
         grid.RemovePiece(this);
     }
 
