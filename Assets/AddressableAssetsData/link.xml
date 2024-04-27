@@ -1,7 +1,9 @@
 <linker>
   <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="AdjacentGridGameManager" preserve="all" />
+    <type fullname="ApplicationKeyPresses" preserve="all" />
     <type fullname="Cell" preserve="all" />
+    <type fullname="GameObjectUtilities" preserve="all" />
     <type fullname="GridAudioManager" preserve="all" />
     <type fullname="GridHistoryManager" preserve="all" />
     <type fullname="GridInputHandler" preserve="all" />
@@ -137,6 +139,7 @@
     <type fullname="UnityEngine.UI.HorizontalLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.Image" preserve="all" />
     <type fullname="UnityEngine.UI.Toggle" preserve="all" />
+    <type fullname="UnityEngine.UI.VerticalLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.EventSystems.EventTrigger/Entry" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.EventSystems.EventTrigger/TriggerEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.AnimationTriggers" preserve="nothing" serialized="true" />
