@@ -48,7 +48,7 @@ public class GridLevelManager : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         if (startingCustom)
             levelIndex = -1;

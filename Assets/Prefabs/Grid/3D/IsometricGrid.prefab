@@ -312,7 +312,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  movementYieldTime: 0.25
+  movementYieldTime: 0.1
 --- !u!1001 &375722806968647197
 PrefabInstance:
   m_ObjectHideFlags: 0
