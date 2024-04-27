@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: 4163296485308720121}
   - component: {fileID: 3347833048018567066}
   - component: {fileID: 3594112614929953029}
+  - component: {fileID: 8592225146939186310}
   m_Layer: 0
   m_Name: IsometricGrid
   m_TagString: Untagged
@@ -260,6 +261,58 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   historyButton: {fileID: 0}
   rewindable: 1
+--- !u!114 &8592225146939186310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6859727263216898544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd119ee574b20204d8bcabc619a1c36c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnMovingChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3347833048018567066}
+        m_TargetAssemblyTypeName: AdjacentGridGameManager, Assembly-CSharp
+        m_MethodName: set_DoNotProcess
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3594112614929953029}
+        m_TargetAssemblyTypeName: GridHistoryManager, Assembly-CSharp
+        m_MethodName: DisableRewindable
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3594112614929953029}
+        m_TargetAssemblyTypeName: GridHistoryManager, Assembly-CSharp
+        m_MethodName: SetFlag
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  movementYieldTime: 0.25
 --- !u!1001 &375722806968647197
 PrefabInstance:
   m_ObjectHideFlags: 0
