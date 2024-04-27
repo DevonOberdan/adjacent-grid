@@ -124,11 +124,8 @@ public class GridManager : MonoBehaviour
         if (Pieces.Count == 0)
             GrabPieces();
 
-        if (PiecesNotSet)
-        {
-            SetPiecesToGrid();
-            SetupPieceEvents();
-        }
+        SetPiecesToGrid();
+        SetupPieceEvents();
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += (piece, canDrop) => DroppedPiece(piece);
