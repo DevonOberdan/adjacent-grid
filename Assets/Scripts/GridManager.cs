@@ -216,7 +216,7 @@ public class GridManager : MonoBehaviour
         OnGridChanged?.Invoke();
     }
 
-    private void PickedUpPiece(GridPiece piece)
+    public void PickedUpPiece(GridPiece piece)
     {
         selectedPiece = piece;
 

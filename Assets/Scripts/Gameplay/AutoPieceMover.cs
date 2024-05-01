@@ -29,7 +29,10 @@ public class AutoPieceMover : MonoBehaviour
     {
         OnMovingChanged.Invoke(true);
 
+        gridManager.PickedUpPiece(piece);
+
         yield return new WaitForSeconds(MOVE_DELAY);
+
 
         Cell nextCell = piece.CurrentCell.AdjacentCells[(int)direction];
         adjacentManager.PickupGroupedPieces(piece);
@@ -77,8 +80,9 @@ public class AutoPieceMover : MonoBehaviour
         yield return new WaitForSeconds(movementYieldTime);
         piece.ShowIndicator(true);
 
-        piece.PlaceOnIndicator();
-        adjacentManager.PlaceGroupedPieces(true);
+        piece.UserDropPiece();
+        //piece.PlaceOnIndicator();
+        //adjacentManager.PlaceGroupedPieces(true);
     }
 
     private DIR GetOppositeDir(DIR dir)
