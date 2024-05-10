@@ -629,7 +629,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 4157748453854324709}
-  startingCustom: 1
+  startingCustom: 0
   puzzleConfigs:
   - {fileID: 11400000, guid: fd8f57d6158785646be34a0f3e1e2e1a, type: 2}
   - {fileID: 11400000, guid: 87bf4903820d63f4abaf9ead7b575eaf, type: 2}
