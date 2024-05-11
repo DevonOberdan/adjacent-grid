@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MainMenuConfig
   m_EditorClassIdentifier: 
   sceneRef:
-    m_AssetGUID: 3a1c63941af09d94c98f0d3b70d4128c
+    m_AssetGUID: bbbcd559be250d648bafe44a7193e664
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1
