@@ -48,12 +48,17 @@ public class GridLevelManager : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         if (startingCustom)
             levelIndex = -1;
         else
-            LevelIndex = 0;
+            Invoke(nameof(StartGame), 0.1f);
+    }
+
+    private void StartGame()
+    {
+        LevelIndex = 0;
     }
 
     private void Update()

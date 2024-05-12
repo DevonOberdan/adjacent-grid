@@ -1,8 +1,19 @@
+using DG.Tweening;
 using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+
+public struct PieceGroup
+{
+    public List<GridPiece> Group;
+
+    public PieceGroup(List<GridPiece> group)
+    {
+        this.Group = group;
+    }
+}
 
 public class AdjacentGridGameManager : MonoBehaviour
 {
@@ -19,6 +30,10 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private bool WinCondition => gridManager.PieceCount == 1;
 
+    public bool AboutToWin => gridManager.PieceCount == 2 && AnyValidMovements();
+    public bool Doomed => wasDoomed;
+    public List<PieceGroup> CurrentGroups { get; private set; }
+
     private void Awake()
     {
         nonActivelyHeldPieceOffsets = new Dictionary<GridPiece, int>();
@@ -31,7 +46,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private void SetupGridListeners()
     {
-        gridManager.OnPiecePickedUp += FindGroupedPieces;
+        gridManager.OnPiecePickedUp += PickupGroupedPieces;
         gridManager.OnPieceDropped += HandlePieceDropped;
         gridManager.OnGridChanged += HandleGridChanged;
 
@@ -39,11 +54,13 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         if (highlightGroup)
             gridManager.OnPieceHovered += HandlePieceHovered;
+
+        gridManager.OnGridChanged += FindAllGroups;
     }
 
     #region Grouping Functions
 
-    private void FindGroupedPieces(GridPiece piece)
+    private void PickupGroupedPieces(GridPiece piece)
     {
         List<GridPiece> groupedPieces = GetAdjacentPieces(piece);
 
@@ -52,13 +69,31 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         ProcessGroupedOffsets();
 
-        groupedPieces.ForEach(piece => piece.ShowIndicator(true));
+        foreach (GridPiece groupedPiece in groupedPieces)
+        {
+            groupedPiece.HandlePickup();
+        }
+    }
+
+    private void FindAllGroups()
+    {
+        CurrentGroups = new();
+
+        List<GridPiece> checkedPieces = new List<GridPiece>();
+        foreach (GridPiece piece in gridManager.Pieces)
+        {
+            List<GridPiece> newPieces = GetAdjacentPieces(piece);
+            if(!newPieces.Any(piece => checkedPieces.Contains(piece)))
+            {
+                checkedPieces.AddRange(newPieces);
+                CurrentGroups.Add(new PieceGroup(newPieces));
+            }
+        }
     }
 
     /// <summary>
     /// Returns list of all "adjacent" connected pieces from the given piece (i.e. the chain of 
     /// connected pieces of the same color).
-    /// 
     /// </summary>
     private List<GridPiece> GetAdjacentPieces(GridPiece piece, List<GridPiece> groupedPieces = null)
     {
@@ -71,10 +106,14 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (Cell adjacentCell in currentPieceCell.AdjacentCells)
         {
             if (groupedPieces.Contains(adjacentCell.CurrentPiece))
+            {
                 continue;
+            }
 
             if (adjacentCell.Occupied && adjacentCell.CurrentPiece.IsOfSameType(piece))
+            {
                 groupedPieces = GetAdjacentPieces(adjacentCell.CurrentPiece, groupedPieces);
+            }
         }
 
         return groupedPieces;
@@ -124,7 +163,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     private void CheckDoomed()
     {
         bool isDoomed = !WinCondition && !AnyValidMovements();
-
         if (isDoomed != wasDoomed)
             OnDoomed.Invoke(isDoomed);
 
@@ -235,7 +273,6 @@ public class AdjacentGridGameManager : MonoBehaviour
         return cell.Occupied && !cell.CurrentPiece.IsOfSameType(piece) && cell.CurrentPiece.Interactable;
     }
 
-
     // Hide all connected pieces that were not flagged as invalid
     private void DisplayInvalidGrouping()
     {
@@ -245,16 +282,15 @@ public class AdjacentGridGameManager : MonoBehaviour
                 piece.ShowIndicator(false);
         }
     }
-
     #endregion
 
     private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
-    {
+    {        
         List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
 
         foreach (GridPiece piece in pieces)
         {
-            piece.Highlight(hovered);
+            piece.HandleHover(hovered);
         }
     }
 }
