@@ -23,7 +23,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private PieceVisualFeedback visualFeedback;
 
     private GridManager grid;
-    private Cell currentCell, indicatorCell;
+    private Cell currentCell, indicatorCell, previouslyHoveredCell;
 
     private Renderer rend;
     private Collider pieceCollider;
@@ -59,14 +59,15 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
             value.AddPiece(this);
 
-            IndicatorCell = value;
-            ShowIndicator(currentCell != null && value != currentCell);
+            //IndicatorCell = value;
+           // ShowIndicator(currentCell != null && value != currentCell);
 
             currentCell = value;
             gameObject.SetActive(true);
             OnCellSet.Invoke(currentCell);
 
             IndicatorCell = currentCell;
+           // CanPlaceOnIndicator = true;
             ShowIndicator(false);
             HandleNewCell();
         }
@@ -84,6 +85,17 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
             ShowIndicator(true);
         }
+    }
+
+    public void ResetIndicator()
+    {
+        indicatorCell = currentCell;
+
+        if (indicatorHandler != null)
+            indicatorHandler.SetCell(indicatorCell, false);
+
+        CanPlaceOnIndicator = false;
+        ShowIndicator(false);
     }
 
     public bool CanPlaceOnIndicator
@@ -166,7 +178,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         //Cell hoveredCell = grid.CurrentHoveredCell();
         Cell hoveredCell = grid.HoveredCell;
 
-        if (ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
+        if (ValidCell(hoveredCell) && hoveredCell != previouslyHoveredCell)
         {
             IndicatorCell = hoveredCell;
             OnIndicatorMoved?.Invoke(indicatorCell);
@@ -180,6 +192,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
                 ShowIndicator(true);
             }
         }
+
+        previouslyHoveredCell = hoveredCell;
     }
 
     private bool ValidCell(Cell cell)
@@ -194,10 +208,13 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #region Indicator Methods
     public void HandlePickup()
     {
+        IndicatorCell = CurrentCell;
         ShowIndicator(true);
 
         if (visualFeedback != null)
             visualFeedback.HandlePickup();
+
+        CanPlaceOnIndicator = true;
     }
 
     public void HandleHover(bool hovered)
@@ -221,6 +238,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (visualFeedback != null)
             visualFeedback.HandleDropped(CurrentCell);
 
+        //CanPlaceOnIndicator = true;
         ShowIndicator(false);
     }
 
@@ -234,9 +252,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void MarkIndicatorCellInvalid()
     {
-        CanPlaceOnIndicator = false;
         IndicatorCell = CurrentCell;
-        ShowIndicator(true);
+        CanPlaceOnIndicator = false;
+        //ShowIndicator(true);
     }
     #endregion
 
@@ -248,7 +266,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
 
     #region Input Callbacks
-
     public void OnPointerDown(PointerEventData eventData)
     {
         if(!Interactable) return;
