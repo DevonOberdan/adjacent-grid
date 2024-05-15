@@ -34,7 +34,7 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
         SetColor(valid ? DefaultColor : GridInputHandler.Instance.InvalidPlacementColor);
     }
 
-    public override void SetCell(Cell cell, bool resetOldCell = true)
+    public override void SetCell(Cell cell, bool displayNewCell = true)
     {
         Material mat = GrabCellMat(cell);
 
@@ -43,13 +43,14 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
             startingColor = mat.color;
             startingColorSet = true;
         }
-        
+
         //set previous Cell's color back to normal
-        if(resetOldCell)
-            SetColor(startingColor);
-        
+        SetColor(startingColor);
+
         currentCell = cell;
-        SetColor(DefaultColor);
+
+        if (displayNewCell)
+            SetColor(DefaultColor);
     }
 
     public override void SetColor(Color color)

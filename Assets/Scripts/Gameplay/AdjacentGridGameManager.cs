@@ -211,12 +211,14 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             DisplayInvalidGrouping();
 
+            // override the normal GridPiece Indicator handling, and mark edge pieces as invalid
+            activelyHeldPiece.ResetIndicator();
 
-
-            // override the normal GridPiece Indicator handling 
-            activelyHeldPiece.ResetIndicator();//IndicatorCell = activelyHeldPiece.CurrentCell;// activeIndicatorCell;
-            //activelyHeldPiece.CanPlaceOnIndicator = false;
-            //activelyHeldPiece.ShowIndicator(false);
+            foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+            {
+                if (!piece.CanPlaceOnIndicator)
+                    piece.MarkIndicatorCellInvalid();
+            }
         }
     }
 

@@ -93,6 +93,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
         if (indicatorHandler != null)
             indicatorHandler.SetCell(indicatorCell, false);
+
+        CanPlaceOnIndicator = false;
+        ShowIndicator(false);
     }
 
     public bool CanPlaceOnIndicator
@@ -175,7 +178,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         //Cell hoveredCell = grid.CurrentHoveredCell();
         Cell hoveredCell = grid.HoveredCell;
 
-        if (ValidCell(hoveredCell) && hoveredCell != IndicatorCell && hoveredCell != previouslyHoveredCell)
+        if (ValidCell(hoveredCell) && hoveredCell != previouslyHoveredCell)
         {
             IndicatorCell = hoveredCell;
             OnIndicatorMoved?.Invoke(indicatorCell);
@@ -263,7 +266,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
 
     #region Input Callbacks
-
     public void OnPointerDown(PointerEventData eventData)
     {
         if(!Interactable) return;
