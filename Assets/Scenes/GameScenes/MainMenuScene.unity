@@ -2561,14 +2561,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 207109131}
     m_Modifications:
     - target: {fileID: 970904555264761266, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
-      propertyPath: m_Type
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 970904555264761266, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-    - target: {fileID: 970904555264761266, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -2687,6 +2679,10 @@ PrefabInstance:
     - target: {fileID: 6404491090961613425, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
       propertyPath: m_text
       value: Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 6404491090961613425, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278519045
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

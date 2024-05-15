@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3761800112014218275, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
       propertyPath: m_Name
-      value: Main Menu Variant
+      value: MainMenuButton
       objectReference: {fileID: 0}
     - target: {fileID: 5765482452662351771, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
       propertyPath: m_Pivot.x
@@ -34,14 +34,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5765482452662351771, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5765482452662351771, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5765482452662351771, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
-      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5765482452662351771, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
@@ -115,6 +107,14 @@ PrefabInstance:
     - target: {fileID: 6404491090961613425, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
       propertyPath: m_text
       value: Main Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 6404491090961613425, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 6404491090961613425, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278519045
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
