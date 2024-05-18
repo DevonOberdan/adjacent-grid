@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class GameObjectUtilities : MonoBehaviour
 {
-
-
     public void ToggleGO()
     {
         gameObject.SetActive(!gameObject.activeSelf);
@@ -20,20 +18,5 @@ public class GameObjectUtilities : MonoBehaviour
         {
             button.interactable = !enabled;
         }
-    }
-
-    private void Awake()
-    {
-        
-    }
-
-    private void Start()
-    {
-        
-    }
-
-    private void Update()
-    {
-        
     }
 }
