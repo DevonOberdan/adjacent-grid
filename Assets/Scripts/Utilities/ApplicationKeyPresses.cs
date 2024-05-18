@@ -24,6 +24,11 @@ public class ApplicationKeyPresses : MonoBehaviour
     private void Update()
     {
         if(Pressable && pauseAction.WasPressedThisFrame())
-            OnPausePressed.Invoke();
+            PressPause();
+    }
+
+    public void PressPause()
+    {
+        OnPausePressed.Invoke();
     }
 }
