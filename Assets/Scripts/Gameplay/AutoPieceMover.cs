@@ -9,6 +9,9 @@ public class AutoPieceMover : MonoBehaviour
 
     [SerializeField] private UnityEvent<bool> OnMovingChanged;
     [SerializeField] private float movementYieldTime;
+    [SerializeField] private float endDelayTime = 0.5f;
+
+    [SerializeField] private bool showIndicators;
 
     public enum DIR { UP, RIGHT, DOWN, LEFT };
 
@@ -47,8 +50,7 @@ public class AutoPieceMover : MonoBehaviour
             piece.IndicatorCell = nextCell;
             piece.ShowIndicator(false);
 
-            adjacentManager.MoveGroupIndicators(nextCell);
-            //adjacentManager.ShowGroupIndicators(false);
+            adjacentManager.MoveGroupIndicators(nextCell, showIndicators);
 
             nextCell = nextCell.AdjacentCells[(int)direction];
 
@@ -65,7 +67,7 @@ public class AutoPieceMover : MonoBehaviour
             piece.IndicatorCell = finalCell;
             piece.ShowIndicator(false);
 
-            adjacentManager.MoveGroupIndicators(finalCell);
+            adjacentManager.MoveGroupIndicators(finalCell, showIndicators);
 
             finalCell = finalCell.AdjacentCells[(int)oppositeDir];
         }
@@ -73,16 +75,14 @@ public class AutoPieceMover : MonoBehaviour
         piece.IndicatorCell = finalCell;
         piece.ShowIndicator(false);
 
-        adjacentManager.MoveGroupIndicators(finalCell);
+        adjacentManager.MoveGroupIndicators(finalCell, true);
 
         OnMovingChanged.Invoke(false);
 
-        yield return new WaitForSeconds(movementYieldTime);
+        yield return new WaitForSeconds(endDelayTime);
         piece.ShowIndicator(true);
 
         piece.UserDropPiece();
-        //piece.PlaceOnIndicator();
-        //adjacentManager.PlaceGroupedPieces(true);
     }
 
     private DIR GetOppositeDir(DIR dir)

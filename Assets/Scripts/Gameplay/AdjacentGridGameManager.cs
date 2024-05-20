@@ -204,7 +204,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     #region Group Movement
 
-    public void MoveGroupIndicators(Cell activeIndicatorCell)
+    public void MoveGroupIndicators(Cell activeIndicatorCell, bool show=true)
     {
         // bool validMovement = ValidMovementDirection(activeIndicatorCell);
 
@@ -217,7 +217,9 @@ public class AdjacentGridGameManager : MonoBehaviour
         foreach (GridPiece piece in activeGrouping)
         {
             piece.CanPlaceOnIndicator = true;
+            piece.ShowIndicator(show);
         }
+
     }
 
     public void ShowGroupIndicators(bool show)
