@@ -1,10 +1,18 @@
+using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class GridHistoryManager : MonoBehaviour
 {
-    [SerializeField] private Button historyButton;
+    [SerializeField] private UnityEvent<bool> HasHistoryBroadcast;
+
+    [Tooltip("Set to 0 for unlimited attempts")]
+    [SerializeField] private int maxRewindCount;
+
+    [SerializeField] private UnityEvent<int> RemainingRewindBroadcast;
+
+    private int rewindsRemaining = 0;
 
     private List<GridPiece[]> gridHistory;
     private GridManager gridManager;
@@ -21,11 +29,6 @@ public class GridHistoryManager : MonoBehaviour
         gridManager.OnGridReset += ResetHistory;
     }
 
-    private void Start()
-    {
-        historyButton.onClick.AddListener(() => RewindGrid());
-    }
-
     public void ResetHistory()
     {
         if (gridHistory == null)
@@ -33,8 +36,10 @@ public class GridHistoryManager : MonoBehaviour
         else
             gridHistory.Clear();
 
-        if (historyButton != null)
-            historyButton.interactable = false;
+        HasHistoryBroadcast.Invoke(false);
+        rewindsRemaining = maxRewindCount;
+
+        RemainingRewindBroadcast.Invoke(rewindsRemaining);
     }
 
     public bool RecordPiecePlacement()
@@ -60,25 +65,16 @@ public class GridHistoryManager : MonoBehaviour
             gridHistory.Add(currentCells);
         }
 
-        if (historyButton != null)
-            historyButton.interactable = gridHistory.Count > 1;
+        bool hasHistory = gridHistory.Count > 1;
+        if (maxRewindCount > 0)
+            hasHistory = hasHistory && rewindsRemaining > 0;
+
+        HasHistoryBroadcast.Invoke(hasHistory);
 
         return needToRecord;
     }
 
-    private bool SameAsLastState(GridPiece[] newPieceConfig)
-    {
-        if (gridHistory.Count == 0)
-            return false;
-
-        for (int i = 0; i < gridHistory[^1].Length; i++)
-        {
-            if (newPieceConfig[i] != gridHistory[^1][i])
-                return false;
-        }
-
-        return true;
-    }
+    public void Rewind() => RewindGrid();
 
     public bool RewindGrid()
     {
@@ -100,13 +96,39 @@ public class GridHistoryManager : MonoBehaviour
             }
         }
 
-        if (historyButton != null)
-            historyButton.interactable = gridHistory.Count > 1;
+        rewindsRemaining = Mathf.Max(rewindsRemaining-1, 0);
+
+        //if limitRewinds is true, check that there are still rewinds
+        bool hasHistory = gridHistory.Count > 1;
+        if (maxRewindCount > 0)
+            hasHistory = hasHistory && rewindsRemaining > 0;
+
+        HasHistoryBroadcast.Invoke(hasHistory);
+
+        RemainingRewindBroadcast.Invoke(rewindsRemaining);
 
         rewindFlag = true;
-
         gridManager.OnGridChanged?.Invoke();
 
         return true;
+    }
+
+    private bool SameAsLastState(GridPiece[] newPieceConfig)
+    {
+        if (gridHistory.Count == 0)
+            return false;
+
+        for (int i = 0; i < gridHistory[^1].Length; i++)
+        {
+            if (newPieceConfig[i] != gridHistory[^1][i])
+                return false;
+        }
+
+        return true;
+    }
+
+    private void OnValidate()
+    {
+        maxRewindCount = Mathf.Max(maxRewindCount, 0);
     }
 }

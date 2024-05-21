@@ -72,5 +72,7 @@ public class GridLevelManager : MonoBehaviour
     public void Decrement() => LevelIndex--;
     public void Increment() => LevelIndex++;
 
+    public void ResetCurrentLevel() => LevelIndex = levelIndex;
+
     public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level + 1}/{puzzleConfigs.Length}";
 }
