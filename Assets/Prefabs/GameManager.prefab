@@ -14,8 +14,6 @@ GameObject:
   - component: {fileID: 627478037597935661}
   - component: {fileID: 335012762627950202}
   - component: {fileID: 5328561002942541469}
-  - component: {fileID: 9015183940319243210}
-  - component: {fileID: 6080036334381066071}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -50,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 348a4c27d84c858408dab895c639221d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputModule: {fileID: 0}
   PauseStateBroadcast:
     m_PersistentCalls:
       m_Calls:
@@ -94,6 +93,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  RequestTogglePause: {fileID: 11400000, guid: 7d4ea231fbf1b464694596909b7db2d8, type: 2}
+  RequestPauseState: {fileID: 11400000, guid: 168086a528d9d2742a9a8eb01631eb4f, type: 2}
+  RequestPreventInput: {fileID: 11400000, guid: 8473bc842cf89a544bf6314e4cea36e7, type: 2}
 --- !u!114 &86666711847726390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,63 +209,5 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 1
-        m_CallState: 2
-  registerOnEnable: 0
---- !u!114 &9015183940319243210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6356584716027277754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eccc7631b112fe6479c3024ceffb081b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEvent: {fileID: 11400000, guid: 7d4ea231fbf1b464694596909b7db2d8, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 373303483465993856}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: TogglePause
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  registerOnEnable: 0
---- !u!114 &6080036334381066071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6356584716027277754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e77d3cd429e11349b100d8a594343c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEvent: {fileID: 11400000, guid: 168086a528d9d2742a9a8eb01631eb4f, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 373303483465993856}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: set_Paused
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
         m_CallState: 2
   registerOnEnable: 0

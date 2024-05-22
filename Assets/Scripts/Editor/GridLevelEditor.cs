@@ -73,5 +73,7 @@ public class GridLevelEditor : Editor
         AssetDatabase.CreateAsset(puzzleConfig, fullPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+
+        Debug.Log("Successful puzzle config created at: "+fullPath);
     }
 }

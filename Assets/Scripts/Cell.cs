@@ -39,15 +39,20 @@ public class Cell : MonoBehaviour
     {
         List<Cell> adjacent = new List<Cell>();
 
-        bool leftCell = IndexInGrid % grid.Width != 0;
-        bool rightCell = IndexInGrid % grid.Width != grid.Width - 1;
         bool topCell = IndexInGrid / grid.Height != grid.Height - 1;
+        bool rightCell = IndexInGrid % grid.Width != grid.Width - 1;
         bool bottomCell = IndexInGrid / grid.Height != 0;
+        bool leftCell = IndexInGrid % grid.Width != 0;
 
-        if (leftCell) adjacent.Add(grid.Cells[IndexInGrid - 1]);
-        if (rightCell) adjacent.Add(grid.Cells[IndexInGrid + 1]);
-        if (topCell) adjacent.Add(grid.Cells[IndexInGrid + grid.Width]);
-        if (bottomCell) adjacent.Add(grid.Cells[IndexInGrid - grid.Width]);
+        adjacent.Add(topCell ? grid.Cells[IndexInGrid + grid.Width] : null);
+        adjacent.Add(rightCell ? grid.Cells[IndexInGrid + 1] : null);
+        adjacent.Add(bottomCell ? grid.Cells[IndexInGrid - grid.Width] : null);
+        adjacent.Add(leftCell ? grid.Cells[IndexInGrid - 1] : null);
+
+        //if (leftCell) adjacent.Add(grid.Cells[IndexInGrid - 1]);
+        //if (rightCell) adjacent.Add(grid.Cells[IndexInGrid + 1]);
+        //if (topCell) adjacent.Add(grid.Cells[IndexInGrid + grid.Width]);
+        //if (bottomCell) adjacent.Add(grid.Cells[IndexInGrid - grid.Width]);
 
         return adjacent;
     }

@@ -7,16 +7,17 @@ public class GridHistoryManager : MonoBehaviour
 {
     [SerializeField] private UnityEvent<bool> HasHistoryBroadcast;
 
+    [SerializeField] private UnityEvent<int> RemainingRewindBroadcast;
+
     [Tooltip("Set to 0 for unlimited attempts")]
     [SerializeField] private int maxRewindCount;
 
-    [SerializeField] private UnityEvent<int> RemainingRewindBroadcast;
-
-    private int rewindsRemaining = 0;
+    [SerializeField] private bool rewindable = true;
 
     private List<GridPiece[]> gridHistory;
     private GridManager gridManager;
 
+    private int rewindsRemaining;
     private bool rewindFlag;
 
     private void Awake()
@@ -27,6 +28,15 @@ public class GridHistoryManager : MonoBehaviour
 
         gridManager.OnGridChanged += () => RecordPiecePlacement();
         gridManager.OnGridReset += ResetHistory;
+    }
+
+    public void DisableRewindable(bool disable) => SetRewindable(!disable);
+    
+    public void SetRewindable(bool allow) => rewindable = allow;
+
+    public void SetFlag(bool set)
+    {
+        rewindFlag = set;
     }
 
     public void ResetHistory()
@@ -65,11 +75,7 @@ public class GridHistoryManager : MonoBehaviour
             gridHistory.Add(currentCells);
         }
 
-        bool hasHistory = gridHistory.Count > 1;
-        if (maxRewindCount > 0)
-            hasHistory = hasHistory && rewindsRemaining > 0;
-
-        HasHistoryBroadcast.Invoke(hasHistory);
+        CheckForHistory();
 
         return needToRecord;
     }
@@ -98,12 +104,7 @@ public class GridHistoryManager : MonoBehaviour
 
         rewindsRemaining = Mathf.Max(rewindsRemaining-1, 0);
 
-        //if limitRewinds is true, check that there are still rewinds
-        bool hasHistory = gridHistory.Count > 1;
-        if (maxRewindCount > 0)
-            hasHistory = hasHistory && rewindsRemaining > 0;
-
-        HasHistoryBroadcast.Invoke(hasHistory);
+        CheckForHistory();
 
         RemainingRewindBroadcast.Invoke(rewindsRemaining);
 
@@ -125,6 +126,15 @@ public class GridHistoryManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void CheckForHistory()
+    {
+        bool hasHistory = gridHistory.Count > 1;
+        if (maxRewindCount > 0)
+            hasHistory = hasHistory && rewindsRemaining > 0;
+
+        HasHistoryBroadcast.Invoke(hasHistory && rewindable);
     }
 
     private void OnValidate()
