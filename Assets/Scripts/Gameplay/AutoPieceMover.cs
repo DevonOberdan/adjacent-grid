@@ -36,7 +36,6 @@ public class AutoPieceMover : MonoBehaviour
 
         yield return new WaitForSeconds(MOVE_DELAY);
 
-
         Cell nextCell = piece.CurrentCell.AdjacentCells[(int)direction];
         adjacentManager.PickupGroupedPieces(piece);
 
@@ -51,7 +50,6 @@ public class AutoPieceMover : MonoBehaviour
             piece.ShowIndicator(false);
 
             adjacentManager.MoveGroupIndicators(nextCell, showIndicators);
-
             nextCell = nextCell.AdjacentCells[(int)direction];
 
             yield return new WaitForSeconds(movementYieldTime);
@@ -76,12 +74,11 @@ public class AutoPieceMover : MonoBehaviour
         piece.ShowIndicator(false);
 
         adjacentManager.MoveGroupIndicators(finalCell, true);
-
-        OnMovingChanged.Invoke(false);
-
-        yield return new WaitForSeconds(endDelayTime);
         piece.ShowIndicator(true);
 
+        yield return new WaitForSeconds(endDelayTime);
+
+        OnMovingChanged.Invoke(false);
         piece.UserDropPiece();
     }
 

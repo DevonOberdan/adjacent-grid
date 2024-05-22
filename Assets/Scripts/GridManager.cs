@@ -212,6 +212,9 @@ public class GridManager : MonoBehaviour
 
     public void SetPiecesToGrid()
     {
+        if (gridPieces == null || gridPieces.Count == 0)
+            return;
+
         gridPieces.ForEach(piece => piece.CurrentCell = GetClosestCell(piece.transform));
         OnGridChanged?.Invoke();
     }

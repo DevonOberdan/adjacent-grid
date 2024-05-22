@@ -15,7 +15,7 @@ public class PieceIndicatorObject : PieceIndicator
         rend.SetColor(valid ? DefaultColor : GridInputHandler.Instance.InvalidPlacementColor);
     }
 
-    public override void SetCell(Cell cell)
+    public override void SetCell(Cell cell, bool displayNewCell = true)
     {
         CurrentCell = cell;
         indicator.transform.position = cell.transform.position;

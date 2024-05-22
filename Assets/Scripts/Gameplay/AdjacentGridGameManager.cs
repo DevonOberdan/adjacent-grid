@@ -253,10 +253,14 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             DisplayInvalidGrouping();
 
-            // override the normal GridPiece Indicator handling 
-            activelyHeldPiece.IndicatorCell = activeIndicatorCell;
-            activelyHeldPiece.CanPlaceOnIndicator = false;
-            activelyHeldPiece.ShowIndicator(false);
+            // override the normal GridPiece Indicator handling, and mark edge pieces as invalid
+            activelyHeldPiece.ResetIndicator();
+
+            foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+            {
+                if (!piece.CanPlaceOnIndicator)
+                    piece.MarkIndicatorCellInvalid();
+            }
         }
     }
 
@@ -331,7 +335,6 @@ public class AdjacentGridGameManager : MonoBehaviour
 
             if (!gridManager.Cells.IsValidIndex(newIndicatorIndex))
             {
-                print("invlalid index");
                 return false;
             }
 
@@ -340,7 +343,7 @@ public class AdjacentGridGameManager : MonoBehaviour
             if (!PieceCanLand(piece, newCell))
                 return false;
         }
-        print("Group can land");
+
         return true;
     }
 

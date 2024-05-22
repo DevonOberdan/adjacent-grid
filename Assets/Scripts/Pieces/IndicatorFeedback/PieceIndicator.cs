@@ -26,7 +26,7 @@ public abstract class PieceIndicator : MonoBehaviour
         SetColor(DefaultColor);
     }
 
-    public abstract void SetCell(Cell cell);
+    public abstract void SetCell(Cell cell, bool displayNewCell = true);
 
     public abstract void SetColor(Color color);
 

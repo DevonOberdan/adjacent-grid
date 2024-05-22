@@ -53,7 +53,12 @@ public class GridLevelManager : MonoBehaviour
         if (startingCustom)
             levelIndex = -1;
         else
-            LevelIndex = 0;
+            Invoke(nameof(StartGame), 0.1f);
+    }
+
+    private void StartGame()
+    {
+        LevelIndex = 0;
     }
 
     private void Update()
@@ -66,6 +71,8 @@ public class GridLevelManager : MonoBehaviour
 
     public void Decrement() => LevelIndex--;
     public void Increment() => LevelIndex++;
+
+    public void ResetCurrentLevel() => LevelIndex = levelIndex;
 
     public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level + 1}/{puzzleConfigs.Length}";
 }

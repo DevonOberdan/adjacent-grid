@@ -1,28 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameObjectUtilities : MonoBehaviour
 {
-
-
     public void ToggleGO()
     {
         gameObject.SetActive(!gameObject.activeSelf);
     }
 
-    private void Awake()
-    {
-        
-    }
+    public void SetDisabled(bool enabled) => gameObject.SetActive(!enabled);
 
-    private void Start()
+    public void SetButtonDisabled(bool enabled)
     {
-        
-    }
-
-    private void Update()
-    {
-        
+        if(TryGetComponent(out Button button))
+        {
+            button.interactable = !enabled;
+        }
     }
 }
