@@ -9,19 +9,11 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private InputSystemUIInputModule inputModule;
 
-    [Header("Game State Broadcasts")]
-    [SerializeField] GameEvent RequestTogglePause;
-    [SerializeField] BoolGameEvent RequestPauseState;
+    private bool paused;
 
-    private GameEventClassListener togglePauseListener;
-    private GameEventClassListener<bool> pauseStateListener;
-
-#region Pause State
     public UnityEvent<bool> PauseStateBroadcast;
-
     public UnityEvent<bool> PausableBroadcast;
 
-    private bool paused;
     public bool Paused 
     {
         get => paused;
@@ -36,7 +28,11 @@ public class GameManager : MonoBehaviour
     }
 
     public bool CanPause { get; private set; }
-    #endregion
+
+    [Header("Request Game Events")]
+    [SerializeField] private GameEvent RequestTogglePause;
+    [SerializeField] private BoolGameEvent RequestPauseState;
+    [SerializeField] private BoolGameEvent RequestPreventInput;
 
     private void Awake()
     {
@@ -45,18 +41,18 @@ public class GameManager : MonoBehaviour
         if(inputModule == null)
         {
             Debug.LogError("InputSystemUIInputModule must be assigned to inputModule field.");
+            return;
         }
 
-        togglePauseListener = new GameEventClassListener(TogglePause);
-        RequestTogglePause.RegisterListener(togglePauseListener);
-
-        pauseStateListener = new GameEventClassListener<bool>(SetPausable);
-        RequestPauseState.RegisterListener(pauseStateListener);
+        RequestTogglePause.RegisterListener(new GameEventClassListener(TogglePause));
+        RequestPauseState.RegisterListener(new GameEventClassListener<bool>(SetPaused));
+        RequestPreventInput.RegisterListener(new GameEventClassListener<bool>(SetDisableInput));
     }
 
     public void Pause() => Paused = true;
     public void Play() => Paused = false;
     public void TogglePause() => Paused = !Paused;
+    public void SetPaused(bool value) => Paused = value;
 
     public void SetPausable(bool pausable)
     {
@@ -64,5 +60,11 @@ public class GameManager : MonoBehaviour
         PausableBroadcast.Invoke(pausable);
     }
 
-    public void DisableInput(bool disable) => inputModule.enabled = !disable;
+    public void SetDisableInput(bool disable)
+    {
+        if(inputModule != null)
+        {
+            inputModule.enabled = !disable;
+        }
+    }
 }

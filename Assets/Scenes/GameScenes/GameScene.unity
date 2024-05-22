@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2115309061629681876, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.135
       objectReference: {fileID: 0}
     - target: {fileID: 2115309061629681876, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -198,7 +198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6940207122529668420, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.135
       objectReference: {fileID: 0}
     - target: {fileID: 6940207122529668420, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
       propertyPath: m_LocalPosition.z
@@ -296,7 +296,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2115309061629681876, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.135
       objectReference: {fileID: 0}
     - target: {fileID: 2115309061629681876, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -357,7 +357,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6940207122529668420, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.135
       objectReference: {fileID: 0}
     - target: {fileID: 6940207122529668420, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1011,7 +1011,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2115309061629681876, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.135
       objectReference: {fileID: 0}
     - target: {fileID: 2115309061629681876, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1888,7 +1888,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
       propertyPath: startingCustom
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
       propertyPath: puzzleConfigs.Array.size
