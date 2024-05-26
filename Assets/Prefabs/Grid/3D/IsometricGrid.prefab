@@ -129,10 +129,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 517990d709d4a414cbd816ca1a32536b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  puzzleConfig: {fileID: 0}
+  puzzleConfig: {fileID: 11400000, guid: fd8f57d6158785646be34a0f3e1e2e1a, type: 2}
   gameActions: {fileID: -944628639613478452, guid: 3f409b5b940e7e146baafceab039e3a0, type: 3}
   cellParent: {fileID: 8058708970009369407}
   pieceParent: {fileID: 2928281522486224360}
+  OnPieceConsumed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: ad9b39dd487caf449bbea5edaf02daae, type: 2}
+        m_TargetAssemblyTypeName: FinishOne.GeneralUtilities.GameEvent, FinishOne.GeneralUtilities.GameEvents
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   width: 4
   height: 4
   <Board>k__BackingField: {fileID: 0}
