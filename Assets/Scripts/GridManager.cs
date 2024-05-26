@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class GridManager : MonoBehaviour
@@ -19,6 +20,10 @@ public class GridManager : MonoBehaviour
     [Header("Containers")]
     [SerializeField] private Transform cellParent;
     [SerializeField] private Transform pieceParent;
+
+    [Space]
+    [Header("Events")]
+    [SerializeField] private UnityEvent OnPieceConsumed;
 
     [Space]
     [Header("Grid Generation")]
@@ -130,7 +135,10 @@ public class GridManager : MonoBehaviour
         SetupPieceEvents();
 
         OnPiecePickedUp += PickedUpPiece;
-        OnPieceDropped += (piece, canDrop) => DroppedPiece(piece);
+        OnPieceDropped += DroppedPiece;
+
+        
+       // OnGridChanged += () => OnPieceConsumed.Invoke();
     }
 
     private void SetupPieceEvents()
@@ -142,6 +150,7 @@ public class GridManager : MonoBehaviour
             piece.OnDropSuccessful += (value) => OnPieceDropped?.Invoke(piece, value);
             piece.OnHovered += (hovered) => OnPieceHovered?.Invoke(piece, hovered);
             piece.OnIndicatorMoved += (cell) => OnPieceIndicatorMoved?.Invoke(cell);
+            piece.OnPieceMoved += () => OnPieceConsumed.Invoke();
         }
     }
 
@@ -227,7 +236,7 @@ public class GridManager : MonoBehaviour
         OnPieceHovered?.Invoke(piece, false);
     }
 
-    private void DroppedPiece(GridPiece piece)
+    private void DroppedPiece(GridPiece piece, bool canDrop)
     {
         selectedPiece = null;
     }
@@ -244,9 +253,12 @@ public class GridManager : MonoBehaviour
         {
             piece.CurrentCell.RemovePiece(piece);
         }
+
         gridPieces.Remove(piece);
 
         piece.transform.position = POOL_POSITION;
+
+       // OnPieceConsumed.Invoke();
     }
 
     #endregion
