@@ -18,6 +18,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public Action OnPickup, OnSelected;
     public Action<bool> OnDropSuccessful, OnHovered;
+    public Action OnPieceMoved;
     public Action<Cell> OnIndicatorMoved;
 
     private PieceIndicator indicatorHandler;
@@ -241,9 +242,13 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         IsHeld = false;
 
         if (CanPlaceOnIndicator)
+        {
             CurrentCell = indicatorCell;
+        }
         else
+        {
             indicatorHandler.SetColor(indicatorHandler.DefaultColor);
+        }
 
         if (visualFeedback != null)
             visualFeedback.HandleDropped(CurrentCell);
@@ -270,6 +275,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public bool UserDropPiece()
     {
+        if(CanPlaceOnIndicator && CurrentCell != indicatorCell)
+            OnPieceMoved.Invoke();
+
         PlaceOnIndicator();
         OnDropSuccessful?.Invoke(CanPlaceOnIndicator);
         return CanPlaceOnIndicator;
