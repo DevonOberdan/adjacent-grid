@@ -81,8 +81,10 @@ public class GridManager : MonoBehaviour
 
     private bool PiecesNotSet => gridPieces.Any(piece => piece.CurrentCell == null);
 
-   // public AXES GridAxes => axes;
+    // public AXES GridAxes => axes;
     #endregion
+
+    public bool Interactable { get; set; } = true;
 
     public Cell CurrentHoveredCell()
     {
@@ -379,17 +381,6 @@ public class GridManager : MonoBehaviour
             SpaceOutCells();
         }
 
-        //if (GridAxes == AXES.XY)
-        //{
-        //    cellParent.transform.localPosition = new Vector2(CellParentPositionValue, CellParentPositionValue);
-        //    transform.eulerAngles = transform.eulerAngles.NewX(-90);
-        //}
-        //else
-        //{
-        //    cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
-        //    transform.eulerAngles = Vector3.zero;
-        //}
-
         cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
         transform.eulerAngles = Vector3.zero;
 
@@ -420,7 +411,6 @@ public class GridManager : MonoBehaviour
             {
                 float width = j * CellSpacing;
                 float height = i * CellSpacing;
-
                 cells[(i*Height)+j].transform.localPosition = new Vector3(width, 0, height);
             }
         }
