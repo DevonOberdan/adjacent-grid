@@ -56,4 +56,12 @@ public static class CustomExtensionMethods
 
     }
 
+    public static Color DarkenedToPercent(this Color color, float perc)
+    {
+        float h, s, v;
+
+        Color.RGBToHSV(color, out h, out s, out v);
+        return Color.HSVToRGB(h, s, perc);
+    }
+
 }

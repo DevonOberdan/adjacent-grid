@@ -1,3 +1,4 @@
+using FinishOne.GeneralUtilities.Audio;
 using UnityEngine;
 
 public class GridAudioManager : MonoBehaviour
@@ -10,12 +11,20 @@ public class GridAudioManager : MonoBehaviour
     [SerializeField] private AudioClip failDropSound;
     [SerializeField] private AudioClip indicatorSound;
 
+    [Header("Audio Configs")]
+    [SerializeField] private AudioConfigSO pickupAudio;
+    [SerializeField] private AudioConfigSO dropAudio;
+    [SerializeField] private AudioConfigSO failDropAudio;
+    [SerializeField] private AudioConfigSO indicatorAudio;
+
     private AudioSource source;
+    private AudioPlayRequester audioPlayRequester;
     private bool pieceMoved;
 
     private void Awake()
     {
         source = GetComponent<AudioSource>();
+        audioPlayRequester = GetComponent<AudioPlayRequester>();
     }
 
     private void Start()
@@ -27,7 +36,8 @@ public class GridAudioManager : MonoBehaviour
 
     private void HandlePiecePickedUp(GridPiece piece)
     {
-        PlayClip(pickupSound);
+        // PlayClip(pickupSound);
+        PlayAudioConfig(pickupAudio);
     }
 
     private void HandlePieceDropped(GridPiece piece, bool canDrop)
@@ -36,9 +46,13 @@ public class GridAudioManager : MonoBehaviour
             return;
 
         if (canDrop)
-            PlayClip(dropSound);
+        //    PlayClip(dropSound);
+            PlayAudioConfig(dropAudio);
+
         else
-            PlayClip(failDropSound);
+          //  PlayClip(failDropSound);
+            PlayAudioConfig(failDropAudio);
+
 
         pieceMoved = false;
     }
@@ -49,7 +63,8 @@ public class GridAudioManager : MonoBehaviour
         GridPiece selectedPiece = gridManager.SelectedPiece;
         if (selectedPiece != null && cell != selectedPiece.CurrentCell)
         {
-            PlayClip(indicatorSound);
+           // PlayClip(indicatorSound);
+            PlayAudioConfig(indicatorAudio);
             pieceMoved = true;
         }
         else
@@ -63,5 +78,12 @@ public class GridAudioManager : MonoBehaviour
         if (clip == null)
             return;
         source.PlayOneShot(clip);
+    }
+    
+    private void PlayAudioConfig(AudioConfigSO audioConfig)
+    {
+        if(audioConfig == null) return;
+
+        audioPlayRequester.Request(audioConfig);
     }
 }
