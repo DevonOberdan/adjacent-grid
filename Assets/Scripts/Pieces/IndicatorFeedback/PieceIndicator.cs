@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class PieceIndicator : MonoBehaviour
 {
+    public bool CanSetColor { get; set; } = true;
+
     public Color DefaultColor { get; protected set; }
 
     public Cell CurrentCell { get; set; }

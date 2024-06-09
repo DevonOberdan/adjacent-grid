@@ -16,6 +16,8 @@ public class Cell : MonoBehaviour
     public bool Occupied => piece != null;
     public int IndexInGrid { get; private set; }
 
+    public bool CanSetIndicatorColor { get; set; } = true;
+
     public bool Hovered { get; set; }
 
     public void Init(GridManager manager, int index)

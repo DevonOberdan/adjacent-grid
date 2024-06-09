@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,7 +56,8 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
 
     public override void SetColor(Color color)
     {
-        if (currentCell == null) return;
+        if (currentCell == null || !currentCell.CanSetIndicatorColor)
+            return;
 
         Material material = GrabCellMat(currentCell);
 
@@ -73,5 +75,12 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
     public override void ShowIndicator(bool show)
     {
         SetColor(show ? DefaultColor : startingColor);
+    }
+
+    public Color StartingColor() => startingColor;
+
+    public void SetStartingColor(Color color)
+    {
+        startingColor = color;
     }
 }
