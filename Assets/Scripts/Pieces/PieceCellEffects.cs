@@ -46,7 +46,17 @@ public class PieceCellEffects : MonoBehaviour
         pieceCell.CanSetIndicatorColor = false;
     }
 
+    private void OnDisable()
+    {
+        ResetIndicator();
+    }
+
     private void OnDestroy()
+    {
+        ResetIndicator();
+    }
+
+    private void ResetIndicator()
     {
         if (pieceCell != null)
         {
