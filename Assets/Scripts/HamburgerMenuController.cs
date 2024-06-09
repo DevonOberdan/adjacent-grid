@@ -50,14 +50,4 @@ public class HamburgerMenuController : MonoBehaviour
         }
         Close();
     }
-
-    private void Start()
-    {
-        
-    }
-
-    private void Update()
-    {
-        
-    }
 }
