@@ -13,6 +13,7 @@ public class TweenUtilities : MonoBehaviour
     #region Scale Fields
     private Vector3 startScale;
     private Sequence scaleSequence;
+    private Tween scaleTween;
 
     private float ScaleBottomRange => 1 - (scaleFactor - 1);
     #endregion
@@ -59,6 +60,13 @@ public class TweenUtilities : MonoBehaviour
             ScaleLoop();
         else
             ScaleLoopEnd();
+    }
+
+    public void Scale(bool scale)
+    {
+        Kill(scaleTween);
+
+        scaleTween = transform.DOScale(scale ? startScale * scaleFactor : startScale, 0.1f);
     }
 
     private void ColorLoop()
@@ -122,5 +130,11 @@ public class TweenUtilities : MonoBehaviour
     {
         if (s.IsActive())
             s.Kill();
+    }
+
+    private void Kill(Tween tween)
+    {
+        if(tween.IsActive())
+            tween.Kill();
     }
 }

@@ -300,7 +300,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #region Input Callbacks
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(!Interactable) return;
+        if(!Interactable || !grid.Interactable) return;
 
         IsHeld = true;
         HandlePickup();
@@ -309,14 +309,14 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!Interactable) return;
+        if (!Interactable || !grid.Interactable) return;
 
         UserDropPiece();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (grid.SelectedPiece != null || !Interactable)
+        if (grid.SelectedPiece != null || !Interactable || !grid.Interactable)
             return;
 
         IsHovered = true;
@@ -325,7 +325,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (grid.SelectedPiece != null || !Interactable) 
+        if (grid.SelectedPiece != null || !Interactable || !grid.Interactable) 
             return;
 
         IsHovered = false;
