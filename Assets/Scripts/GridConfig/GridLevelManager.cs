@@ -1,3 +1,4 @@
+using FinishOne.GeneralUtilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,9 +10,12 @@ public class GridLevelManager : MonoBehaviour
 
     [SerializeField] private GridPuzzleConfigSO[] puzzleConfigs;
 
-    [SerializeField] private UnityEvent<int> OnNewLevel;
+    public UnityEvent<int> OnNewLevel;
     [SerializeField] private UnityEvent OnWonGame;
 
+    [SerializeField] private GameEvent OnRequestNext, OnRequestRestart, OnRequestDecrement;
+
+    public int CompletedLevelCount { get; private set; } = 0;
 
     [SerializeField] private TMP_Text levelText;
 
@@ -24,6 +28,7 @@ public class GridLevelManager : MonoBehaviour
 
     public GridManager GridManager => gridManager;
     public string NewPuzzleName => newPuzzleName;
+    public int PuzzleCount => puzzleConfigs.Length;
 
     private bool LastLevelComplete => levelIndex == puzzleConfigs.Length;
 
@@ -35,6 +40,8 @@ public class GridLevelManager : MonoBehaviour
         set
         {
             levelIndex = Mathf.Clamp(value, 0, puzzleConfigs.Length);
+
+            //CompletedLevelCount = Mathf.Max(CompletedLevelCount, levelIndex);
 
             if (LastLevelComplete)
             {
@@ -50,6 +57,10 @@ public class GridLevelManager : MonoBehaviour
 
     private void Start()
     {
+        OnRequestNext.RegisterListener(new GameEventClassListener(Increment));
+        OnRequestDecrement.RegisterListener(new GameEventClassListener(Decrement));
+        OnRequestRestart.RegisterListener(new GameEventClassListener(ResetCurrentLevel));
+
         if (startingCustom)
             levelIndex = -1;
         else
@@ -72,7 +83,11 @@ public class GridLevelManager : MonoBehaviour
     public void Decrement() => LevelIndex--;
     public void Increment() => LevelIndex++;
 
+    public void SetLevelIndex(int index) => LevelIndex = index;
+
     public void ResetCurrentLevel() => LevelIndex = levelIndex;
+
+    public void NewLevelBeaten() => CompletedLevelCount++;
 
     public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level + 1}/{puzzleConfigs.Length}";
 }
