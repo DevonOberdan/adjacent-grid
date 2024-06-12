@@ -15,25 +15,21 @@ public class LevelSelectController : MonoBehaviour
 
     [SerializeField] private MeshRenderer background;
 
-    [SerializeField] private Button leftButton, rightButton, playButton, returnButton;
+    [SerializeField] private Button leftButton, rightButton, playButton;
 
     [SerializeField] private GridLevelManager levelManager;
     [SerializeField] private PostProcessingController postProcess;
     [SerializeField] private GameObject lockedImage;
-    [SerializeField] private int returnRange = 5;
     [SerializeField] private bool showLock;
 
     Material backgroundMat;
     Color startColor;
     Color tweenedColor;
 
-
     private bool viewingLockedLevels;
     
     private const string BACKGROUND_COLOR = "_Water_Color";
 
-    List<GridPiece> currentPieces;
-    GridPuzzleConfigSO currentConfig;
     int currentLevel;
 
     private void Awake()
@@ -66,13 +62,22 @@ public class LevelSelectController : MonoBehaviour
             
             lockedImage.SetActive(currentLevelLocked);
             playButton.interactable = !currentLevelLocked;
-            returnButton.gameObject.SetActive(level > (levelManager.CompletedLevelCount + returnRange));
-
             postProcess.EnableDepthOfField(currentLevelLocked);
+
+            if(currentLevelLocked)
+            {
+                // shake lockedImage
+            }
         }
         else
         {
             rightButton.interactable = level < levelManager.CompletedLevelCount;
+        }
+
+        // now viewing locked level
+        if (currentLevelLocked && !viewingLockedLevels)
+        {
+
         }
 
         viewingLockedLevels = currentLevelLocked;
@@ -80,12 +85,8 @@ public class LevelSelectController : MonoBehaviour
 
     public void MoveToLevelSelect()
     {
-       // currentPieces = levelManager.GridManager.Pieces;
-        //currentConfig = levelManager.GridManager.PuzzleConfig;
         currentLevel = levelManager.LevelIndex;
-
         levelManager.SetLevelIndex(currentLevel);
-
         postProcess.EnableVignette(true);
 
         Camera.main.transform.DOMove(levelSelectView.position, transitionTime).SetEase(ease).OnComplete(EnteredLevelSelect);
@@ -118,8 +119,6 @@ public class LevelSelectController : MonoBehaviour
 
     private void ExitedLevelSelect()
     {
-        currentPieces = null;
-        currentConfig = null;
         currentLevel = -1;
     }
 
