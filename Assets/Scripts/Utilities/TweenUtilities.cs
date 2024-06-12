@@ -46,6 +46,7 @@ public class TweenUtilities : MonoBehaviour
             startColor = graphic.color;
     }
 
+    #region Color
     public void SetColorLoop(bool loop)
     {
         if (loop)
@@ -54,24 +55,9 @@ public class TweenUtilities : MonoBehaviour
             ColorLoopEnd();
     }
 
-    public void SetScaleLoop(bool loop)
-    {
-        if (loop)
-            ScaleLoop();
-        else
-            ScaleLoopEnd();
-    }
-
-    public void Scale(bool scale)
-    {
-        Kill(scaleTween);
-
-        scaleTween = transform.DOScale(scale ? startScale * scaleFactor : startScale, 0.1f);
-    }
-
     private void ColorLoop()
     {
-        if(mat == null && graphic == null)
+        if (mat == null && graphic == null)
         {
             Debug.LogError("Trying to Tween color on an object with no visual component.");
             return;
@@ -99,6 +85,23 @@ public class TweenUtilities : MonoBehaviour
             mat.color = startColor;
         else if (graphic != null)
             graphic.color = startColor;
+    }
+
+    #endregion
+
+    public void SetScaleLoop(bool loop)
+    {
+        if (loop)
+            ScaleLoop();
+        else
+            ScaleLoopEnd();
+    }
+
+    public void Scale(bool scale)
+    {
+        Kill(scaleTween);
+
+        scaleTween = transform.DOScale(scale ? startScale * scaleFactor : startScale, 0.1f);
     }
 
     private void ScaleLoop()

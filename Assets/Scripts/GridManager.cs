@@ -132,6 +132,9 @@ public class GridManager : MonoBehaviour
         if(gridPieces == null)
             gridPieces = new();
 
+        if(gridPiecePool == null)
+            gridPiecePool = new();
+
         gameActions.Enable();
         pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");
     }

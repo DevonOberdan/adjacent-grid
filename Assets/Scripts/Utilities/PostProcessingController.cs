@@ -39,4 +39,11 @@ public class PostProcessingController : MonoBehaviour
     {
         Vignette.intensity.value = intensity;
     }
+
+    private void OnDestroy()
+    {
+        EnableVignette(false);
+        SetVignetteIntensity(VignetteRange.x);
+        EnableDepthOfField(false);
+    }
 }

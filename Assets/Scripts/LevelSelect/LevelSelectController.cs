@@ -1,12 +1,12 @@
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
+using FinishOne.GeneralUtilities;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class LevelSelectController : MonoBehaviour
 {
+    [SerializeField] private GameEvent OnEnterLevelSelect;
+
     [SerializeField] private Transform gameView, levelSelectView;
     [SerializeField] private float transitionTime;
     [SerializeField] private float backgroundDarkenPerc;
@@ -14,7 +14,6 @@ public class LevelSelectController : MonoBehaviour
     [SerializeField] private Ease ease;
 
     [SerializeField] private MeshRenderer background;
-
     [SerializeField] private Button leftButton, rightButton, playButton;
 
     [SerializeField] private GridLevelManager levelManager;
@@ -22,15 +21,24 @@ public class LevelSelectController : MonoBehaviour
     [SerializeField] private GameObject lockedImage;
     [SerializeField] private bool showLock;
 
-    Material backgroundMat;
-    Color startColor;
-    Color tweenedColor;
+    [SerializeField] Transform lockIcon;
+    [SerializeField] float lockShakeFactor;
+
+    private Material backgroundMat;
+
+   // private Tween camTween, waterTween, vignetteTween;
+
+    private Tween shakeTween;
+    private Vector3 ShakeFactor;
+
+    private Color startColor, tweenedColor;
 
     private bool viewingLockedLevels;
-    
+    private int currentLevel;
+
     private const string BACKGROUND_COLOR = "_Water_Color";
 
-    int currentLevel;
+    private bool entered = false;
 
     private void Awake()
     {
@@ -39,6 +47,8 @@ public class LevelSelectController : MonoBehaviour
         tweenedColor = startColor;
 
         levelManager.OnNewLevel.AddListener(ConfigureFromLevel);
+
+        ShakeFactor = new Vector3(0, 0, lockShakeFactor);
     }
 
     private void Update()
@@ -46,7 +56,6 @@ public class LevelSelectController : MonoBehaviour
         if(backgroundMat.GetColor(BACKGROUND_COLOR) != tweenedColor)
         {
             backgroundMat.SetColor(BACKGROUND_COLOR, tweenedColor);
-
         }
     }
 
@@ -56,22 +65,21 @@ public class LevelSelectController : MonoBehaviour
 
         bool currentLevelLocked = level > levelManager.CompletedLevelCount;
 
-        if (showLock)
-        {
-            rightButton.interactable = level < levelManager.PuzzleCount - 1;
-            
-            lockedImage.SetActive(currentLevelLocked);
-            playButton.interactable = !currentLevelLocked;
-            postProcess.EnableDepthOfField(currentLevelLocked);
+        rightButton.interactable = level < levelManager.PuzzleCount - 1;
 
-            if(currentLevelLocked)
-            {
-                // shake lockedImage
-            }
-        }
-        else
+        lockedImage.SetActive(currentLevelLocked);
+        playButton.interactable = !currentLevelLocked;
+        postProcess.EnableDepthOfField(currentLevelLocked);
+
+        if (currentLevelLocked)
         {
-            rightButton.interactable = level < levelManager.CompletedLevelCount;
+            if (shakeTween.IsActive())
+            {
+                shakeTween.Kill();
+                lockIcon.eulerAngles = lockIcon.eulerAngles.NewZ(0);
+            }
+
+            shakeTween = lockIcon.DOPunchRotation(ShakeFactor, 0.5f, 8);
         }
 
         // now viewing locked level
@@ -89,7 +97,10 @@ public class LevelSelectController : MonoBehaviour
         levelManager.SetLevelIndex(currentLevel);
         postProcess.EnableVignette(true);
 
-        Camera.main.transform.DOMove(levelSelectView.position, transitionTime).SetEase(ease).OnComplete(EnteredLevelSelect);
+        if(Camera.main != null)
+        {
+            Camera.main.transform.DOMove(levelSelectView.position, transitionTime).SetEase(ease).OnComplete(EnteredLevelSelect);
+        }
         DOTween.To(() => tweenedColor, x => tweenedColor = x, startColor.DarkenedToPercent(0.46f), transitionTime).SetEase(ease);
         DOTween.To(() => postProcess.VignetteRange.x, x => postProcess.SetVignetteIntensity(x), postProcess.VignetteRange.y, transitionTime).SetEase(ease);
     }
@@ -110,6 +121,17 @@ public class LevelSelectController : MonoBehaviour
         {
             levelManager.SetLevelIndex(currentLevel);
         }
+    }
+
+    public void StartInLevelSelect()
+    {
+        if (entered)
+            return;
+
+        entered = true;
+
+        OnEnterLevelSelect.Raise();
+
     }
 
     private void EnteredLevelSelect()
