@@ -115,6 +115,14 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void SetNewPieces(List<GridPiece> newPieces)
+    {
+        ClearPieces();
+        GenerateFromList(puzzleConfig.Pieces);
+        SetPiecesToGrid();
+        SetupPieceEvents();
+    }
+
     private void Awake()
     {
         Instance = this;

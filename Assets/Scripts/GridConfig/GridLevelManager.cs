@@ -34,10 +34,10 @@ public class GridLevelManager : MonoBehaviour
 
     private const string LEVEL_TEXT = "Level ";
 
-    private int LevelIndex
+    public int LevelIndex
     {
         get => levelIndex;
-        set
+        private set
         {
             levelIndex = Mathf.Clamp(value, 0, puzzleConfigs.Length);
 
