@@ -41,8 +41,6 @@ public class GridLevelManager : MonoBehaviour
         {
             levelIndex = Mathf.Clamp(value, 0, puzzleConfigs.Length);
 
-            //CompletedLevelCount = Mathf.Max(CompletedLevelCount, levelIndex);
-
             if (LastLevelComplete)
             {
                 OnWonGame.Invoke();

@@ -2016,6 +2016,7 @@ GameObject:
   - component: {fileID: 1855414419}
   - component: {fileID: 1855414421}
   - component: {fileID: 1855414422}
+  - component: {fileID: 1855414423}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -2262,6 +2263,7 @@ MonoBehaviour:
   showLock: 1
   lockIcon: {fileID: 336495404}
   lockShakeFactor: 5
+  lockAudio: {fileID: 11400000, guid: 3deaf5433cbc676448a1a2c0169f6dea, type: 2}
 --- !u!114 &1855414422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2290,6 +2292,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1855414423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855414417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d9dc0f09c507f4cb2365db3abe3d9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultAudio: {fileID: 0}
+  audioPlayEvent: {fileID: 11400000, guid: 3130a41301c211442b110da9568fea65, type: 2}
 --- !u!1 &1872614024
 GameObject:
   m_ObjectHideFlags: 0

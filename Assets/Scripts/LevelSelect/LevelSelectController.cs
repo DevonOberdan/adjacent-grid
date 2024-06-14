@@ -1,5 +1,7 @@
 using DG.Tweening;
 using FinishOne.GeneralUtilities;
+using FinishOne.GeneralUtilities.Audio;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,9 +23,9 @@ public class LevelSelectController : MonoBehaviour
     [SerializeField] private GameObject lockedImage;
     [SerializeField] private bool showLock;
 
-    [SerializeField] Transform lockIcon;
-    [SerializeField] float lockShakeFactor;
-
+    [SerializeField] private Transform lockIcon;
+    [SerializeField] private float lockShakeFactor;
+    [SerializeField] private AudioConfigSO lockAudio;
     private Material backgroundMat;
 
    // private Tween camTween, waterTween, vignetteTween;
@@ -40,15 +42,27 @@ public class LevelSelectController : MonoBehaviour
 
     private bool entered = false;
 
+    private AudioConfigSO startButtonAudio;
+    private ButtonAudioHelper leftArrowAudio, rightArrowAudio;
+
+    private Coroutine setButtonCoroutine;
+
     private void Awake()
     {
         backgroundMat = background.material;
         startColor = backgroundMat.GetColor(BACKGROUND_COLOR);
         tweenedColor = startColor;
 
-        levelManager.OnNewLevel.AddListener(ConfigureFromLevel);
-
         ShakeFactor = new Vector3(0, 0, lockShakeFactor);
+
+        leftArrowAudio = leftButton.GetComponent<ButtonAudioHelper>();
+        rightArrowAudio = rightButton.GetComponent<ButtonAudioHelper>();
+        startButtonAudio = leftArrowAudio.AudioConfig;
+    }
+
+    private void Start()
+    {
+        levelManager.OnNewLevel.AddListener(ConfigureFromLevel);
     }
 
     private void Update()
@@ -62,10 +76,9 @@ public class LevelSelectController : MonoBehaviour
     public void ConfigureFromLevel(int level)
     {
         leftButton.interactable = level > 0;
+        rightButton.interactable = level < levelManager.PuzzleCount - 1;
 
         bool currentLevelLocked = level > levelManager.CompletedLevelCount;
-
-        rightButton.interactable = level < levelManager.PuzzleCount - 1;
 
         lockedImage.SetActive(currentLevelLocked);
         playButton.interactable = !currentLevelLocked;
@@ -82,13 +95,24 @@ public class LevelSelectController : MonoBehaviour
             shakeTween = lockIcon.DOPunchRotation(ShakeFactor, 0.5f, 8);
         }
 
-        // now viewing locked level
-        if (currentLevelLocked && !viewingLockedLevels)
-        {
 
+        bool lockedLeft = (level - 1) > levelManager.CompletedLevelCount;
+        bool lockedRight = (level + 1) > levelManager.CompletedLevelCount;
+
+        if(setButtonCoroutine != null)
+        {
+            StopCoroutine(setButtonCoroutine);
         }
+        setButtonCoroutine = StartCoroutine(SetArrowSounds(lockedLeft, lockedRight));
 
         viewingLockedLevels = currentLevelLocked;
+    }
+
+    private IEnumerator SetArrowSounds(bool lockedLeft, bool lockedRight)
+    {
+        yield return new WaitForEndOfFrame();
+        leftArrowAudio.SetAudio(lockedLeft ? lockAudio : startButtonAudio);
+        rightArrowAudio.SetAudio(lockedRight ? lockAudio : startButtonAudio);
     }
 
     public void MoveToLevelSelect()
@@ -142,11 +166,5 @@ public class LevelSelectController : MonoBehaviour
     private void ExitedLevelSelect()
     {
         currentLevel = -1;
-    }
-
-
-    private void EnterLockedLevelView(bool viewingLockedLevel)
-    {
-
     }
 }
