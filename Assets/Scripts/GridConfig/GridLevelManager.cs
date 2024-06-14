@@ -15,6 +15,8 @@ public class GridLevelManager : MonoBehaviour
 
     [SerializeField] private GameEvent OnRequestNext, OnRequestRestart, OnRequestDecrement;
 
+    private GameEventClassListener nextListener, restartListener, decremenetListener;
+
     public int CompletedLevelCount { get; private set; } = 0;
 
     [SerializeField] private TMP_Text levelText;
@@ -53,12 +55,19 @@ public class GridLevelManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        nextListener = new GameEventClassListener(Increment);
+        decremenetListener = new GameEventClassListener(Decrement);
+        restartListener = new GameEventClassListener(ResetCurrentLevel);
+
+        OnRequestNext.RegisterListener(nextListener);
+        OnRequestDecrement.RegisterListener(decremenetListener);
+        OnRequestRestart.RegisterListener(restartListener);
+    }
+
     private void Start()
     {
-        OnRequestNext.RegisterListener(new GameEventClassListener(Increment));
-        OnRequestDecrement.RegisterListener(new GameEventClassListener(Decrement));
-        OnRequestRestart.RegisterListener(new GameEventClassListener(ResetCurrentLevel));
-
         if (startingCustom)
             levelIndex = -1;
         else
@@ -76,6 +85,17 @@ public class GridLevelManager : MonoBehaviour
             Decrement();
         else if (Input.GetKeyUp(KeyCode.M))
             Increment();
+    }
+
+    private void OnDestroy()
+    {
+        OnRequestNext.UnregisterListener(nextListener);
+        OnRequestDecrement.UnregisterListener(decremenetListener);
+        OnRequestRestart.UnregisterListener(restartListener);
+
+        nextListener = null;
+        decremenetListener = null;
+        restartListener = null;
     }
 
     public void Decrement() => LevelIndex--;
