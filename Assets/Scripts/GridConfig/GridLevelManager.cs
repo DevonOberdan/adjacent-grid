@@ -82,9 +82,15 @@ public class GridLevelManager : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.N))
+        {
+            NewLevelBeaten();
             Decrement();
+        }
         else if (Input.GetKeyUp(KeyCode.M))
+        {
+            NewLevelBeaten();
             Increment();
+        }
     }
 
     private void OnDestroy()
