@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5711068635142058961, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
       propertyPath: m_Name
-      value: FallingCellPiece Variant
+      value: FallingCellPiece 1
       objectReference: {fileID: 0}
     - target: {fileID: 6184026729029522652, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
       propertyPath: OnCellSet.m_PersistentCalls.m_Calls.Array.size
@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7035708977858143049, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.165
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7035708977858143049, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
       propertyPath: m_LocalPosition.z

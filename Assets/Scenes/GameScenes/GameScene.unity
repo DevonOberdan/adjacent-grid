@@ -2271,7 +2271,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1855414417}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f5eae08e005cda4c8cb0d83ec66be70, type: 3}
   m_Name: 
@@ -3113,6 +3113,10 @@ PrefabInstance:
       propertyPath: gridManager
       value: 
       objectReference: {fileID: 4157748453854324709}
+    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
+      propertyPath: startingCustom
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
       propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.size
       value: 3

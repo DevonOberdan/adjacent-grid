@@ -342,6 +342,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private void OnValidate()
     {
         HandleDroppedInPieces();
+        //transform.localPosition = transform.localPosition.NewY(0);
     }
 
     /// <summary>
@@ -352,9 +353,14 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 #if UNITY_EDITOR
         if (PrefabStageUtility.GetCurrentPrefabStage() == null && !PrefabUtility.IsPartOfPrefabAsset(gameObject))
         {
+            if (transform.parent != null && transform.parent.CompareTag("GridPieceParent"))
+                return;
+
             GameObject parent = GameObject.FindGameObjectWithTag("GridPieceParent");
             if (parent != null)
+            {
                 transform.parent = parent.transform;
+            }
         }
 #endif
     }
