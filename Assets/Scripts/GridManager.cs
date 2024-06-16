@@ -115,6 +115,14 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void SetNewPieces(List<GridPiece> newPieces)
+    {
+        ClearPieces();
+        GenerateFromList(puzzleConfig.Pieces);
+        SetPiecesToGrid();
+        SetupPieceEvents();
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -123,6 +131,9 @@ public class GridManager : MonoBehaviour
 
         if(gridPieces == null)
             gridPieces = new();
+
+        if(gridPiecePool == null)
+            gridPiecePool = new();
 
         gameActions.Enable();
         pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");

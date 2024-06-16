@@ -11,6 +11,10 @@ public class ButtonAudioHelper : MonoBehaviour
 
     private AudioPlayRequester audioPlayRequester;
 
+    public AudioConfigSO AudioConfig => audioConfig;
+
+    public bool Muted { get; set; }
+
     private void Awake()
     {
         button = GetComponent<Button>();
@@ -31,6 +35,15 @@ public class ButtonAudioHelper : MonoBehaviour
             Debug.LogError($"{nameof(ButtonAudioHelper)} is not attached to a Button of Toggle component.", gameObject);
         }
     }
+    
+    public void SetAudio(AudioConfigSO newAudio) => audioConfig = newAudio;
 
-    private void Click() => audioPlayRequester.Request(audioConfig);
+    private void Click()
+    {
+        if (!Muted)
+        {
+            print("Playing button sound");
+            audioPlayRequester.Request(audioConfig);
+        }
+    }
 }
