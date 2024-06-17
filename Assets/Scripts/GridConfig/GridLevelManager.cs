@@ -1,18 +1,25 @@
 using FinishOne.GeneralUtilities;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GridLevelManager : MonoBehaviour
+[Serializable]
+public class LevelData : ISaveable
+{
+    [field: SerializeField] public string Id { get; set; }
+
+    public int Index;
+}
+
+public class GridLevelManager : MonoBehaviour, IBind<LevelData>
 {
     [SerializeField] private GridManager gridManager;
     [SerializeField] private bool startingCustom;
-
     [SerializeField] private GridPuzzleConfigSO[] puzzleConfigs;
 
     public UnityEvent<int> OnNewLevel;
     [SerializeField] private UnityEvent OnWonGame;
-
     [SerializeField] private GameEvent OnRequestNext, OnRequestRestart, OnRequestDecrement;
 
     private GameEventClassListener nextListener, restartListener, decremenetListener;
@@ -26,15 +33,14 @@ public class GridLevelManager : MonoBehaviour
 
     [SerializeField] private string newPuzzleName;
 
-    private int levelIndex;
-
     public GridManager GridManager => gridManager;
     public string NewPuzzleName => newPuzzleName;
     public int PuzzleCount => puzzleConfigs.Length;
-
     private bool LastLevelComplete => levelIndex == puzzleConfigs.Length;
 
     private const string LEVEL_TEXT = "Level ";
+
+    private int levelIndex;
 
     public int LevelIndex
     {
@@ -55,6 +61,22 @@ public class GridLevelManager : MonoBehaviour
         }
     }
 
+    #region Save Data
+
+    [Header("Save Data")]
+    [SerializeField] private LevelData data;
+    [field: SerializeField] public string Id { get; set; } = "LevelManager";
+
+    public void Bind(LevelData data)
+    {
+        this.data = data;
+        this.data.Id = Id;
+
+        CompletedLevelCount = data.Index;
+        LevelIndex = CompletedLevelCount;
+    }
+    #endregion
+
     private void Awake()
     {
         nextListener = new GameEventClassListener(Increment);
@@ -70,25 +92,20 @@ public class GridLevelManager : MonoBehaviour
     {
         if (startingCustom)
             levelIndex = -1;
-        else
-            Invoke(nameof(StartGame), 0.1f);
-    }
-
-    private void StartGame()
-    {
-        LevelIndex = 0;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.N))
         {
-            NewLevelBeaten();
             Decrement();
         }
         else if (Input.GetKeyUp(KeyCode.M))
         {
-            NewLevelBeaten();
+            if(levelIndex == CompletedLevelCount)
+            {
+                NewLevelBeaten();
+            }
             Increment();
         }
     }
@@ -102,6 +119,11 @@ public class GridLevelManager : MonoBehaviour
         nextListener = null;
         decremenetListener = null;
         restartListener = null;
+
+        if(SaveSystem.Instance != null)
+        {
+            SaveSystem.Instance.SaveGame();
+        }
     }
 
     public void Decrement() => LevelIndex--;
@@ -111,7 +133,11 @@ public class GridLevelManager : MonoBehaviour
 
     public void ResetCurrentLevel() => LevelIndex = levelIndex;
 
-    public void NewLevelBeaten() => CompletedLevelCount++;
+    public void NewLevelBeaten()
+    {
+        CompletedLevelCount++;
+        data.Index = CompletedLevelCount;
+    }
 
     public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level + 1}/{puzzleConfigs.Length}";
 }
