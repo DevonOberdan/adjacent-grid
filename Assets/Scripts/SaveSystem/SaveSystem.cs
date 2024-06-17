@@ -16,10 +16,9 @@ public interface IBind<TData> where TData: ISaveable
 
 public class SaveSystem : MonoBehaviour
 {
-    [SerializeField] private IntGameEvent LoadedIndexBroadcast;
-
     public static SaveSystem Instance { get; private set; }
 
+    [SerializeField] private IntGameEvent LoadedIndexBroadcast;
     [SerializeField] public GameData gameData;
     
     private IDataService dataService;
@@ -39,7 +38,6 @@ public class SaveSystem : MonoBehaviour
 
     public void BindData()
     {
-        Debug.Log("Data bound!");
         gameData.LevelData = Bind<GridLevelManager, LevelData>(gameData.LevelData);
     }
 
@@ -51,8 +49,8 @@ public class SaveSystem : MonoBehaviour
             if (data == null)
             {
                 data = new TData { Id = entity.Id };
-                Debug.Log("Creating new data, "+data.Id);
             }
+
             entity.Bind(data);
 
             return data;
