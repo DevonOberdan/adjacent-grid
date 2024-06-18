@@ -15,6 +15,11 @@ public class GameUISaveController : MonoBehaviour
 
     private void Start()
     {
+        if (SaveSystem.Instance.gameData == null)
+        {
+            SaveSystem.Instance.NewGame();
+        }
+
         if (!SaveSystem.Instance.gameData.NewGame)
         {
             tutorialTextRoot.SetActive(false);

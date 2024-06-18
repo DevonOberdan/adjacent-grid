@@ -22,6 +22,7 @@ public class SaveSystem : MonoBehaviour
     [SerializeField] public GameData gameData;
     
     private IDataService dataService;
+    private bool SavingAllowed;
 
     private void Awake()
     {
@@ -44,28 +45,29 @@ public class SaveSystem : MonoBehaviour
     private TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
     {
         var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
+        
         if (entity != null)
         {
-            if (data == null)
-            {
-                data = new TData { Id = entity.Id };
-            }
-
+            data ??= new TData { Id = entity.Id };
             entity.Bind(data);
-
             return data;
         }
 
         return default;
     }
 
-    public void NewGame()
+    public void NewGame(bool allowSaving = true)
     {
+        Debug.Log("New Game!");
         gameData = new GameData("Game");
+        SavingAllowed = allowSaving;
     }
 
     public void SaveGame()
     {
+        if (!SavingAllowed)
+            return;
+
         gameData.NewGame = false;
         dataService.Save(gameData);
     }
@@ -73,6 +75,7 @@ public class SaveSystem : MonoBehaviour
     public void LoadGame(string name = "Game")
     {
         gameData = dataService.Load(name);
+        SavingAllowed = true;
     }
 
     public void ReloadGame() => LoadGame(gameData.Name);

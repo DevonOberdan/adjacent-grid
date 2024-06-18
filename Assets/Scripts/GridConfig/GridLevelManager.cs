@@ -72,8 +72,11 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
         this.data = data;
         this.data.Id = Id;
 
-        CompletedLevelCount = data.Index;
-        LevelIndex = CompletedLevelCount;
+        if (!startingCustom)
+        {
+            CompletedLevelCount = data.Index;
+            LevelIndex = CompletedLevelCount;
+        }
     }
     #endregion
 
