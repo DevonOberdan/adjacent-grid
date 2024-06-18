@@ -696,7 +696,7 @@ MonoBehaviour:
   startHeight: 250
   endHeight: 450
   ease: 27
-  tween: 0
+  tween: 1
 --- !u!1 &2421059348116811297
 GameObject:
   m_ObjectHideFlags: 0
