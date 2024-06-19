@@ -31,7 +31,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private Renderer rend;
     private Collider pieceCollider;
 
-    private Color pieceColor;
+    [SerializeField] private Color pieceColor;
     private bool canPlaceOnIndicator;
 
     #region Properties
@@ -124,7 +124,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             pieceCollider = GetComponentInChildren<Collider>();
 
         rend = gameObject.GrabRenderer();
-        pieceColor = rend.GetColor();
+       // pieceColor = rend.GetColor();
         pieceCollider.enabled = Interactable;
 
         if(TryGetComponent(out indicatorHandler))

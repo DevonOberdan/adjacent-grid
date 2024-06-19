@@ -52,6 +52,7 @@ MonoBehaviour:
   OnCellSet:
     m_PersistentCalls:
       m_Calls: []
+  pieceColor: {r: 1, g: 0.61960787, b: 0, a: 1}
 --- !u!114 &6380177604508458252
 MonoBehaviour:
   m_ObjectHideFlags: 0
