@@ -2,24 +2,49 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuSaveController : MonoBehaviour
 {
-    [SerializeField] private TMP_Text buttonText;
+    [SerializeField] private Button newGameButton, continueButton, levelButton;
+   // private TMP_Text newText, continueText
+    private void Awake()
+    {
+        
+    }
 
     private void Start()
     {
         SaveSystem.Instance.LoadGame();
 
-        buttonText.text = SaveSystem.Instance.gameData == null ? "Play" : "Continue";
+        bool noData = SaveSystem.Instance.gameData == null;
+
+        if (noData)
+        {
+            continueButton.interactable = false;
+        }
+        else
+        {
+            bool allLevelsBeat = SaveSystem.Instance.gameData.LevelData.AllLevelsComplete;
+            continueButton.interactable = !allLevelsBeat;
+        }
     }
 
     public void StartNewGame()
     {
-        if(SaveSystem.Instance.gameData == null || SaveSystem.Instance.gameData.Name.Equals(string.Empty))
-        {
-            SaveSystem.Instance.NewGame();
-        }
+        GameManager.StartInLevelSelect = false;
+
+        SaveSystem.Instance.NewGame();
+    }
+
+    public void ContinueGame()
+    {
+        GameManager.StartInLevelSelect = false;
+    }
+
+    public void HandleLevelSelect()
+    {
+        GameManager.StartInLevelSelect = true;
     }
 
     private void OnApplicationQuit()

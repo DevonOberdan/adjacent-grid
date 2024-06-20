@@ -20,14 +20,19 @@ public class GameUISaveController : MonoBehaviour
             SaveSystem.Instance.NewGame();
         }
 
-        if (!SaveSystem.Instance.gameData.NewGame)
+        if (GameManager.StartInLevelSelect)
         {
-            tutorialTextRoot.SetActive(false);
-            ExitLevelSelectEvent.Raise();
+            EnterLevelSelectEvent.Raise();
+            GameManager.StartInLevelSelect = false;
         }
         else
         {
-            EnterLevelSelectEvent.Raise();
+            ExitLevelSelectEvent.Raise();
+        }
+
+        if (!SaveSystem.Instance.gameData.NewGame)
+        {
+            tutorialTextRoot.SetActive(false);
         }
     }
 }

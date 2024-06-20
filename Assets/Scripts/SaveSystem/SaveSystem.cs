@@ -28,7 +28,13 @@ public class SaveSystem : MonoBehaviour
     {
         Instance = this;
 
+#if UNITY_EDITOR
         dataService = new FileDataService(new JsonSerializer());
+#elif UNITY_WEBGL
+        dataService = new ItchDataService(new JsonSerializer());
+#else
+        dataService = new FileDataService(new JsonSerializer());
+#endif
     }
 
     private void OnDestroy()
@@ -65,7 +71,7 @@ public class SaveSystem : MonoBehaviour
 
     public void SaveGame()
     {
-        if (!SavingAllowed)
+        if (!SavingAllowed || gameData == null)
             return;
 
         gameData.NewGame = false;

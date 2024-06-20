@@ -10,6 +10,7 @@ public class LevelData : ISaveable
     [field: SerializeField] public string Id { get; set; }
 
     public int Index;
+    public bool AllLevelsComplete;
 }
 
 public class GridLevelManager : MonoBehaviour, IBind<LevelData>
@@ -52,6 +53,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
             if (LastLevelComplete)
             {
                 OnWonGame.Invoke();
+                data.AllLevelsComplete = true;
             }
             else
             {
