@@ -18,7 +18,6 @@ public class SaveSystem : MonoBehaviour
 {
     public static SaveSystem Instance { get; private set; }
 
-    [SerializeField] private IntGameEvent LoadedIndexBroadcast;
     [SerializeField] public GameData gameData;
     
     private IDataService dataService;
@@ -31,7 +30,7 @@ public class SaveSystem : MonoBehaviour
 #if UNITY_EDITOR
         dataService = new FileDataService(new JsonSerializer());
 #elif UNITY_WEBGL
-        dataService = new ItchDataService(new JsonSerializer());
+        dataService = new FileDataService(new JsonSerializer(), "idbfs/adjacent-grid-game_sgwhf94hgfw/");
 #else
         dataService = new FileDataService(new JsonSerializer());
 #endif

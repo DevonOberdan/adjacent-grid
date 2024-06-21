@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor;
 using UnityEngine;
 
 namespace FinishOne.SaveSystem
@@ -12,9 +10,9 @@ namespace FinishOne.SaveSystem
         private string dataPath;
         private string fileExtension;
 
-        public FileDataService(ISerializer serializer)
+        public FileDataService(ISerializer serializer, string path = "")
         {
-            this.dataPath = Application.persistentDataPath;
+            this.dataPath = path.Equals(string.Empty) ? Application.persistentDataPath : path;
             this.fileExtension = "json";
             this.serializer = serializer;
         }
