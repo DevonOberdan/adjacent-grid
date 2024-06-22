@@ -78,7 +78,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
         if (!startingCustom)
         {
             CompletedLevelCount = data.Index;
-            LevelIndex = CompletedLevelCount;
+            LevelIndex = Mathf.Clamp(CompletedLevelCount, 0, puzzleConfigs.Length-1);
         }
     }
     #endregion

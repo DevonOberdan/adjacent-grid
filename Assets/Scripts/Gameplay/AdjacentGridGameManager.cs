@@ -345,7 +345,6 @@ public class AdjacentGridGameManager : MonoBehaviour
         // new cell has blocking piece OR (a piece of the same type that is not in the current group)
         if (cellPiece != null && (cellPiece.Consumable == false || (cellPiece.IsOfSameType(piece) && !activeGrouping.Contains(cellPiece))))
         {
-            Debug.Log("Piece would land on invalid piece "+cellPiece, piece.gameObject);
             return false;
         }
 
