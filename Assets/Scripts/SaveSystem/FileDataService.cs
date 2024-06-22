@@ -15,6 +15,12 @@ namespace FinishOne.SaveSystem
             this.dataPath = path.Equals(string.Empty) ? Application.persistentDataPath : path;
             this.fileExtension = "json";
             this.serializer = serializer;
+
+            if (!Directory.Exists(this.dataPath))
+            {
+                Directory.CreateDirectory(this.dataPath);
+                Debug.Log("Created new directory: "+this.dataPath);
+            }
         }
 
         private string GetFilePath(string fileName)
