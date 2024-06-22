@@ -108,10 +108,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
         }
         else if (Input.GetKeyUp(KeyCode.M))
         {
-            if(levelIndex == CompletedLevelCount)
-            {
-                NewLevelBeaten();
-            }
+            CheckNewLevelCompletion();
             Increment();
         }
     }
@@ -139,10 +136,13 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
 
     public void ResetCurrentLevel() => LevelIndex = levelIndex;
 
-    public void NewLevelBeaten()
+    public void CheckNewLevelCompletion()
     {
-        CompletedLevelCount++;
-        data.Index = CompletedLevelCount;
+        if (levelIndex == CompletedLevelCount)
+        {
+            CompletedLevelCount++;
+            data.Index = CompletedLevelCount;
+        }
     }
 
     public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level + 1}/{puzzleConfigs.Length}";

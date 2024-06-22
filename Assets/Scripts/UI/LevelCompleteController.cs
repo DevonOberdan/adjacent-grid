@@ -1,7 +1,5 @@
 using DG.Tweening;
 using FinishOne.GeneralUtilities;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -24,7 +22,6 @@ public class LevelCompleteController : MonoBehaviour
     {
         banner.localScale = banner.localScale.NewX(0);
     }
-
 
     public void Open()
     {

@@ -7,10 +7,7 @@ public class GameUISaveController : MonoBehaviour
     [SerializeField] private GameEvent EnterLevelSelectEvent, ExitLevelSelectEvent;
     [SerializeField] private GameObject tutorialTextRoot;
 
-    private void Awake()
-    {
-        
-    }
+    private bool levelSelectSetup;
 
     private void Start()
     {
@@ -19,19 +16,30 @@ public class GameUISaveController : MonoBehaviour
             SaveSystem.Instance.NewGame();
         }
 
+        if (!SaveSystem.Instance.gameData.NewGame)
+        {
+            tutorialTextRoot.SetActive(false);
+        }
+
+        HandleLevelSelectSetup();
+    }
+
+    public void HandleLevelSelectSetup()
+    {
+       // if (levelSelectSetup)
+       //     return;
+
+        //levelSelectSetup = true;
+
         if (GameManager.StartInLevelSelect)
         {
             EnterLevelSelectEvent.Raise();
-            GameManager.StartInLevelSelect = false;
         }
         else
         {
             ExitLevelSelectEvent.Raise();
         }
 
-        if (!SaveSystem.Instance.gameData.NewGame)
-        {
-            tutorialTextRoot.SetActive(false);
-        }
+        GameManager.StartInLevelSelect = false;
     }
 }

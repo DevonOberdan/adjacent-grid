@@ -112,7 +112,10 @@ public class LevelSelectController : MonoBehaviour
 
     public void MoveToLevelSelect()
     {
-        currentLevel = levelManager.LevelIndex;
+        Debug.Log("Moved to Level Select");
+
+        currentLevel = levelManager.LevelIndex; //: levelManager.CompletedLevelCount;
+
         levelManager.SetLevelIndex(currentLevel);
         postProcess.EnableVignette(true);
 
