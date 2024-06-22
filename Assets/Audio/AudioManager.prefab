@@ -292,6 +292,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7462922010169018162}
   - component: {fileID: 4094349506783282236}
+  - component: {fileID: 3398432383999683446}
+  - component: {fileID: 3739460710699531861}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -332,3 +334,52 @@ MonoBehaviour:
   pitchRange: {x: 0.75, y: 1.25}
   sfxPlayEvent: {fileID: 11400000, guid: 3130a41301c211442b110da9568fea65, type: 2}
   musicPlayEvent: {fileID: 11400000, guid: b5108bb8a4ffb7944ad23984f0b17f65, type: 2}
+--- !u!114 &3398432383999683446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8734708628983481702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e77d3cd429e11349b100d8a594343c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: c4f20c042a56bdc4b92023225aae66ce, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 195813533149732136}
+        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+        m_MethodName: set_mute
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 345225345467437762}
+        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+        m_MethodName: set_mute
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  registerOnEnable: 0
+--- !u!81 &3739460710699531861
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8734708628983481702}
+  m_Enabled: 1
