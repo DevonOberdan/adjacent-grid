@@ -14,9 +14,9 @@ public class LevelCompleteController : MonoBehaviour
     [SerializeField] private float startHeight = 250;
     [SerializeField] private float endHeight = 450;
     [SerializeField] private Ease ease;
-    private Sequence openSeq;
-
     [SerializeField] private bool tween;
+
+    private Sequence openSeq;
 
     private void Awake()
     {
@@ -37,8 +37,6 @@ public class LevelCompleteController : MonoBehaviour
 
         banner.localScale = banner.localScale.NewX(1);
         banner.sizeDelta = new Vector2(banner.sizeDelta.x, startHeight);
-
-
 
         Vector2 endSize = banner.sizeDelta;
         endSize.y = endHeight;

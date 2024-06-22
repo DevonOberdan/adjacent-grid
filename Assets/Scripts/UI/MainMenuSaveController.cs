@@ -1,18 +1,10 @@
 using FinishOne.SaveSystem;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuSaveController : MonoBehaviour
 {
     [SerializeField] private Button newGameButton, continueButton, levelButton;
-   // private TMP_Text newText, continueText
-    private void Awake()
-    {
-        
-    }
 
     private void Start()
     {
@@ -34,7 +26,6 @@ public class MainMenuSaveController : MonoBehaviour
     public void StartNewGame()
     {
         GameManager.StartInLevelSelect = false;
-
         SaveSystem.Instance.NewGame();
     }
 

@@ -8,11 +8,9 @@ public class ButtonAudioHelper : MonoBehaviour
 
     private Button button;
     private Toggle toggle;
-
     private AudioPlayRequester audioPlayRequester;
 
     public AudioConfigSO AudioConfig => audioConfig;
-
     public bool Muted { get; set; }
 
     private void Awake()
@@ -42,7 +40,6 @@ public class ButtonAudioHelper : MonoBehaviour
     {
         if (!Muted)
         {
-            print("Playing button sound");
             audioPlayRequester.Request(audioConfig);
         }
     }

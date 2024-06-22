@@ -7,8 +7,6 @@ public class GameUISaveController : MonoBehaviour
     [SerializeField] private GameEvent EnterLevelSelectEvent, ExitLevelSelectEvent;
     [SerializeField] private GameObject tutorialTextRoot;
 
-    private bool levelSelectSetup;
-
     private void Start()
     {
         if (SaveSystem.Instance.gameData == null)
@@ -24,13 +22,8 @@ public class GameUISaveController : MonoBehaviour
         HandleLevelSelectSetup();
     }
 
-    public void HandleLevelSelectSetup()
+    private  void HandleLevelSelectSetup()
     {
-       // if (levelSelectSetup)
-       //     return;
-
-        //levelSelectSetup = true;
-
         if (GameManager.StartInLevelSelect)
         {
             EnterLevelSelectEvent.Raise();

@@ -65,7 +65,7 @@ public class LevelSelectController : MonoBehaviour
 
     private void Update()
     {
-        if(backgroundMat.GetColor(BACKGROUND_COLOR) != tweenedColor)
+        if (backgroundMat.GetColor(BACKGROUND_COLOR) != tweenedColor)
         {
             backgroundMat.SetColor(BACKGROUND_COLOR, tweenedColor);
         }
@@ -96,7 +96,7 @@ public class LevelSelectController : MonoBehaviour
         bool lockedLeft = (level - 1) > levelManager.CompletedLevelCount;
         bool lockedRight = (level + 1) > levelManager.CompletedLevelCount;
 
-        if(setButtonCoroutine != null)
+        if (setButtonCoroutine != null)
         {
             StopCoroutine(setButtonCoroutine);
         }
@@ -112,9 +112,7 @@ public class LevelSelectController : MonoBehaviour
 
     public void MoveToLevelSelect()
     {
-        Debug.Log("Moved to Level Select");
-
-        currentLevel = levelManager.LevelIndex; //: levelManager.CompletedLevelCount;
+        currentLevel = levelManager.LevelIndex;
 
         levelManager.SetLevelIndex(currentLevel);
         postProcess.EnableVignette(true);
@@ -139,7 +137,7 @@ public class LevelSelectController : MonoBehaviour
 
     public void CloseLevelSelect()
     {
-        if(currentLevel >= 0 && currentLevel != levelManager.LevelIndex)
+        if (currentLevel >= 0 && currentLevel != levelManager.LevelIndex)
         {
             levelManager.SetLevelIndex(currentLevel);
         }
@@ -153,6 +151,5 @@ public class LevelSelectController : MonoBehaviour
         entered = true;
 
         OnEnterLevelSelect.Raise();
-
     }
 }
