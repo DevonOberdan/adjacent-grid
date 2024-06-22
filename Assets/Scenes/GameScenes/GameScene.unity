@@ -2581,10 +2581,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1116706698}
-    - target: {fileID: 4427053818511797785, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
-      propertyPath: response.m_PersistentCalls.m_Calls.Array.data[3].m_Target
-      value: 
-      objectReference: {fileID: 1288235268}
     - target: {fileID: 5040479932935284586, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -2617,14 +2613,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameUI
       objectReference: {fileID: 0}
-    - target: {fileID: 7100964962904268764, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
-      propertyPath: response.m_PersistentCalls.m_Calls.Array.data[2].m_Target
-      value: 
-      objectReference: {fileID: 1288235268}
-    - target: {fileID: 7544802752153515369, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
-      propertyPath: response.m_PersistentCalls.m_Calls.Array.data[3].m_Target
-      value: 
-      objectReference: {fileID: 510787317}
     - target: {fileID: 8341532033731012107, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
       propertyPath: m_Pivot.x
       value: 0
