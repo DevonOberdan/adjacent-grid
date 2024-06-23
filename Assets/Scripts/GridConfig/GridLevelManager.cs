@@ -142,6 +142,11 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
         {
             CompletedLevelCount++;
             data.Index = CompletedLevelCount;
+
+            if (SaveSystem.Instance != null)
+            {
+                SaveSystem.Instance.SaveGame();
+            }
         }
     }
 

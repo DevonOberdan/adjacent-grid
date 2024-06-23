@@ -14,7 +14,10 @@ public class GameUISaveController : MonoBehaviour
             SaveSystem.Instance.NewGame();
         }
 
-        if (!SaveSystem.Instance.gameData.NewGame)
+        bool hasPlayed = SaveSystem.Instance.gameData.LevelData != null &&
+                            SaveSystem.Instance.gameData.LevelData.Index > 0;
+
+        if (hasPlayed)
         {
             tutorialTextRoot.SetActive(false);
         }

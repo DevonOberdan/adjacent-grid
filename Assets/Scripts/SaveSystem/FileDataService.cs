@@ -1,11 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace FinishOne.SaveSystem
 {
     public class FileDataService : IDataService
     {
+        [DllImport("__Internal")]
+        private static extern void SyncFiles();
+
         private ISerializer serializer;
         private string dataPath;
         private string fileExtension;
@@ -19,7 +24,6 @@ namespace FinishOne.SaveSystem
             if (!Directory.Exists(this.dataPath))
             {
                 Directory.CreateDirectory(this.dataPath);
-                Debug.Log("Created new directory: "+this.dataPath);
             }
         }
 
@@ -37,7 +41,17 @@ namespace FinishOne.SaveSystem
                 throw new IOException($"The file '{data.Name}.{fileExtension}' already exists and cannot be overridden.");
             }
 
-            File.WriteAllText(filePath, serializer.Serialize(data));
+            try
+            {
+                File.WriteAllText(filePath, serializer.Serialize(data));
+#if UNITY_WEBGL
+                SyncFiles();
+#endif
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("File write failed: " + e.Message);
+            }
         }
 
         public GameData Load(string name)

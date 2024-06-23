@@ -10,7 +10,8 @@ public class MainMenuSaveController : MonoBehaviour
     {
         SaveSystem.Instance.LoadGame();
 
-        bool noData = SaveSystem.Instance.gameData == null;
+        bool noData = SaveSystem.Instance.gameData.LevelData == null ||
+                      SaveSystem.Instance.gameData.LevelData.Index == 0;
 
         if (noData)
         {
@@ -27,7 +28,6 @@ public class MainMenuSaveController : MonoBehaviour
     public void StartNewGame()
     {
         GameManager.StartInLevelSelect = false;
-        SaveSystem.Instance.NewGame();
     }
 
     public void ContinueGame()

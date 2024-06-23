@@ -1,7 +1,6 @@
 using System.Linq;
 using UnityEngine;
 
-
 namespace FinishOne.SaveSystem
 {
     public interface ISaveable
@@ -33,9 +32,9 @@ namespace FinishOne.SaveSystem
 #if UNITY_EDITOR
             dataService = new FileDataService(new JsonSerializer());
 #elif UNITY_WEBGL
-        dataService = new FileDataService(new JsonSerializer(), ITCH_PATH);
+            dataService = new FileDataService(new JsonSerializer(), ITCH_PATH);
 #else
-        dataService = new FileDataService(new JsonSerializer());
+            dataService = new FileDataService(new JsonSerializer());
 #endif
         }
 
@@ -66,23 +65,29 @@ namespace FinishOne.SaveSystem
 
         public void NewGame(bool allowSaving = true)
         {
-            Debug.Log("New Game!");
             gameData = new GameData("Game");
             SavingAllowed = allowSaving;
+
+            SaveGame();
         }
 
         public void SaveGame()
         {
-            if (!SavingAllowed || gameData == null)
-                return;
-
-            gameData.NewGame = false;
-            dataService.Save(gameData);
+            if (SavingAllowed && gameData != null)
+            {
+                dataService.Save(gameData);
+            }
         }
 
         public void LoadGame(string name = "Game")
         {
             gameData = dataService.Load(name);
+
+            if (gameData == null)
+            {
+                NewGame();
+            }
+
             SavingAllowed = true;
         }
 
