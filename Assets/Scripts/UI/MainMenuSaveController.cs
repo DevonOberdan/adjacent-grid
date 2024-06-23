@@ -27,6 +27,7 @@ public class MainMenuSaveController : MonoBehaviour
 
     public void StartNewGame()
     {
+        SaveSystem.Instance.NewGame();
         GameManager.StartInLevelSelect = false;
     }
 
