@@ -1,7 +1,5 @@
 using DG.Tweening;
 using FinishOne.GeneralUtilities;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -16,15 +14,14 @@ public class LevelCompleteController : MonoBehaviour
     [SerializeField] private float startHeight = 250;
     [SerializeField] private float endHeight = 450;
     [SerializeField] private Ease ease;
-    private Sequence openSeq;
-
     [SerializeField] private bool tween;
+
+    private Sequence openSeq;
 
     private void Awake()
     {
         banner.localScale = banner.localScale.NewX(0);
     }
-
 
     public void Open()
     {
@@ -40,8 +37,6 @@ public class LevelCompleteController : MonoBehaviour
 
         banner.localScale = banner.localScale.NewX(1);
         banner.sizeDelta = new Vector2(banner.sizeDelta.x, startHeight);
-
-
 
         Vector2 endSize = banner.sizeDelta;
         endSize.y = endHeight;

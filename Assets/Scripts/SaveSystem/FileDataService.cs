@@ -1,22 +1,30 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace FinishOne.SaveSystem
 {
     public class FileDataService : IDataService
     {
+        [DllImport("__Internal")]
+        private static extern void SyncFiles();
+
         private ISerializer serializer;
         private string dataPath;
         private string fileExtension;
 
-        public FileDataService(ISerializer serializer)
+        public FileDataService(ISerializer serializer, string path = "")
         {
-            this.dataPath = Application.persistentDataPath;
+            this.dataPath = path.Equals(string.Empty) ? Application.persistentDataPath : path;
             this.fileExtension = "json";
             this.serializer = serializer;
+
+            if (!Directory.Exists(this.dataPath))
+            {
+                Directory.CreateDirectory(this.dataPath);
+            }
         }
 
         private string GetFilePath(string fileName)
@@ -33,7 +41,17 @@ namespace FinishOne.SaveSystem
                 throw new IOException($"The file '{data.Name}.{fileExtension}' already exists and cannot be overridden.");
             }
 
-            File.WriteAllText(filePath, serializer.Serialize(data));
+            try
+            {
+                File.WriteAllText(filePath, serializer.Serialize(data));
+#if (UNITY_WEBGL && !UNITY_EDITOR)
+                SyncFiles();
+#endif
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("File write failed: " + e.Message);
+            }
         }
 
         public GameData Load(string name)
@@ -42,7 +60,7 @@ namespace FinishOne.SaveSystem
 
             if (!File.Exists(filePath))
             {
-                return null;//throw new IOException($"The file '{name}.{fileExtension}' does not exist.");
+                return null;
             }
 
             return serializer.Deserialize<GameData>(File.ReadAllText(filePath));

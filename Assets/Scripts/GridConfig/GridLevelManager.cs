@@ -1,4 +1,5 @@
 using FinishOne.GeneralUtilities;
+using FinishOne.SaveSystem;
 using System;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class LevelData : ISaveable
     [field: SerializeField] public string Id { get; set; }
 
     public int Index;
+    public bool AllLevelsComplete;
 }
 
 public class GridLevelManager : MonoBehaviour, IBind<LevelData>
@@ -52,6 +54,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
             if (LastLevelComplete)
             {
                 OnWonGame.Invoke();
+                data.AllLevelsComplete = true;
             }
             else
             {
@@ -75,7 +78,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
         if (!startingCustom)
         {
             CompletedLevelCount = data.Index;
-            LevelIndex = CompletedLevelCount;
+            LevelIndex = Mathf.Clamp(CompletedLevelCount, 0, puzzleConfigs.Length-1);
         }
     }
     #endregion
@@ -105,10 +108,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
         }
         else if (Input.GetKeyUp(KeyCode.M))
         {
-            if(levelIndex == CompletedLevelCount)
-            {
-                NewLevelBeaten();
-            }
+            CheckNewLevelCompletion();
             Increment();
         }
     }
@@ -136,10 +136,18 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
 
     public void ResetCurrentLevel() => LevelIndex = levelIndex;
 
-    public void NewLevelBeaten()
+    public void CheckNewLevelCompletion()
     {
-        CompletedLevelCount++;
-        data.Index = CompletedLevelCount;
+        if (levelIndex == CompletedLevelCount)
+        {
+            CompletedLevelCount++;
+            data.Index = CompletedLevelCount;
+
+            if (SaveSystem.Instance != null)
+            {
+                SaveSystem.Instance.SaveGame();
+            }
+        }
     }
 
     public void SetLevelText(int level) => levelText.text = LEVEL_TEXT + $"{level + 1}/{puzzleConfigs.Length}";

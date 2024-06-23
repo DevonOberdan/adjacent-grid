@@ -1,83 +1,95 @@
-using FinishOne.GeneralUtilities;
-using FinishOne.SaveSystem;
 using System.Linq;
 using UnityEngine;
 
-public interface ISaveable
+namespace FinishOne.SaveSystem
 {
-    string Id { get; set; }
-}
-
-public interface IBind<TData> where TData: ISaveable
-{
-    string Id { get; set; }
-    void Bind(TData data);
-}
-
-public class SaveSystem : MonoBehaviour
-{
-    public static SaveSystem Instance { get; private set; }
-
-    [SerializeField] private IntGameEvent LoadedIndexBroadcast;
-    [SerializeField] public GameData gameData;
-    
-    private IDataService dataService;
-    private bool SavingAllowed;
-
-    private void Awake()
+    public interface ISaveable
     {
-        Instance = this;
-
-        dataService = new FileDataService(new JsonSerializer());
+        string Id { get; set; }
     }
 
-    private void OnDestroy()
+    public interface IBind<TData> where TData : ISaveable
     {
-        Instance = null;
-        SaveGame();
+        string Id { get; set; }
+        void Bind(TData data);
     }
 
-    public void BindData()
+    public class SaveSystem : MonoBehaviour
     {
-        gameData.LevelData = Bind<GridLevelManager, LevelData>(gameData.LevelData);
-    }
+        public static SaveSystem Instance { get; private set; }
 
-    private TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
-    {
-        var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
-        
-        if (entity != null)
+        [SerializeField] public GameData gameData;
+
+        private IDataService dataService;
+        private bool SavingAllowed;
+
+        private const string ITCH_PATH = "idbfs/adjacent-grid-game_sgwhf94hgfw/";
+
+        private void Awake()
         {
-            data ??= new TData { Id = entity.Id };
-            entity.Bind(data);
-            return data;
+            Instance = this;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            dataService = new FileDataService(new JsonSerializer(), ITCH_PATH);
+#else
+            dataService = new FileDataService(new JsonSerializer());
+#endif
         }
 
-        return default;
+        private void OnDestroy()
+        {
+            Instance = null;
+            SaveGame();
+        }
+
+        public void BindData()
+        {
+            gameData.LevelData = Bind<GridLevelManager, LevelData>(gameData.LevelData);
+        }
+
+        private TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
+        {
+            var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
+
+            if (entity != null)
+            {
+                data ??= new TData { Id = entity.Id };
+                entity.Bind(data);
+                return data;
+            }
+
+            return default;
+        }
+
+        public void NewGame(bool allowSaving = true)
+        {
+            gameData = new GameData("Game");
+            SavingAllowed = allowSaving;
+
+            SaveGame();
+        }
+
+        public void SaveGame()
+        {
+            if (SavingAllowed && gameData != null)
+            {
+                dataService.Save(gameData);
+            }
+        }
+
+        public void LoadGame(string name = "Game")
+        {
+            gameData = dataService.Load(name);
+
+            if (gameData == null)
+            {
+                NewGame();
+            }
+
+            SavingAllowed = true;
+        }
+
+        public void ReloadGame() => LoadGame(gameData.Name);
+        public void DeleteGame(string name) => dataService.Delete(name);
     }
-
-    public void NewGame(bool allowSaving = true)
-    {
-        Debug.Log("New Game!");
-        gameData = new GameData("Game");
-        SavingAllowed = allowSaving;
-    }
-
-    public void SaveGame()
-    {
-        if (!SavingAllowed)
-            return;
-
-        gameData.NewGame = false;
-        dataService.Save(gameData);
-    }
-
-    public void LoadGame(string name = "Game")
-    {
-        gameData = dataService.Load(name);
-        SavingAllowed = true;
-    }
-
-    public void ReloadGame() => LoadGame(gameData.Name);
-    public void DeleteGame(string name) => dataService.Delete(name);
 }

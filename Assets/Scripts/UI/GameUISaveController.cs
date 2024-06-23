@@ -1,17 +1,11 @@
 using FinishOne.GeneralUtilities;
-using System.Collections;
-using System.Collections.Generic;
+using FinishOne.SaveSystem;
 using UnityEngine;
 
 public class GameUISaveController : MonoBehaviour
 {
     [SerializeField] private GameEvent EnterLevelSelectEvent, ExitLevelSelectEvent;
     [SerializeField] private GameObject tutorialTextRoot;
-
-    private void Awake()
-    {
-        
-    }
 
     private void Start()
     {
@@ -20,14 +14,28 @@ public class GameUISaveController : MonoBehaviour
             SaveSystem.Instance.NewGame();
         }
 
-        if (!SaveSystem.Instance.gameData.NewGame)
+        bool hasPlayed = SaveSystem.Instance.gameData.LevelData != null &&
+                            SaveSystem.Instance.gameData.LevelData.Index > 0;
+
+        if (hasPlayed)
         {
             tutorialTextRoot.SetActive(false);
-            ExitLevelSelectEvent.Raise();
         }
-        else
+
+        HandleLevelSelectSetup();
+    }
+
+    private  void HandleLevelSelectSetup()
+    {
+        if (GameManager.StartInLevelSelect)
         {
             EnterLevelSelectEvent.Raise();
         }
+        else
+        {
+            ExitLevelSelectEvent.Raise();
+        }
+
+        GameManager.StartInLevelSelect = false;
     }
 }

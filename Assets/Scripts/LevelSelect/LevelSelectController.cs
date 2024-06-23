@@ -28,14 +28,12 @@ public class LevelSelectController : MonoBehaviour
     [SerializeField] private AudioConfigSO lockAudio;
     private Material backgroundMat;
 
-   // private Tween camTween, waterTween, vignetteTween;
 
     private Tween shakeTween;
     private Vector3 ShakeFactor;
 
     private Color startColor, tweenedColor;
 
-    private bool viewingLockedLevels;
     private int currentLevel;
 
     private const string BACKGROUND_COLOR = "_Water_Color";
@@ -67,7 +65,7 @@ public class LevelSelectController : MonoBehaviour
 
     private void Update()
     {
-        if(backgroundMat.GetColor(BACKGROUND_COLOR) != tweenedColor)
+        if (backgroundMat.GetColor(BACKGROUND_COLOR) != tweenedColor)
         {
             backgroundMat.SetColor(BACKGROUND_COLOR, tweenedColor);
         }
@@ -95,17 +93,14 @@ public class LevelSelectController : MonoBehaviour
             shakeTween = lockIcon.DOPunchRotation(ShakeFactor, 0.5f, 8);
         }
 
-
         bool lockedLeft = (level - 1) > levelManager.CompletedLevelCount;
         bool lockedRight = (level + 1) > levelManager.CompletedLevelCount;
 
-        if(setButtonCoroutine != null)
+        if (setButtonCoroutine != null)
         {
             StopCoroutine(setButtonCoroutine);
         }
         setButtonCoroutine = StartCoroutine(SetArrowSounds(lockedLeft, lockedRight));
-
-        viewingLockedLevels = currentLevelLocked;
     }
 
     private IEnumerator SetArrowSounds(bool lockedLeft, bool lockedRight)
@@ -118,12 +113,13 @@ public class LevelSelectController : MonoBehaviour
     public void MoveToLevelSelect()
     {
         currentLevel = levelManager.LevelIndex;
+
         levelManager.SetLevelIndex(currentLevel);
         postProcess.EnableVignette(true);
 
         if(Camera.main != null)
         {
-            Camera.main.transform.DOMove(levelSelectView.position, transitionTime).SetEase(ease).OnComplete(EnteredLevelSelect);
+            Camera.main.transform.DOMove(levelSelectView.position, transitionTime).SetEase(ease);
         }
         DOTween.To(() => tweenedColor, x => tweenedColor = x, startColor.DarkenedToPercent(0.46f), transitionTime).SetEase(ease);
         DOTween.To(() => postProcess.VignetteRange.x, x => postProcess.SetVignetteIntensity(x), postProcess.VignetteRange.y, transitionTime).SetEase(ease);
@@ -131,7 +127,7 @@ public class LevelSelectController : MonoBehaviour
 
     public void MoveToGameView()
     {
-        Camera.main.transform.DOMove(gameView.position, transitionTime).SetEase(ease).OnComplete(ExitedLevelSelect);
+        Camera.main.transform.DOMove(gameView.position, transitionTime).SetEase(ease);
         DOTween.To(() => tweenedColor, val => tweenedColor = val, startColor, transitionTime).SetEase(ease);
         DOTween.To(() => postProcess.VignetteRange.y, val => postProcess.SetVignetteIntensity(val), postProcess.VignetteRange.x, transitionTime)
                .SetEase(ease).OnComplete(() => postProcess.EnableVignette(false));
@@ -141,7 +137,7 @@ public class LevelSelectController : MonoBehaviour
 
     public void CloseLevelSelect()
     {
-        if(currentLevel > 0 && currentLevel != levelManager.LevelIndex)
+        if (currentLevel >= 0 && currentLevel != levelManager.LevelIndex)
         {
             levelManager.SetLevelIndex(currentLevel);
         }
@@ -155,16 +151,5 @@ public class LevelSelectController : MonoBehaviour
         entered = true;
 
         OnEnterLevelSelect.Raise();
-
-    }
-
-    private void EnteredLevelSelect()
-    {
-
-    }
-
-    private void ExitedLevelSelect()
-    {
-        currentLevel = -1;
     }
 }

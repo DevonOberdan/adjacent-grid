@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public UnityEvent<bool> PauseStateBroadcast;
     public UnityEvent<bool> PausableBroadcast;
 
+    public static bool StartInLevelSelect;
+
     public bool Paused 
     {
         get => paused;
