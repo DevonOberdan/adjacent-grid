@@ -29,9 +29,7 @@ namespace FinishOne.SaveSystem
         {
             Instance = this;
 
-#if UNITY_EDITOR
-            dataService = new FileDataService(new JsonSerializer());
-#elif UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
             dataService = new FileDataService(new JsonSerializer(), ITCH_PATH);
 #else
             dataService = new FileDataService(new JsonSerializer());

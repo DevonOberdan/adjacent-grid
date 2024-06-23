@@ -44,7 +44,7 @@ namespace FinishOne.SaveSystem
             try
             {
                 File.WriteAllText(filePath, serializer.Serialize(data));
-#if UNITY_WEBGL
+#if (UNITY_WEBGL && !UNITY_EDITOR)
                 SyncFiles();
 #endif
             }
