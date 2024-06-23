@@ -47,20 +47,6 @@ namespace FinishOne.SaveSystem
             gameData.LevelData = Bind<GridLevelManager, LevelData>(gameData.LevelData);
         }
 
-        private TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
-        {
-            var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
-
-            if (entity != null)
-            {
-                data ??= new TData { Id = entity.Id };
-                entity.Bind(data);
-                return data;
-            }
-
-            return default;
-        }
-
         public void NewGame(bool allowSaving = true)
         {
             gameData = new GameData("Game");
@@ -91,5 +77,19 @@ namespace FinishOne.SaveSystem
 
         public void ReloadGame() => LoadGame(gameData.Name);
         public void DeleteGame(string name) => dataService.Delete(name);
+
+        private TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
+        {
+            var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
+
+            if (entity != null)
+            {
+                data ??= new TData { Id = entity.Id };
+                entity.Bind(data);
+                return data;
+            }
+
+            return default;
+        }
     }
 }

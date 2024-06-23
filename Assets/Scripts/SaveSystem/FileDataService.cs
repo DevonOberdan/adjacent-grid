@@ -27,11 +27,6 @@ namespace FinishOne.SaveSystem
             }
         }
 
-        private string GetFilePath(string fileName)
-        {
-            return Path.Combine(dataPath, string.Concat(fileName, ".", fileExtension));
-        }
-
         public void Save(GameData data, bool overwrite = true)
         {
             string filePath = GetFilePath(data.Name);
@@ -97,6 +92,11 @@ namespace FinishOne.SaveSystem
                     yield return Path.GetFileNameWithoutExtension(path);
                 }
             }
+        }
+
+        private string GetFilePath(string fileName)
+        {
+            return Path.Combine(dataPath, string.Concat(fileName, ".", fileExtension));
         }
     }
 }
