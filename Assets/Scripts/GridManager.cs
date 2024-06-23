@@ -290,6 +290,12 @@ public class GridManager : MonoBehaviour
             if (pieceToSpawn != null)
             {
                 GridPiece newPiece = CustomMethods.Instantiate(pieceToSpawn, PieceParent);
+
+                if (newPiece == null)
+                {
+                    return;
+                }
+
                 newPiece.gameObject.name = pieceToSpawn.gameObject.name;
 
                 newPiece.CurrentCell = cells[i];
