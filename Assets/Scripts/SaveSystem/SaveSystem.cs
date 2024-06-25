@@ -14,13 +14,35 @@ namespace FinishOne.SaveSystem
         void Bind(TData data);
     }
 
+    public abstract class SaveDataBinder : MonoBehaviour
+    {
+        public abstract GameData Data { get; set; }
+        
+        public abstract void BindData();
+
+        public TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
+        {
+            var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
+
+            if (entity != null)
+            {
+                data ??= new TData { Id = entity.Id };
+                entity.Bind(data);
+                return data;
+            }
+
+            return default;
+        }
+    }
+
     public class SaveSystem : MonoBehaviour
     {
         public static SaveSystem Instance { get; private set; }
 
-        [SerializeField] public GameData gameData;
+        public GameData Data => dataBinder.Data;
 
         private IDataService dataService;
+        private SaveDataBinder dataBinder;
         private bool SavingAllowed;
 
         private const string ITCH_PATH = "idbfs/adjacent-grid-game_sgwhf94hgfw/";
@@ -28,7 +50,7 @@ namespace FinishOne.SaveSystem
         private void Awake()
         {
             Instance = this;
-
+            dataBinder = GetComponent<SaveDataBinder>();
 #if UNITY_WEBGL && !UNITY_EDITOR
             dataService = new FileDataService(new JsonSerializer(), ITCH_PATH);
 #else
@@ -42,14 +64,9 @@ namespace FinishOne.SaveSystem
             SaveGame();
         }
 
-        public void BindData()
-        {
-            gameData.LevelData = Bind<GridLevelManager, LevelData>(gameData.LevelData);
-        }
-
         public void NewGame(bool allowSaving = true)
         {
-            gameData = new GameData("Game");
+            dataBinder.Data = new GameData("Game");
             SavingAllowed = allowSaving;
 
             SaveGame();
@@ -57,17 +74,17 @@ namespace FinishOne.SaveSystem
 
         public void SaveGame()
         {
-            if (SavingAllowed && gameData != null)
+            if (SavingAllowed && dataBinder.Data != null)
             {
-                dataService.Save(gameData);
+                dataService.Save(dataBinder.Data);
             }
         }
 
         public void LoadGame(string name = "Game")
         {
-            gameData = dataService.Load(name);
+            dataBinder.Data = dataService.Load(name);
 
-            if (gameData == null)
+            if (dataBinder.Data == null)
             {
                 NewGame();
             }
@@ -75,21 +92,7 @@ namespace FinishOne.SaveSystem
             SavingAllowed = true;
         }
 
-        public void ReloadGame() => LoadGame(gameData.Name);
+        public void ReloadGame() => LoadGame(dataBinder.Data.Name);
         public void DeleteGame(string name) => dataService.Delete(name);
-
-        private TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
-        {
-            var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
-
-            if (entity != null)
-            {
-                data ??= new TData { Id = entity.Id };
-                entity.Bind(data);
-                return data;
-            }
-
-            return default;
-        }
     }
 }

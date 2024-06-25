@@ -194,6 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 473143642}
   - component: {fileID: 473143641}
+  - component: {fileID: 473143645}
   - component: {fileID: 473143644}
   m_Layer: 0
   m_Name: SaveSystem
@@ -214,13 +215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 071be0cd5d4accd45a3a944dfac37d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameData:
-    Name: 
-    NewGame: 0
-    LevelData:
-      <Id>k__BackingField: 
-      Index: 0
-      AllLevelsComplete: 0
 --- !u!4 &473143642
 Transform:
   m_ObjectHideFlags: 0
@@ -252,8 +246,8 @@ MonoBehaviour:
   response:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 473143641}
-        m_TargetAssemblyTypeName: SaveSystem, Assembly-CSharp
+      - m_Target: {fileID: 473143645}
+        m_TargetAssemblyTypeName: AdjacentGridDataBinder, Assembly-CSharp
         m_MethodName: BindData
         m_Mode: 1
         m_Arguments:
@@ -265,6 +259,24 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   registerOnEnable: 0
+--- !u!114 &473143645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473143639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c31a3f77e095f242bad21f6cc212fb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameData:
+    Name: 
+    LevelData:
+      <Id>k__BackingField: 
+      Index: 0
+      AllLevelsComplete: 0
 --- !u!1 &553719607
 GameObject:
   m_ObjectHideFlags: 0

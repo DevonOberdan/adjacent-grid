@@ -9,13 +9,14 @@ public class GameUISaveController : MonoBehaviour
 
     private void Start()
     {
-        if (SaveSystem.Instance.gameData == null)
+        if (SaveSystem.Instance.Data == null)
         {
             SaveSystem.Instance.NewGame();
         }
 
-        bool hasPlayed = SaveSystem.Instance.gameData.LevelData != null &&
-                            SaveSystem.Instance.gameData.LevelData.Index > 0;
+        AdjacentGridGameData gameData = SaveSystem.Instance.Data as AdjacentGridGameData;
+
+        bool hasPlayed = gameData.LevelData != null && gameData.LevelData.Index > 0;
 
         if (hasPlayed)
         {

@@ -6,12 +6,16 @@ public class MainMenuSaveController : MonoBehaviour
 {
     [SerializeField] private Button newGameButton, continueButton, levelButton;
 
+    AdjacentGridGameData gameData;
+
     private void Start()
     {
         SaveSystem.Instance.LoadGame();
 
-        bool noData = SaveSystem.Instance.gameData.LevelData == null ||
-                      SaveSystem.Instance.gameData.LevelData.Index == 0;
+        gameData = SaveSystem.Instance.Data as AdjacentGridGameData;
+
+        bool noData = gameData.LevelData == null ||
+                      gameData.LevelData.Index == 0;
 
         if (noData)
         {
@@ -20,7 +24,7 @@ public class MainMenuSaveController : MonoBehaviour
         }
         else
         {
-            bool allLevelsBeat = SaveSystem.Instance.gameData.LevelData.AllLevelsComplete;
+            bool allLevelsBeat = gameData.LevelData.AllLevelsComplete;
             continueButton.interactable = !allLevelsBeat;
         }
     }
