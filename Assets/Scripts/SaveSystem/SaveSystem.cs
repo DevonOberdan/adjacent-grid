@@ -1,39 +1,22 @@
-using System.Linq;
 using UnityEngine;
 
 namespace FinishOne.SaveSystem
 {
-    public interface ISaveable
-    {
-        string Id { get; set; }
-    }
-
-    public interface IBind<TData> where TData : ISaveable
-    {
-        string Id { get; set; }
-        void Bind(TData data);
-    }
-
     public class SaveSystem : MonoBehaviour
     {
         public static SaveSystem Instance { get; private set; }
 
-        [SerializeField] public GameData gameData;
+        public GameData Data => gameDataHandler.Data;
 
+        private SaveDataHandler gameDataHandler;
         private IDataService dataService;
         private bool SavingAllowed;
-
-        private const string ITCH_PATH = "idbfs/adjacent-grid-game_sgwhf94hgfw/";
 
         private void Awake()
         {
             Instance = this;
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-            dataService = new FileDataService(new JsonSerializer(), ITCH_PATH);
-#else
-            dataService = new FileDataService(new JsonSerializer());
-#endif
+            gameDataHandler = GetComponent<SaveDataHandler>();
+            dataService = gameDataHandler.GetDataService();
         }
 
         private void OnDestroy()
@@ -42,14 +25,9 @@ namespace FinishOne.SaveSystem
             SaveGame();
         }
 
-        public void BindData()
-        {
-            gameData.LevelData = Bind<GridLevelManager, LevelData>(gameData.LevelData);
-        }
-
         public void NewGame(bool allowSaving = true)
         {
-            gameData = new GameData("Game");
+            gameDataHandler.NewData("Game");
             SavingAllowed = allowSaving;
 
             SaveGame();
@@ -57,17 +35,17 @@ namespace FinishOne.SaveSystem
 
         public void SaveGame()
         {
-            if (SavingAllowed && gameData != null)
+            if (SavingAllowed && gameDataHandler.Data != null)
             {
-                dataService.Save(gameData);
+                dataService.Save(gameDataHandler.Data);
             }
         }
 
         public void LoadGame(string name = "Game")
         {
-            gameData = dataService.Load(name);
+            gameDataHandler.LoadData(name, dataService);
 
-            if (gameData == null)
+            if (gameDataHandler.Data == null)
             {
                 NewGame();
             }
@@ -75,21 +53,7 @@ namespace FinishOne.SaveSystem
             SavingAllowed = true;
         }
 
-        public void ReloadGame() => LoadGame(gameData.Name);
+        public void ReloadGame() => LoadGame(gameDataHandler.Data.Name);
         public void DeleteGame(string name) => dataService.Delete(name);
-
-        private TData Bind<T, TData>(TData data) where T : MonoBehaviour, IBind<TData> where TData : ISaveable, new()
-        {
-            var entity = FindObjectsByType<T>(FindObjectsSortMode.None).FirstOrDefault();
-
-            if (entity != null)
-            {
-                data ??= new TData { Id = entity.Id };
-                entity.Bind(data);
-                return data;
-            }
-
-            return default;
-        }
     }
 }

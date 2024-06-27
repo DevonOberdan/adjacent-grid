@@ -27,7 +27,7 @@ namespace FinishOne.SaveSystem
             }
         }
 
-        public void Save(GameData data, bool overwrite = true)
+        public void Save<T>(T data, bool overwrite = true) where T : GameData
         {
             string filePath = GetFilePath(data.Name);
 
@@ -49,7 +49,7 @@ namespace FinishOne.SaveSystem
             }
         }
 
-        public GameData Load(string name)
+        public T Load<T>(string name) where T : GameData
         {
             string filePath = GetFilePath(name);
 
@@ -58,7 +58,7 @@ namespace FinishOne.SaveSystem
                 return null;
             }
 
-            return serializer.Deserialize<GameData>(File.ReadAllText(filePath));
+            return serializer.Deserialize<T>(File.ReadAllText(filePath));
         }
 
         public void Delete(string name)

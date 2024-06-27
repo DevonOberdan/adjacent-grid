@@ -4,8 +4,8 @@ namespace FinishOne.SaveSystem
 {
     public interface IDataService
     {
-        void Save(GameData data, bool overwrite = true);
-        GameData Load(string name);
+        void Save<T>(T data, bool overwrite = true) where T : GameData;
+        T Load<T>(string name) where T : GameData;
         void Delete(string name);
         void DeleteAll();
         IEnumerable<string> ListSaves();
