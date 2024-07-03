@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 {
+    [SerializeField] private bool doNotTween;
+
     Tween pickupTween;
     Tween dropTween;
 
@@ -54,9 +56,9 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 
     public override void HandleNewCell(Cell cell)
     {
-        if (currentCell == null)
+        if (currentCell == null || doNotTween)
         {
-            transform.localPosition = cell.transform.position.NewY(0);
+            transform.localPosition = cell.transform.position.NewY(defaultHeight);
             currentCell = cell;
             return;
         }

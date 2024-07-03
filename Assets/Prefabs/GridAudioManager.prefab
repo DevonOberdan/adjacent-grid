@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 454149167064367612}
   - component: {fileID: 4607122975924443236}
   - component: {fileID: 228524880898241673}
+  - component: {fileID: 3434139112672335437}
+  - component: {fileID: 1412960668306285475}
   m_Layer: 0
-  m_Name: AudioManager
+  m_Name: GridAudioManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6080461095826748435}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &4607122975924443236
 AudioSource:
@@ -146,3 +148,52 @@ MonoBehaviour:
   dropSound: {fileID: 8300000, guid: f755564455ea5b54f90ec4618f89dabe, type: 3}
   failDropSound: {fileID: 8300000, guid: bcb07b43dc74c2d48be63a18d024913e, type: 3}
   indicatorSound: {fileID: 0}
+  pickupAudio: {fileID: 0}
+  dropAudio: {fileID: 11400000, guid: 37384af625f085b4f85f8de59f637a85, type: 2}
+  failDropAudio: {fileID: 11400000, guid: 3a1af147709d7c643a435335d1d2ed73, type: 2}
+  indicatorAudio: {fileID: 0}
+--- !u!114 &3434139112672335437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6080461095826748435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d9dc0f09c507f4cb2365db3abe3d9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultAudio: {fileID: 0}
+  audioPlayEvent: {fileID: 11400000, guid: 3130a41301c211442b110da9568fea65, type: 2}
+--- !u!114 &1412960668306285475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6080461095826748435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eccc7631b112fe6479c3024ceffb081b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvent: {fileID: 11400000, guid: b3b4928026ee224489dd0c25ed6cdc00, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3434139112672335437}
+        m_TargetAssemblyTypeName: FinishOne.GeneralUtilities.Audio.AudioPlayRequester,
+          FinishOne.GeneralUtilities.Audio
+        m_MethodName: Request
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: 969c9b6987972434d9c3d82a49f4bc60, type: 2}
+          m_ObjectArgumentAssemblyTypeName: FinishOne.GeneralUtilities.Audio.AudioConfigSO,
+            FinishOne.GeneralUtilities.Audio
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  registerOnEnable: 0

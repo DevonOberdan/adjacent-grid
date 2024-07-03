@@ -1,4 +1,3 @@
-using DG.Tweening;
 using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +27,7 @@ public class AdjacentGridGameManager : MonoBehaviour
     private Dictionary<GridPiece, int> nonActivelyHeldPieceOffsets;
     private bool wasDoomed;
 
+    #region Public Properties
     private bool WinCondition => gridManager.PieceCount == 1;
 
     public bool AboutToWin => gridManager.PieceCount == 2 && AnyValidMovements();
@@ -39,6 +39,7 @@ public class AdjacentGridGameManager : MonoBehaviour
     public bool DoNotProcess { get; set; }
 
     public Dictionary<GridPiece, int> HeldGroupOffsets => nonActivelyHeldPieceOffsets;
+    #endregion
 
     private void Awake()
     {
@@ -129,9 +130,10 @@ public class AdjacentGridGameManager : MonoBehaviour
     {
         foreach (GridPiece piece in activeGrouping)
         {
-            if (piece == activelyHeldPiece)
-                continue;
-            nonActivelyHeldPieceOffsets.Add(piece, piece.CurrentCell.IndexInGrid - activelyHeldPiece.CurrentCell.IndexInGrid);
+            if (piece != activelyHeldPiece && !nonActivelyHeldPieceOffsets.ContainsKey(piece))
+            {
+                nonActivelyHeldPieceOffsets.Add(piece, piece.CurrentCell.IndexInGrid - activelyHeldPiece.CurrentCell.IndexInGrid);
+            }
         }
     }
     #endregion
@@ -311,11 +313,6 @@ public class AdjacentGridGameManager : MonoBehaviour
             {
                 return false;
             }
-      
-            //if(!PieceCanLand(piece, newCell))
-            //{
-            //    return false;
-            //}
         }
 
         return true;
@@ -323,12 +320,6 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     public bool GroupCanLand(Cell activePieceCell)
     {
-        //if (!GroupStaysInGrid(activePieceCell))
-        //{
-        //    print("group not in grid");
-        //    return false;
-        //}
-
         foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
         {
             int newIndicatorIndex = activePieceCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
@@ -354,7 +345,6 @@ public class AdjacentGridGameManager : MonoBehaviour
         // new cell has blocking piece OR (a piece of the same type that is not in the current group)
         if (cellPiece != null && (cellPiece.Consumable == false || (cellPiece.IsOfSameType(piece) && !activeGrouping.Contains(cellPiece))))
         {
-            Debug.Log("Piece would land on invalid piece "+cellPiece, piece.gameObject);
             return false;
         }
 

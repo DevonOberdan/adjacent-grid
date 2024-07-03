@@ -33,9 +33,6 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private List<GridPiece> piecePrefabs;
 
-    //public enum AXES { XY, XZ };
-    //[SerializeField] private AXES axes;
-
     [field: SerializeField] public float CellSpacing { get; private set; }
 
     public float CellParentPositionValue => -1 * CellSpacing * 1.5f;
@@ -81,8 +78,9 @@ public class GridManager : MonoBehaviour
 
     private bool PiecesNotSet => gridPieces.Any(piece => piece.CurrentCell == null);
 
-   // public AXES GridAxes => axes;
     #endregion
+
+    public bool Interactable { get; set; } = true;
 
     public Cell CurrentHoveredCell()
     {
@@ -113,6 +111,14 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void SetNewPieces(List<GridPiece> newPieces)
+    {
+        ClearPieces();
+        GenerateFromList(puzzleConfig.Pieces);
+        SetPiecesToGrid();
+        SetupPieceEvents();
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -121,6 +127,9 @@ public class GridManager : MonoBehaviour
 
         if(gridPieces == null)
             gridPieces = new();
+
+        if(gridPiecePool == null)
+            gridPiecePool = new();
 
         gameActions.Enable();
         pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");
@@ -136,9 +145,6 @@ public class GridManager : MonoBehaviour
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += DroppedPiece;
-
-        
-       // OnGridChanged += () => OnPieceConsumed.Invoke();
     }
 
     private void SetupPieceEvents()
@@ -255,12 +261,8 @@ public class GridManager : MonoBehaviour
         }
 
         gridPieces.Remove(piece);
-
         piece.transform.position = POOL_POSITION;
-
-       // OnPieceConsumed.Invoke();
     }
-
     #endregion
 
     private Cell GetClosestCell(Transform givenTransform) => GetClosestCell(givenTransform.position);
@@ -288,6 +290,12 @@ public class GridManager : MonoBehaviour
             if (pieceToSpawn != null)
             {
                 GridPiece newPiece = CustomMethods.Instantiate(pieceToSpawn, PieceParent);
+
+                if (newPiece == null)
+                {
+                    return;
+                }
+
                 newPiece.gameObject.name = pieceToSpawn.gameObject.name;
 
                 newPiece.CurrentCell = cells[i];
@@ -379,20 +387,8 @@ public class GridManager : MonoBehaviour
             SpaceOutCells();
         }
 
-        //if (GridAxes == AXES.XY)
-        //{
-        //    cellParent.transform.localPosition = new Vector2(CellParentPositionValue, CellParentPositionValue);
-        //    transform.eulerAngles = transform.eulerAngles.NewX(-90);
-        //}
-        //else
-        //{
-        //    cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
-        //    transform.eulerAngles = Vector3.zero;
-        //}
-
         cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
         transform.eulerAngles = Vector3.zero;
-
 
         if (puzzleConfig != null)
         {
@@ -420,7 +416,6 @@ public class GridManager : MonoBehaviour
             {
                 float width = j * CellSpacing;
                 float height = i * CellSpacing;
-
                 cells[(i*Height)+j].transform.localPosition = new Vector3(width, 0, height);
             }
         }
@@ -430,11 +425,13 @@ public class GridManager : MonoBehaviour
     {
         for (int i = 0; i < cells.Count; i++)
         {
+            //empty when it should have piece, or vice-versa
             if (cells[i].Occupied != (puzzleConfig.Pieces[i] != null))
             {
                 return false;
             }
 
+            //wrong type
             if (cells[i].Occupied && !cells[i].CurrentPiece.IsOfSameType(puzzleConfig.Pieces[i]))
             {
                 return false;
@@ -447,11 +444,9 @@ public class GridManager : MonoBehaviour
     public bool PieceCanLandOnCell(GridPiece piece, Cell cell)
     {
         GridPiece cellPiece = cell.CurrentPiece;
-        if (cellPiece != null)
-            print($"cellPiece: {cellPiece}");
 
         // Grouped piece trying to move "out" of the grid left or right 
-        if (!(cell == piece.CurrentCell || piece.IndicatorCell.AdjacentCells.Contains(cell))) //piece.CurrentCell.AdjacentCells.Contains(gridManager.Cells[newIndicatorIndex])))
+        if (!(cell == piece.CurrentCell || piece.IndicatorCell.AdjacentCells.Contains(cell)))
         {
             return false;
         }

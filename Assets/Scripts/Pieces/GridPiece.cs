@@ -31,7 +31,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private Renderer rend;
     private Collider pieceCollider;
 
-    private Color pieceColor;
+    [SerializeField] private Color pieceColor;
     private bool canPlaceOnIndicator;
 
     #region Properties
@@ -124,7 +124,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             pieceCollider = GetComponentInChildren<Collider>();
 
         rend = gameObject.GrabRenderer();
-        pieceColor = rend.GetColor();
+       // pieceColor = rend.GetColor();
         pieceCollider.enabled = Interactable;
 
         if(TryGetComponent(out indicatorHandler))
@@ -300,7 +300,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #region Input Callbacks
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(!Interactable) return;
+        if(!Interactable || !grid.Interactable) return;
 
         IsHeld = true;
         HandlePickup();
@@ -309,14 +309,14 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!Interactable) return;
+        if (!Interactable || !grid.Interactable) return;
 
         UserDropPiece();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (grid.SelectedPiece != null || !Interactable)
+        if (grid.SelectedPiece != null || !Interactable || !grid.Interactable)
             return;
 
         IsHovered = true;
@@ -325,7 +325,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (grid.SelectedPiece != null || !Interactable) 
+        if (grid.SelectedPiece != null || !Interactable || !grid.Interactable) 
             return;
 
         IsHovered = false;
@@ -342,6 +342,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private void OnValidate()
     {
         HandleDroppedInPieces();
+        //transform.localPosition = transform.localPosition.NewY(0);
     }
 
     /// <summary>
@@ -352,9 +353,14 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 #if UNITY_EDITOR
         if (PrefabStageUtility.GetCurrentPrefabStage() == null && !PrefabUtility.IsPartOfPrefabAsset(gameObject))
         {
+            if (transform.parent != null && transform.parent.CompareTag("GridPieceParent"))
+                return;
+
             GameObject parent = GameObject.FindGameObjectWithTag("GridPieceParent");
             if (parent != null)
+            {
                 transform.parent = parent.transform;
+            }
         }
 #endif
     }
