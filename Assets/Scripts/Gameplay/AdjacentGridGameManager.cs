@@ -268,6 +268,9 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     private bool ValidateMovement(Cell activeIndicatorCell)
     {
+        if(activeIndicatorCell == null)
+            return false;
+
         bool allValid = true;
 
         foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
@@ -389,7 +392,7 @@ public class AdjacentGridGameManager : MonoBehaviour
     {
         Cell cell = piece.IndicatorCell;
         // hovering over piece          && is opposing type            && it's a consumable piece
-        return cell.Occupied && !cell.CurrentPiece.IsOfSameType(piece) && cell.CurrentPiece.Consumable;
+        return cell && cell.Occupied && !cell.CurrentPiece.IsOfSameType(piece) && cell.CurrentPiece.Consumable;
     }
 
     // Hide all connected pieces that were not flagged as invalid
