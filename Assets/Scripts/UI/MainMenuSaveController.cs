@@ -20,7 +20,6 @@ public class MainMenuSaveController : MonoBehaviour
         if (noData)
         {
             continueButton.interactable = false;
-            levelButton.interactable = false;
         }
         else
         {

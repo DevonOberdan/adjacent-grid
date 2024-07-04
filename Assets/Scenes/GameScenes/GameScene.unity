@@ -290,6 +290,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6266592020962336254, guid: 2f48fd2e8e06c5c449ad8355887212fc, type: 3}
   m_PrefabInstance: {fileID: 286712606}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &286712609 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4428954302914957858, guid: 2f48fd2e8e06c5c449ad8355887212fc, type: 3}
+  m_PrefabInstance: {fileID: 286712606}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 286712608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &336495403
 GameObject:
   m_ObjectHideFlags: 0
@@ -2283,22 +2294,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e7af98336757644e8429ff3d497b24d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transitionTime: 0.15
   OnEnterLevelSelect: {fileID: 11400000, guid: 04cd3e75dea7b354694cb4fc188e1b9e, type: 2}
   gameView: {fileID: 1711363864}
   levelSelectView: {fileID: 1739792991}
-  transitionTime: 0.15
-  backgroundDarkenPerc: 0.46
-  ease: 27
-  background: {fileID: 895927613}
   leftButton: {fileID: 711103630}
   rightButton: {fileID: 1491794725}
   playButton: {fileID: 1371292283}
   levelManager: {fileID: 557531809}
   postProcess: {fileID: 510787317}
   lockedImage: {fileID: 1471220827}
-  showLock: 1
   lockIcon: {fileID: 336495404}
-  lockShakeFactor: 5
   lockAudio: {fileID: 11400000, guid: 3deaf5433cbc676448a1a2c0169f6dea, type: 2}
 --- !u!114 &1855414423
 MonoBehaviour:
@@ -2329,6 +2335,7 @@ MonoBehaviour:
   EnterLevelSelectEvent: {fileID: 11400000, guid: 04cd3e75dea7b354694cb4fc188e1b9e, type: 2}
   ExitLevelSelectEvent: {fileID: 11400000, guid: d16b5dbff3d7c0d4bbde5f3f3f77a175, type: 2}
   tutorialTextRoot: {fileID: 1102045474457240433}
+  levelSelectCloseButton: {fileID: 286712609}
 --- !u!1 &1872614024
 GameObject:
   m_ObjectHideFlags: 0

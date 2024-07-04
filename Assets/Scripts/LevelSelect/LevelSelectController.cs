@@ -7,51 +7,34 @@ using UnityEngine.UI;
 
 public class LevelSelectController : MonoBehaviour
 {
-    [SerializeField] private GameEvent OnEnterLevelSelect;
-
-    [SerializeField] private Transform gameView, levelSelectView;
     [SerializeField] private float transitionTime;
-    [SerializeField] private float backgroundDarkenPerc;
 
-    [SerializeField] private Ease ease;
-
-    [SerializeField] private MeshRenderer background;
+    [SerializeField] private GameEvent OnEnterLevelSelect;
+    [SerializeField] private Transform gameView, levelSelectView;
     [SerializeField] private Button leftButton, rightButton, playButton;
-
     [SerializeField] private GridLevelManager levelManager;
     [SerializeField] private PostProcessingController postProcess;
+
+    [Header("Locked Levels")]
     [SerializeField] private GameObject lockedImage;
-    [SerializeField] private bool showLock;
-
     [SerializeField] private Transform lockIcon;
-    [SerializeField] private float lockShakeFactor;
     [SerializeField] private AudioConfigSO lockAudio;
-    private Material backgroundMat;
-
-
-    private Tween shakeTween;
-    private Vector3 ShakeFactor;
-
-    private Color startColor, tweenedColor;
-
+    
     private int currentLevel;
-
-    private const string BACKGROUND_COLOR = "_Water_Color";
-
     private bool entered = false;
 
     private AudioConfigSO startButtonAudio;
     private ButtonAudioHelper leftArrowAudio, rightArrowAudio;
 
     private Coroutine setButtonCoroutine;
+    private Tween shakeTween;
+    private Vector3 ShakeFactor;
+    private Ease ease;
 
     private void Awake()
     {
-        backgroundMat = background.material;
-        startColor = backgroundMat.GetColor(BACKGROUND_COLOR);
-        tweenedColor = startColor;
-
-        ShakeFactor = new Vector3(0, 0, lockShakeFactor);
+        ShakeFactor = new Vector3(0, 0, 5);
+        ease = Ease.OutBack;
 
         leftArrowAudio = leftButton.GetComponent<ButtonAudioHelper>();
         rightArrowAudio = rightButton.GetComponent<ButtonAudioHelper>();
@@ -61,14 +44,6 @@ public class LevelSelectController : MonoBehaviour
     private void Start()
     {
         levelManager.OnNewLevel.AddListener(ConfigureFromLevel);
-    }
-
-    private void Update()
-    {
-        if (backgroundMat.GetColor(BACKGROUND_COLOR) != tweenedColor)
-        {
-            backgroundMat.SetColor(BACKGROUND_COLOR, tweenedColor);
-        }
     }
 
     public void ConfigureFromLevel(int level)
@@ -117,18 +92,13 @@ public class LevelSelectController : MonoBehaviour
         levelManager.SetLevelIndex(currentLevel);
         postProcess.EnableVignette(true);
 
-        if(Camera.main != null)
-        {
-            Camera.main.transform.DOMove(levelSelectView.position, transitionTime).SetEase(ease);
-        }
-        DOTween.To(() => tweenedColor, x => tweenedColor = x, startColor.DarkenedToPercent(0.46f), transitionTime).SetEase(ease);
+        Camera.main.transform.DOMove(levelSelectView.position, transitionTime).SetEase(ease);
         DOTween.To(() => postProcess.VignetteRange.x, x => postProcess.SetVignetteIntensity(x), postProcess.VignetteRange.y, transitionTime).SetEase(ease);
     }
 
     public void MoveToGameView()
     {
         Camera.main.transform.DOMove(gameView.position, transitionTime).SetEase(ease);
-        DOTween.To(() => tweenedColor, val => tweenedColor = val, startColor, transitionTime).SetEase(ease);
         DOTween.To(() => postProcess.VignetteRange.y, val => postProcess.SetVignetteIntensity(val), postProcess.VignetteRange.x, transitionTime)
                .SetEase(ease).OnComplete(() => postProcess.EnableVignette(false));
 
