@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class MainMenuSaveController : MonoBehaviour
 {
-    [SerializeField] private Button newGameButton, continueButton, levelButton;
+    [SerializeField] private FinishOne.UI.Button newGameButton, continueButton, levelButton;
 
     AdjacentGridGameData gameData;
 
@@ -19,12 +19,12 @@ public class MainMenuSaveController : MonoBehaviour
 
         if (noData)
         {
-            continueButton.interactable = false;
+            continueButton.Interactable = false;
         }
         else
         {
             bool allLevelsBeat = gameData.LevelData.AllLevelsComplete;
-            continueButton.interactable = !allLevelsBeat;
+            continueButton.Interactable = !allLevelsBeat;
         }
     }
 

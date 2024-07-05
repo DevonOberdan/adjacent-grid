@@ -7,7 +7,7 @@ public class GameUISaveController : MonoBehaviour
 {
     [SerializeField] private GameEvent EnterLevelSelectEvent, ExitLevelSelectEvent;
     [SerializeField] private GameObject tutorialTextRoot;
-    [SerializeField] private Button levelSelectCloseButton;
+    [SerializeField] private FinishOne.UI.Button levelSelectCloseButton;
 
     private void Start()
     {

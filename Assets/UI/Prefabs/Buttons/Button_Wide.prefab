@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6176921672114629744}
   - component: {fileID: 494017286003058775}
   - component: {fileID: 5405772355128081930}
+  - component: {fileID: 3754986612412564540}
   m_Layer: 5
   m_Name: Button_Wide
   m_TagString: Untagged
@@ -150,6 +151,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioConfig: {fileID: 11400000, guid: 2a0a087bdb5028f4cb923d6900bfa33d, type: 2}
+--- !u!114 &3754986612412564540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3761800112014218275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73530df6144bbb34c890e017f6e77892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnInteractionSet:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHoverChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5860878409271630927}
+        m_TargetAssemblyTypeName: TextUtilities, Assembly-CSharp
+        m_MethodName: IncreaseFontSize
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5633723249391536408
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,6 +192,7 @@ GameObject:
   - component: {fileID: 9000022293496112630}
   - component: {fileID: 4665995358267413442}
   - component: {fileID: 6404491090961613425}
+  - component: {fileID: 5860878409271630927}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -243,7 +275,7 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4294967295
   m_fontSize: 60
-  m_fontSizeBase: 75
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 36
@@ -284,6 +316,18 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5860878409271630927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5633723249391536408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cde1366a16564d1419729db62ee6478a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5999270270345324118
 GameObject:
   m_ObjectHideFlags: 0

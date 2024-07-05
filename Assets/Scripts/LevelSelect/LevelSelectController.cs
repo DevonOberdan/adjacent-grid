@@ -11,7 +11,7 @@ public class LevelSelectController : MonoBehaviour
 
     [SerializeField] private GameEvent OnEnterLevelSelect;
     [SerializeField] private Transform gameView, levelSelectView;
-    [SerializeField] private Button leftButton, rightButton, playButton;
+    [SerializeField] private FinishOne.UI.Button leftButton, rightButton, playButton;
     [SerializeField] private GridLevelManager levelManager;
     [SerializeField] private PostProcessingController postProcess;
 
@@ -48,13 +48,13 @@ public class LevelSelectController : MonoBehaviour
 
     public void ConfigureFromLevel(int level)
     {
-        leftButton.interactable = level > 0;
-        rightButton.interactable = level < levelManager.PuzzleCount - 1;
+        leftButton.Interactable = level > 0;
+        rightButton.Interactable = level < levelManager.PuzzleCount - 1;
 
         bool currentLevelLocked = level > levelManager.CompletedLevelCount;
 
         lockedImage.SetActive(currentLevelLocked);
-        playButton.interactable = !currentLevelLocked;
+        playButton.Interactable = !currentLevelLocked;
         postProcess.EnableDepthOfField(currentLevelLocked);
 
         if (currentLevelLocked)
