@@ -102,6 +102,13 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
 
     private void Update()
     {
+#if UNITY_EDITOR
+        DebugInput();
+#endif
+    }
+
+    private void DebugInput()
+    {
         if (Input.GetKeyDown(KeyCode.N))
         {
             Decrement();
@@ -112,6 +119,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
             Increment();
         }
     }
+
 
     private void OnDestroy()
     {
