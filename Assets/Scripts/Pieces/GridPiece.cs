@@ -305,6 +305,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         IsHeld = true;
         HandlePickup();
         OnPickup?.Invoke();
+
+        if(CursorHandler.Instance != null)
+        {
+            CursorHandler.Instance.Hold();
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -312,23 +317,40 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (!Interactable || !grid.Interactable) return;
 
         UserDropPiece();
+
+
+        if(CursorHandler.Instance != null)
+        {
+            if (IsHovered)
+                CursorHandler.Instance.Hover();
+            else
+                CursorHandler.Instance.Default();
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        IsHovered = true;
+
         if (grid.SelectedPiece != null || !Interactable || !grid.Interactable)
             return;
 
-        IsHovered = true;
         OnHovered?.Invoke(IsHovered);
+
+        if(CursorHandler.Instance != null)
+        {
+            CursorHandler.Instance.Hover();
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        IsHovered = false;
+
         if (grid.SelectedPiece != null || !Interactable || !grid.Interactable) 
             return;
 
-        IsHovered = false;
+        CursorHandler.Instance.Default();
         OnHovered?.Invoke(IsHovered);
     }
     #endregion

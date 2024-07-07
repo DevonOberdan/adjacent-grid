@@ -184,6 +184,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2f9286db11d5fc4997079c2aee67e68, type: 3}
+--- !u!1 &223332233
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 223332235}
+  - component: {fileID: 223332234}
+  m_Layer: 0
+  m_Name: CursorHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &223332234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223332233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cb26ae2e6fbeb40ac67f948205ee7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultCursor: {fileID: 2800000, guid: 872f6b57bdcd74b479968b52dcac0e3e, type: 3}
+  hoverCursor: {fileID: 2800000, guid: d3b8d9ea10d0b1843b214515d0333ea3, type: 3}
+  holdCursor: {fileID: 2800000, guid: 513aa2bd2fd69254b80d682cea57bb0f, type: 3}
+--- !u!4 &223332235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223332233}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &473143639
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,3 +564,4 @@ SceneRoots:
   - {fileID: 553719610}
   - {fileID: 2920108114790774732}
   - {fileID: 473143642}
+  - {fileID: 223332235}

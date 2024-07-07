@@ -13,8 +13,7 @@ public class HamburgerMenuController : MonoBehaviour
     private void Awake()
     {
         closedWidth = new Vector2(0,0);
-        expandedWidth = new Vector2(525, 525);
-
+        expandedWidth = menuPanel.rect.size;
         Close();
     }
 

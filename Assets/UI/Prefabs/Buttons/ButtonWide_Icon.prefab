@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3787269196051698175}
   - component: {fileID: 2463599925623744752}
   - component: {fileID: 8013235868954473868}
+  - component: {fileID: 7485771788327062179}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -75,6 +76,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7485771788327062179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5536385662915136165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22d48cb2538eab04fa214cc7b7010c2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LOOP_TIME: 0.5
+  TIME_BETWEEN_LOOPS: 1.5
+  scaleFactor: 1.1
+  colorToTweenTo: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1001 &2994741234070324882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -83,6 +100,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3754986612412564540, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
+      propertyPath: OnHoverChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7485771788327062179}
+    - target: {fileID: 3754986612412564540, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
+      propertyPath: OnHoverChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Scale
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754986612412564540, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
+      propertyPath: OnHoverChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: TweenUtilities, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 3761800112014218275, guid: 03e1d5a04b7ae6e4181930c47a111747, type: 3}
       propertyPath: m_Name
       value: ButtonWide_Icon

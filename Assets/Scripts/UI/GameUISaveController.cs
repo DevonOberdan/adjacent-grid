@@ -1,11 +1,13 @@
 using FinishOne.GeneralUtilities;
 using FinishOne.SaveSystem;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameUISaveController : MonoBehaviour
 {
     [SerializeField] private GameEvent EnterLevelSelectEvent, ExitLevelSelectEvent;
     [SerializeField] private GameObject tutorialTextRoot;
+    [SerializeField] private FinishOne.UI.Button levelSelectCloseButton;
 
     private void Start()
     {
@@ -26,11 +28,12 @@ public class GameUISaveController : MonoBehaviour
         HandleLevelSelectSetup();
     }
 
-    private  void HandleLevelSelectSetup()
+    private void HandleLevelSelectSetup()
     {
         if (GameManager.StartInLevelSelect)
         {
             EnterLevelSelectEvent.Raise();
+            levelSelectCloseButton.gameObject.SetActive(false);
         }
         else
         {
