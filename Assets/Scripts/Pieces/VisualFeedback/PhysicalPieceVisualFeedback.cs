@@ -1,7 +1,6 @@
 using DG.Tweening;
 using FinishOne.GeneralUtilities;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class PhysicalPieceVisualFeedback : PieceVisualFeedback
@@ -31,27 +30,6 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
 
         if (dropTween.IsActive())
             dropTween.Kill();
-    }
-
-    // TODO: try returning Random range surrounding LIFT_TIME
-    private float GetLiftTime()
-    {
-        return LIFT_TIME;
-    }
-
-    private void LowerPiece()
-    {
-        // ensure this never runs from editor-time code
-        if (!Application.isPlaying)
-            return;
-
-        if (pickupTween.IsActive())
-        {
-            pickupTween.Kill();
-        }
-
-        dropTween = transform.DOLocalMoveY(defaultHeight, GetLiftTime());
-        dropTween.ForceInit();
     }
 
     public override void HandleNewCell(Cell cell)
@@ -86,13 +64,27 @@ public class PhysicalPieceVisualFeedback : PieceVisualFeedback
         LowerPiece();
     }
 
-    public override void HandleHovered(bool hovered)
+    public override void HandleHovered(bool hovered) { }
+
+    public override void HandleIndicatorMoved(Cell newCell) { }
+
+    private float GetLiftTime()
     {
-        
+        return LIFT_TIME;
     }
 
-    public override void HandleIndicatorMoved(Cell newCell)
+    private void LowerPiece()
     {
-        //maybe don't need
+        // ensure this never runs from editor-time code
+        if (!Application.isPlaying)
+            return;
+
+        if (pickupTween.IsActive())
+        {
+            pickupTween.Kill();
+        }
+
+        dropTween = transform.DOLocalMoveY(defaultHeight, GetLiftTime());
+        dropTween.ForceInit();
     }
 }

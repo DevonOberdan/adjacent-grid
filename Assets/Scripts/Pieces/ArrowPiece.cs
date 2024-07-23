@@ -5,15 +5,11 @@ using UnityEngine;
 [RequireComponent(typeof(GridPiece))]
 public class ArrowPiece : PieceDestroyedFeedback
 {
-    private GridPiece piece;
-
-    private GridManager manager;
-    private AutoPieceMover pieceMover;
-    
     [SerializeField] AutoPieceMover.DIR direction;
 
+    private AutoPieceMover pieceMover;
 
-    private float MOVE_DELAY = 0.2f;
+    private const float MOVE_DELAY = 0.2f;
 
     public override void HandleDestroyed(GridPiece destroyer)
     {
@@ -50,9 +46,6 @@ public class ArrowPiece : PieceDestroyedFeedback
 
     private void Awake()
     {
-        piece = GetComponent<GridPiece>();
-
-        manager = GetComponentInParent<GridManager>();
         pieceMover = GetComponentInParent<AutoPieceMover>();
     }
 

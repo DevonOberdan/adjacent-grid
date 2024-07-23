@@ -120,7 +120,6 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
         }
     }
 
-
     private void OnDestroy()
     {
         OnRequestNext.UnregisterListener(nextListener);

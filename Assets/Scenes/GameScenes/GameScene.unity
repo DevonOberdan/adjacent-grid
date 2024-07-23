@@ -1311,7 +1311,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 895927612}
-  m_Mesh: {fileID: 7764937463692161990, guid: 2c48b77a8d3d16648b3d346211704a2d, type: 3}
+  m_Mesh: {fileID: 7764937463692161990, guid: 6ccdf51d2502dc84f9ae93c29bdb3c90, type: 3}
 --- !u!4 &895927615
 Transform:
   m_ObjectHideFlags: 0
@@ -1920,7 +1920,7 @@ TerrainCollider:
   m_Enabled: 0
   serializedVersion: 2
   m_TerrainData: {fileID: 15600000, guid: 01d0d1840d0a80d4eb2e722887b5047e, type: 2}
-  m_EnableTreeColliders: 1
+  m_EnableTreeColliders: 0
 --- !u!218 &1483716499
 Terrain:
   m_ObjectHideFlags: 0
@@ -3009,13 +3009,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4157748453854324709}
     - target: {fileID: 228524880898241673, guid: 1af16425693bdc345b80e77a6d2edbdc, type: 3}
-      propertyPath: pickupAudio
-      value: 
-      objectReference: {fileID: 11400000, guid: 7b13c5addd902444ea461e13a168d45b, type: 2}
-    - target: {fileID: 228524880898241673, guid: 1af16425693bdc345b80e77a6d2edbdc, type: 3}
       propertyPath: pickupSound
       value: 
-      objectReference: {fileID: 8300000, guid: 0d59d49260c8afc47990eb6cb26818f5, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 454149167064367612, guid: 1af16425693bdc345b80e77a6d2edbdc, type: 3}
       propertyPath: m_RootOrder
       value: 5

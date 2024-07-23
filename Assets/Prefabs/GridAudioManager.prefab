@@ -144,10 +144,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 0}
-  pickupSound: {fileID: 0}
-  dropSound: {fileID: 8300000, guid: f755564455ea5b54f90ec4618f89dabe, type: 3}
-  failDropSound: {fileID: 8300000, guid: bcb07b43dc74c2d48be63a18d024913e, type: 3}
-  indicatorSound: {fileID: 0}
   pickupAudio: {fileID: 0}
   dropAudio: {fileID: 11400000, guid: 37384af625f085b4f85f8de59f637a85, type: 2}
   failDropAudio: {fileID: 11400000, guid: 3a1af147709d7c643a435335d1d2ed73, type: 2}

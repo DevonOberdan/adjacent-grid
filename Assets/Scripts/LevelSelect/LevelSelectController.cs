@@ -1,9 +1,9 @@
 using DG.Tweening;
 using FinishOne.GeneralUtilities;
 using FinishOne.GeneralUtilities.Audio;
+using FinishOne.UI;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class LevelSelectController : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class LevelSelectController : MonoBehaviour
 
     [SerializeField] private GameEvent OnEnterLevelSelect;
     [SerializeField] private Transform gameView, levelSelectView;
-    [SerializeField] private FinishOne.UI.Button leftButton, rightButton, playButton;
+    [SerializeField] private Button leftButton, rightButton, playButton;
     [SerializeField] private GridLevelManager levelManager;
     [SerializeField] private PostProcessingController postProcess;
 
@@ -20,9 +20,6 @@ public class LevelSelectController : MonoBehaviour
     [SerializeField] private Transform lockIcon;
     [SerializeField] private AudioConfigSO lockAudio;
     
-    private int currentLevel;
-    private bool entered = false;
-
     private AudioConfigSO startButtonAudio;
     private ButtonAudioHelper leftArrowAudio, rightArrowAudio;
 
@@ -30,6 +27,9 @@ public class LevelSelectController : MonoBehaviour
     private Tween shakeTween;
     private Vector3 ShakeFactor;
     private Ease ease;
+
+    private int currentLevel;
+    private bool entered = false;
 
     private void Awake()
     {

@@ -14,6 +14,12 @@ public struct PieceGroup
     }
 }
 
+/// <summary>
+/// Hooks into GridManager events in order to provide this game with its unique grouping mechanic
+/// 
+/// When a piece is picked up, this determines all cardinally-adjacent pieces, extended out from the
+/// grabbed piece, and makes them mimic the grabbed piece behaviour.
+/// </summary>
 public class AdjacentGridGameManager : MonoBehaviour
 {
     [SerializeField] private bool highlightGroup;
@@ -45,7 +51,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     {
         nonActivelyHeldPieceOffsets = new Dictionary<GridPiece, int>();
         activeGrouping = new List<GridPiece>();
-
         gridManager = GetComponent<GridManager>();
 
         SetupGridListeners();
@@ -63,6 +68,16 @@ public class AdjacentGridGameManager : MonoBehaviour
             gridManager.OnPieceHovered += HandlePieceHovered;
 
         gridManager.OnGridChanged += FindAllGroups;
+    }
+
+    private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
+    {
+        List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
+
+        foreach (GridPiece piece in pieces)
+        {
+            piece.HandleHover(hovered);
+        }
     }
 
     #region Grouping Functions
@@ -208,8 +223,6 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     public void MoveGroupIndicators(Cell activeIndicatorCell, bool show=true)
     {
-        // bool validMovement = ValidMovementDirection(activeIndicatorCell);
-
         foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
         {
             int newIndicatorIndex = activeIndicatorCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
@@ -221,7 +234,6 @@ public class AdjacentGridGameManager : MonoBehaviour
             piece.CanPlaceOnIndicator = true;
             piece.ShowIndicator(show);
         }
-
     }
 
     public void ShowGroupIndicators(bool show)
@@ -290,7 +302,6 @@ public class AdjacentGridGameManager : MonoBehaviour
             }
             else
             {
-                // valid piece, hide it
                 piece.IndicatorCell = piece.CurrentCell;
             }
         }
@@ -405,14 +416,4 @@ public class AdjacentGridGameManager : MonoBehaviour
         }
     }
     #endregion
-
-    private void HandlePieceHovered(GridPiece hoveredPiece, bool hovered)
-    {        
-        List<GridPiece> pieces = GetAdjacentPieces(hoveredPiece);
-
-        foreach (GridPiece piece in pieces)
-        {
-            piece.HandleHover(hovered);
-        }
-    }
 }
