@@ -138,12 +138,12 @@ MonoBehaviour:
   OnRequestRestart: {fileID: 11400000, guid: 6294e18b2ea80f0449d5076d775b9952, type: 2}
   OnRequestDecrement: {fileID: 11400000, guid: 2fc0885b4717dbc41a5d7b744c21abd2, type: 2}
   levelText: {fileID: 0}
-  newPuzzleName: ArrowChainMisdirection
   data:
     <Id>k__BackingField: 
     Index: 0
     AllLevelsComplete: 0
   <Id>k__BackingField: LevelManager
+  newPuzzleName: ArrowChainMisdirection
 --- !u!114 &468934064640700941
 MonoBehaviour:
   m_ObjectHideFlags: 0

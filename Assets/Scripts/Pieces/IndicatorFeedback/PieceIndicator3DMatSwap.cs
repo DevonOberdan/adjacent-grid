@@ -1,13 +1,18 @@
 using UnityEngine;
 
-public class PieceIndicator3DCellHighlight : PieceIndicator
+public class PieceIndicator3DMatSwap : PieceIndicator
 {
-    private Color startingColor;
-    private Cell currentCell;
+    [SerializeField] private Material activeMatPrefab;
 
     private bool initialized;
+    private Material startMat;
+    private Cell currentCell;
+    private Material activeMat;
 
-    public Color StartingColor => startingColor;
+    private void Awake()
+    {
+        activeMat = Instantiate(activeMatPrefab);
+    }
 
     private Material GrabCellMat(Cell cell)
     {
@@ -23,8 +28,25 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
         return null;
     }
 
+    private void SetMaterial(Material mat)
+    {
+        if (currentCell == null)
+            return;
+
+        Renderer rend = currentCell.gameObject.GrabRenderer();
+        if (rend != null && rend.materials.Length > 1)
+        {
+            rend.materials[1] = mat;
+        }
+    }
+
     public override void HandleValidPlacement(bool valid)
     {
+        if(GrabCellMat(currentCell) != activeMat)
+        {
+            SetMaterial(activeMat);
+        }
+
         SetColor(valid ? DefaultColor : GridInputHandler.Instance.InvalidPlacementColor);
     }
 
@@ -34,12 +56,12 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
 
         if (!initialized && mat != null)
         {
-            startingColor = mat.color;
+            startMat = mat;
             initialized = true;
         }
 
         //set previous Cell's color back to normal
-        SetColor(startingColor);
+        SetMaterial(startMat);
 
         currentCell = cell;
 
@@ -54,12 +76,13 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
 
         Material material = GrabCellMat(currentCell);
 
-        if(material != null)
+        if(color == DefaultColor)
+        {
+            SetMaterial(startMat);
+        }
+        else if (material != null)
         {
             material.color = color;
-
-            if (material.HasFloat("_TimeOffset"))
-                material.SetFloat("_TimeOffset", Time.time);
         }
     }
 
@@ -70,6 +93,15 @@ public class PieceIndicator3DCellHighlight : PieceIndicator
 
     public override void ShowIndicator(bool show)
     {
-        SetColor(show ? DefaultColor : startingColor);
+        if (show)
+        {
+            activeMat.color = DefaultColor;
+            SetMaterial(activeMat);
+        }
+        else
+        {
+
+            SetMaterial(startMat);
+        }
     }
 }

@@ -1,6 +1,5 @@
 using DG.Tweening;
 using FinishOne.GeneralUtilities;
-
 using UnityEngine;
 
 public class PhysicalPieceVisualFeedback : PieceVisualFeedback
