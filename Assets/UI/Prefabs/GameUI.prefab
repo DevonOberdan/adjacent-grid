@@ -3787,12 +3787,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2142565586081403569, guid: caecd86e8f45aff46a01f8d306e753c4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6968977921523093667}
-    - targetCorrespondingSourceObject: {fileID: 5536385662915136165, guid: caecd86e8f45aff46a01f8d306e753c4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7448225261952924641}
-    - targetCorrespondingSourceObject: {fileID: 5536385662915136165, guid: caecd86e8f45aff46a01f8d306e753c4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 569886323204572481}
   m_SourcePrefab: {fileID: 100100000, guid: caecd86e8f45aff46a01f8d306e753c4, type: 3}
 --- !u!114 &1316658077281272412 stripped
 MonoBehaviour:
@@ -3874,56 +3868,6 @@ MonoBehaviour:
       - m_Target: {fileID: 6626472947418056397}
         m_TargetAssemblyTypeName: TweenUtilities, Assembly-CSharp
         m_MethodName: SetColorLoop
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  registerOnEnable: 0
---- !u!1 &4828867886072744535 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5536385662915136165, guid: caecd86e8f45aff46a01f8d306e753c4, type: 3}
-  m_PrefabInstance: {fileID: 1141280628742226162}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7448225261952924641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4828867886072744535}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22d48cb2538eab04fa214cc7b7010c2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LOOP_TIME: 0.75
-  TIME_BETWEEN_LOOPS: 0
-  scaleFactor: 1.1
-  colorToTweenTo: {r: 0, g: 0, b: 0, a: 0}
---- !u!114 &569886323204572481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4828867886072744535}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e77d3cd429e11349b100d8a594343c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEvent: {fileID: 11400000, guid: 831368f9b5b59bc4eac93a6e39036090, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7448225261952924641}
-        m_TargetAssemblyTypeName: TweenUtilities, Assembly-CSharp
-        m_MethodName: SetScaleLoop
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
