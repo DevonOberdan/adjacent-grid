@@ -19,6 +19,8 @@ public class CursorHandler : MonoBehaviour
         }
 
         Instance = this;
+
+        Default();
     }
 
     public void Default() => SetCursor(defaultCursor);
@@ -27,6 +29,6 @@ public class CursorHandler : MonoBehaviour
 
     private void SetCursor(Texture2D cursor)
     {
-        Cursor.SetCursor(cursor, Vector2.zero, CursorMode.ForceSoftware);
+        Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
     }
 }

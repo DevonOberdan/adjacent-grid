@@ -30,6 +30,23 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
 
     [SerializeField] private TMP_Text levelText;
 
+    #region Save Data
+    [HideInInspector][SerializeField] private LevelData data;
+    [field: SerializeField] public string Id { get; set; } = "LevelManager";
+
+    public void Bind(LevelData data)
+    {
+        this.data = data;
+        this.data.Id = Id;
+
+        if (!startingCustom)
+        {
+            CompletedLevelCount = data.Index;
+            LevelIndex = Mathf.Clamp(CompletedLevelCount, 0, puzzleConfigs.Length - 1);
+        }
+    }
+    #endregion
+
     [Space]
     [Header("Config Generation")]
 
@@ -63,25 +80,6 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
             }
         }
     }
-
-    #region Save Data
-
-    [Header("Save Data")]
-    [SerializeField] private LevelData data;
-    [field: SerializeField] public string Id { get; set; } = "LevelManager";
-
-    public void Bind(LevelData data)
-    {
-        this.data = data;
-        this.data.Id = Id;
-
-        if (!startingCustom)
-        {
-            CompletedLevelCount = data.Index;
-            LevelIndex = Mathf.Clamp(CompletedLevelCount, 0, puzzleConfigs.Length-1);
-        }
-    }
-    #endregion
 
     private void Awake()
     {
@@ -119,7 +117,6 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
             Increment();
         }
     }
-
 
     private void OnDestroy()
     {

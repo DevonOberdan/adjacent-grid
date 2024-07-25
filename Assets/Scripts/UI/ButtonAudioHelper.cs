@@ -2,6 +2,9 @@ using FinishOne.GeneralUtilities.Audio;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Hooks up a Unity Button or Toggle to play a sound clip when it is clicked
+/// </summary>
 public class ButtonAudioHelper : MonoBehaviour
 {
     [SerializeField] private AudioConfigSO audioConfig;

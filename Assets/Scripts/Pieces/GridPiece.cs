@@ -16,6 +16,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public UnityEvent<Cell> OnCellSet;
 
+    [SerializeField] private Color pieceColor;
+
     public Action OnPickup, OnSelected;
     public Action<bool> OnDropSuccessful, OnHovered;
     public Action OnPieceMoved;
@@ -30,8 +32,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     private Renderer rend;
     private Collider pieceCollider;
-
-    [SerializeField] private Color pieceColor;
     private bool canPlaceOnIndicator;
 
     #region Properties
@@ -64,15 +64,11 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
             value.AddPiece(this);
 
-            //IndicatorCell = value;
-           // ShowIndicator(currentCell != null && value != currentCell);
-
             currentCell = value;
             gameObject.SetActive(true);
             OnCellSet.Invoke(currentCell);
 
             IndicatorCell = currentCell;
-           // CanPlaceOnIndicator = true;
             ShowIndicator(false);
             HandleNewCell();
         }
@@ -124,7 +120,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             pieceCollider = GetComponentInChildren<Collider>();
 
         rend = gameObject.GrabRenderer();
-       // pieceColor = rend.GetColor();
         pieceCollider.enabled = Interactable;
 
         if(TryGetComponent(out indicatorHandler))
@@ -167,11 +162,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
 
     #region Public Methods
-
     public void HandleNewCell()
     {
-        visualFeedback = GetComponent<PieceVisualFeedback>();
-        if (visualFeedback != null)
+        if (TryGetComponent(out visualFeedback))
             visualFeedback.HandleNewCell(CurrentCell);
         else
             transform.localPosition = CurrentCell.transform.position;
@@ -186,7 +179,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #region Private Helper Methods
     private void HandleIndicator()
     {
-        //Cell hoveredCell = grid.CurrentHoveredCell();
         Cell hoveredCell = grid.HoveredCell;
 
         if (ValidCell(hoveredCell) && hoveredCell != previouslyHoveredCell)
@@ -253,7 +245,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (visualFeedback != null)
             visualFeedback.HandleDropped(CurrentCell);
 
-        //CanPlaceOnIndicator = true;
         ShowIndicator(false);
     }
 
@@ -269,7 +260,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         IndicatorCell = CurrentCell;
         CanPlaceOnIndicator = false;
-        //ShowIndicator(true);
     }
     #endregion
 
@@ -364,7 +354,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private void OnValidate()
     {
         HandleDroppedInPieces();
-        //transform.localPosition = transform.localPosition.NewY(0);
     }
 
     /// <summary>

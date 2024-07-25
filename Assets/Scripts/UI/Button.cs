@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -13,10 +10,14 @@ namespace FinishOne.UI
     {
         public UnityEvent<bool> OnInteractionSet, OnHoverChanged;
 
+        private Selectable button;
         private bool interactable;
-        public bool Interactable {
+
+        public bool Interactable 
+        {
             get => interactable;
-            set {
+            set 
+            {
                 interactable = value;
                 button.interactable = value;
                 OnInteractionSet?.Invoke(value);
@@ -25,8 +26,6 @@ namespace FinishOne.UI
                     OnHoverChanged?.Invoke(false);
             }
         }
-
-        private Selectable button;
 
         public void OnPointerEnter(PointerEventData eventData)
         {
@@ -46,16 +45,6 @@ namespace FinishOne.UI
         {
             TryGetComponent(out button);
             Interactable = button.interactable;
-        }
-
-        private void Start()
-        {
-
-        }
-
-        private void Update()
-        {
-
         }
     }
 }
