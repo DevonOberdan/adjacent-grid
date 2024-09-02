@@ -1,4 +1,3 @@
-using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,7 +5,6 @@ using UnityEngine.Events;
 public class GridHistoryManager : MonoBehaviour
 {
     [SerializeField] private UnityEvent<bool> HasHistoryBroadcast;
-
     [SerializeField] private UnityEvent<int> RemainingRewindBroadcast;
 
     [Tooltip("Set to 0 for unlimited attempts")]
@@ -28,19 +26,9 @@ public class GridHistoryManager : MonoBehaviour
         gridManager.OnGridReset += ResetHistory;
     }
 
-    private void Start()
-    {
-        ResetHistory();
-    }
-
     public void DisableRewindable(bool disable) => SetRewindable(!disable);
-    
     public void SetRewindable(bool allow) => rewindable = allow;
-
-    public void SetFlag(bool set)
-    {
-        rewindFlag = set;
-    }
+    public void SetFlag(bool set) => rewindFlag = set;
 
     public void ResetHistory()
     {
