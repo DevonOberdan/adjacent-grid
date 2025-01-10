@@ -1900,6 +1900,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneLoadRequester
       objectReference: {fileID: 0}
+    - target: {fileID: 7575613462236351578, guid: 2321aaa4e8057c446905e9b340fe3214, type: 3}
+      propertyPath: defaultScene
+      value: 
+      objectReference: {fileID: 11400000, guid: d61cac422efba9047acb02ccd59c8ca7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

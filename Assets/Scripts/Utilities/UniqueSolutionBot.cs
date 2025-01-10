@@ -30,7 +30,7 @@ public class UniqueSolutionBot : MonoBehaviour
 
         gridManager.OnGridReset += HandleGridReset;
 
-        solveButton.onClick.AddListener(HandleButton);
+        solveButton.onClick.AddListener(SolveCurrentGrid);
         delaySlider.onValueChanged.AddListener(SetTimeDelay);
     }
 
@@ -40,7 +40,7 @@ public class UniqueSolutionBot : MonoBehaviour
         SolveNewPuzzle();
     }
 
-    private void HandleButton()
+    public void SolveCurrentGrid()
     {
         if (solving)
         {
@@ -89,13 +89,14 @@ public class UniqueSolutionBot : MonoBehaviour
 
     private void SolveNewPuzzle()
     {
-        SetCount(0);
         SetSolving(true);
         StartCoroutine(SolvePuzzle());
     }
 
-    private IEnumerator SolvePuzzle()
+    public IEnumerator SolvePuzzle()
     {
+        SetCount(0);
+
         yield return new WaitForSeconds(MOVE_DELAY);
         yield return StartCoroutine(CheckGroups());
         uniqueSolutionText.text = "" + uniqueCount;

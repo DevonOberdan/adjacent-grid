@@ -1,5 +1,5 @@
 {
-    "name": "AdjacentGrid.Tests.Editor",
+    "name": "AdjacentGrid.Editor.Tests",
     "rootNamespace": "",
     "references": [
         "GUID:b4f642e8d1933524e97806e7067ea1cd",
@@ -15,8 +15,10 @@
     "precompiledReferences": [
         "nunit.framework.dll"
     ],
-    "autoReferenced": true,
-    "defineConstraints": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
