@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using FinishOne.SceneManagement;
 using NUnit.Framework;
 using UnityEngine;
@@ -12,8 +11,7 @@ public class AdjacentGrid_Tests
     public IEnumerator AdjacentGrid_CorrectSolutionCountFound_Level1()
     {
         yield return RunBot(0);
-        GridManager gridManager = GameObject.FindAnyObjectByType<GridManager>();
-        Assert.AreEqual(8, gridManager.PuzzleConfig.SolutionCount);
+        Assert.AreEqual(8, GridManager.Instance.PuzzleConfig.SolutionCount);
         yield return null;
     }
 
@@ -21,8 +19,7 @@ public class AdjacentGrid_Tests
     public IEnumerator AdjacentGrid_CorrectSolutionCountFound_Level4()
     {
         yield return RunBot(3);
-        GridManager gridManager = GameObject.FindAnyObjectByType<GridManager>();
-        Assert.AreEqual(14, gridManager.PuzzleConfig.SolutionCount);
+        Assert.AreEqual(14, GridManager.Instance.PuzzleConfig.SolutionCount);
         yield return null;
     }
 
@@ -30,8 +27,7 @@ public class AdjacentGrid_Tests
     public IEnumerator AdjacentGrid_CorrectSolutionCountFound_Level22()
     {
         yield return RunBot(21);
-        GridManager gridManager = GameObject.FindAnyObjectByType<GridManager>();
-        Assert.AreEqual(19, gridManager.PuzzleConfig.SolutionCount);
+        Assert.AreEqual(19, GridManager.Instance.PuzzleConfig.SolutionCount);
         yield return null;
     }
 
