@@ -41,18 +41,21 @@ public class AdjacentGrid_Tests
 
         GridLevelManager levelManager = GameObject.FindAnyObjectByType<GridLevelManager>();
         UniqueSolutionBot solutionBot = GameObject.FindAnyObjectByType<UniqueSolutionBot>();
-
         levelManager.SetLevelIndex(level);
 
-        yield return new WaitForEndOfFrame();
         yield return solutionBot.StartCoroutine(solutionBot.SolvePuzzle());
     }
 
     private IEnumerator GetToGame()
     {
         yield return SceneManager.LoadSceneAsync(0);
-        yield return new WaitForSeconds(.25f);
+
+        while (!SceneManager.GetSceneByName("MainMenuScene").isLoaded)
+            yield return new WaitForEndOfFrame();
+
         GameObject.FindAnyObjectByType<SceneLoadRequester>().Request();
-        yield return new WaitForSeconds(.25f);
+
+        while (!SceneManager.GetSceneByName("GameScene").isLoaded)
+            yield return new WaitForEndOfFrame();
     }
 }

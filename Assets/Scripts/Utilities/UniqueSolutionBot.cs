@@ -1,43 +1,33 @@
+using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class UniqueSolutionBot : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
 
-    [SerializeField] private UnityEvent<bool> OnSetSolving;
-
-    [Header("UI References")]
-    [SerializeField] private Slider delaySlider;
-    [SerializeField] private Button solveButton;
-    [SerializeField] private TMP_Text uniqueSolutionText, delayTimeText;
+    public Action<float> OnSetDelay;
+    public Action<int> OnSetSolutionCount;
+    public Action<bool> OnSetSolving;
 
     private AdjacentGridGameManager gameManager;
     private GridHistoryManager historyManager;
-
-    private float MOVE_DELAY = 0.005f;
     private bool solving;
     private int uniqueCount;
+
+    public float MoveDelayTime { get; set; } = 0f;
+
+    private YieldInstruction WaitForMove => MoveDelayTime == 0f ? new WaitForEndOfFrame() :
+                                                                  new WaitForSeconds(MoveDelayTime);
 
     private void Awake()
     {
         gameManager = gridManager.GetComponent<AdjacentGridGameManager>();
         historyManager = gridManager.GetComponent<GridHistoryManager>();
 
-        gridManager.OnGridReset += HandleGridReset;
-
-        solveButton.onClick.AddListener(SolveCurrentGrid);
-        delaySlider.onValueChanged.AddListener(SetTimeDelay);
-    }
-
-    public void SolveSlowly()
-    {
-        SetTimeDelay(1.75f);
-        SolveNewPuzzle();
+        gridManager.OnGridReset += () => SetCount(gridManager.PuzzleConfig.SolutionCount);
     }
 
     public void SolveCurrentGrid()
@@ -51,55 +41,34 @@ public class UniqueSolutionBot : MonoBehaviour
         }
         else
         {
-            SolveNewPuzzle();
+            SetSolving(true);
+            StartCoroutine(SolvePuzzle());
         }
-    }
-
-    private void HandleGridReset()
-    {
-        SetCount(gridManager.PuzzleConfig.SolutionCount);
     }
 
     private void SetCount(int count)
     {
         uniqueCount = count;
-        uniqueSolutionText.text = "" + uniqueCount;
+        OnSetSolutionCount?.Invoke(uniqueCount);
     }
 
     private void SetSolving(bool enabled)
     {
         solving = enabled;
-        solveButton.GetComponentInChildren<TMP_Text>().text = enabled ? "Reset" : "Find Solutions";
         if(Camera.main.TryGetComponent(out BaseRaycaster raycaster))
         {
             raycaster.enabled = !solving;
         }
-        OnSetSolving.Invoke(solving);
-    }
 
-    private void SetTimeDelay(float value)
-    {
-        delayTimeText.text = "" + value;
-
-        if (!float.TryParse(delayTimeText.text, out MOVE_DELAY))
-        {
-            MOVE_DELAY = 0.05f;
-        }
-    }
-
-    private void SolveNewPuzzle()
-    {
-        SetSolving(true);
-        StartCoroutine(SolvePuzzle());
+        OnSetSolving?.Invoke(solving);
     }
 
     public IEnumerator SolvePuzzle()
     {
         SetCount(0);
 
-        yield return new WaitForSeconds(MOVE_DELAY);
+        yield return WaitForMove;
         yield return StartCoroutine(CheckGroups());
-        uniqueSolutionText.text = "" + uniqueCount;
 
         if (gridManager.GridSameAsConfig())
         {
@@ -115,13 +84,13 @@ public class UniqueSolutionBot : MonoBehaviour
         {
             SetCount(uniqueCount+1);
             historyManager.RewindGrid();
-            yield return new WaitForSeconds(MOVE_DELAY);
+            yield return WaitForMove;
             yield break;
         }
         else if (gameManager.Doomed)
         {
             historyManager.RewindGrid();
-            yield return new WaitForSeconds(MOVE_DELAY);
+            yield return WaitForMove;
             yield break;
         }
 
@@ -139,17 +108,17 @@ public class UniqueSolutionBot : MonoBehaviour
                 drivingPiece.IndicatorCell = cell;
                 gridManager.OnPieceIndicatorMoved?.Invoke(drivingPiece.IndicatorCell);
 
-                yield return new WaitForSeconds(MOVE_DELAY);
+                yield return new WaitForSeconds(MoveDelayTime);
                 if (drivingPiece.UserDropPiece())
                 {
                     // let events run, make new CurrentGroups
-                    yield return new WaitForSeconds(MOVE_DELAY);
+                    yield return WaitForMove;
                     yield return StartCoroutine(CheckGroups());
                 }
             }
         }
 
         historyManager.RewindGrid();
-        yield return new WaitForSeconds(MOVE_DELAY);
+        yield return WaitForMove;
     }
 }
