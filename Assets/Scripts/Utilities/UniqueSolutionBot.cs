@@ -45,23 +45,6 @@ public class UniqueSolutionBot : MonoBehaviour
         }
     }
 
-    private void SetCount(int count)
-    {
-        uniqueCount = count;
-        OnSetSolutionCount?.Invoke(uniqueCount);
-    }
-
-    private void SetSolving(bool enabled)
-    {
-        solving = enabled;
-        if(Camera.main.TryGetComponent(out BaseRaycaster raycaster))
-        {
-            raycaster.enabled = !solving;
-        }
-
-        OnSetSolving.Invoke(solving);
-    }
-
     public IEnumerator SolvePuzzle()
     {
         SetSolving(true);
@@ -120,5 +103,22 @@ public class UniqueSolutionBot : MonoBehaviour
 
         historyManager.RewindGrid();
         yield return WaitForMove;
+    }
+
+    private void SetCount(int count)
+    {
+        uniqueCount = count;
+        OnSetSolutionCount?.Invoke(uniqueCount);
+    }
+
+    private void SetSolving(bool enabled)
+    {
+        solving = enabled;
+        if (Camera.main.TryGetComponent(out BaseRaycaster raycaster))
+        {
+            raycaster.enabled = !solving;
+        }
+
+        OnSetSolving.Invoke(solving);
     }
 }
