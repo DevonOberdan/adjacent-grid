@@ -1452,6 +1452,30 @@ PrefabInstance:
       propertyPath: gridManager
       value: 
       objectReference: {fileID: 4157748453854324709}
+    - target: {fileID: 937612391057198934, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
+      propertyPath: OnSetSolving.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 937612391057198934, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
+      propertyPath: OnSetSolving.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1102045474457240434}
+    - target: {fileID: 937612391057198934, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
+      propertyPath: OnSetSolving.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 937612391057198934, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
+      propertyPath: OnSetSolving.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: set_isOn
+      objectReference: {fileID: 0}
+    - target: {fileID: 937612391057198934, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
+      propertyPath: OnSetSolving.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UnityEngine.UI.Toggle, UnityEngine.UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 937612391057198934, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
+      propertyPath: OnSetSolving.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1133240527886946327, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -1468,13 +1492,17 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -25
       objectReference: {fileID: 0}
+    - target: {fileID: 1696403897189956443, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1839006603223210379, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
       propertyPath: m_Name
       value: SolverBotUI
       objectReference: {fileID: 0}
     - target: {fileID: 1839006603223210379, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3485806423303329595, guid: c8279a8b336dbcd42a2835ade8bbd922, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3054,6 +3082,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1641554477817677995, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
   m_PrefabInstance: {fileID: 1102045474457240432}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1102045474457240434 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4463160948164762160, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
+  m_PrefabInstance: {fileID: 1102045474457240432}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1102045474457240436 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5519832257390347672, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}

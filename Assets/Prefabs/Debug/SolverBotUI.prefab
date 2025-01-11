@@ -695,7 +695,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7915665741273088581}
   - component: {fileID: 937612391057198934}
-  - component: {fileID: 6654797674810270141}
   m_Layer: 5
   m_Name: SolverBotUI
   m_TagString: EditorOnly
@@ -736,22 +735,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 0}
---- !u!114 &6654797674810270141
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839006603223210379}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a407c4ec062e6c498bf9a643b0d6356, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  delaySlider: {fileID: 3776446044100629714}
-  solveButton: {fileID: 8011526313553027519}
-  uniqueSolutionText: {fileID: 5201036226422780766}
-  delayTimeText: {fileID: 8765813468489812125}
 --- !u!1 &1842094806102219270
 GameObject:
   m_ObjectHideFlags: 0

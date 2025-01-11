@@ -10,7 +10,7 @@ public class UniqueSolutionBot : MonoBehaviour
 
     public Action<float> OnSetDelay;
     public Action<int> OnSetSolutionCount;
-    public Action<bool> OnSetSolving;
+    public UnityEvent<bool> OnSetSolving;
 
     private AdjacentGridGameManager gameManager;
     private GridHistoryManager historyManager;
@@ -41,7 +41,6 @@ public class UniqueSolutionBot : MonoBehaviour
         }
         else
         {
-            SetSolving(true);
             StartCoroutine(SolvePuzzle());
         }
     }
@@ -60,11 +59,12 @@ public class UniqueSolutionBot : MonoBehaviour
             raycaster.enabled = !solving;
         }
 
-        OnSetSolving?.Invoke(solving);
+        OnSetSolving.Invoke(solving);
     }
 
     public IEnumerator SolvePuzzle()
     {
+        SetSolving(true);
         SetCount(0);
 
         yield return WaitForMove;

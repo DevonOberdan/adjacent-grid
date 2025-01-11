@@ -30,7 +30,7 @@ public class UniqueSolutionUIHandler : MonoBehaviour
 
         solutionBot.OnSetDelay += SetTimeDelay;
         solutionBot.OnSetSolutionCount += OnSetCount;
-        solutionBot.OnSetSolving += SetSolving;
+        solutionBot.OnSetSolving.AddListener(SetSolving);
 
         solveButton.onClick.AddListener(solutionBot.SolveCurrentGrid);
         delaySlider.onValueChanged.AddListener(SetTimeDelay);
