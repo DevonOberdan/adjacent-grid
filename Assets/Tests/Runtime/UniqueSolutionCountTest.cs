@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using FinishOne.SceneManagement;
 using NUnit.Framework;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -13,7 +12,8 @@ public class UniqueSolutionCountTest
     {
         (0, 8),
         (3, 14),
-        (21, 19)
+        (21, 19),
+        (1, 2)
     };
 
     [UnityTest]
