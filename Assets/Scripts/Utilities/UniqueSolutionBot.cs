@@ -19,8 +19,7 @@ public class UniqueSolutionBot : MonoBehaviour
 
     public float MoveDelayTime { get; set; } = 0f;
 
-    private YieldInstruction WaitForMove => MoveDelayTime == 0f ? new WaitForEndOfFrame() :
-                                                                  new WaitForSeconds(MoveDelayTime);
+    private YieldInstruction WaitForMove => MoveDelayTime == 0f ? null : new WaitForSeconds(MoveDelayTime);
 
     private void Awake()
     {
