@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-public class UniqueSolutionCountTest
+public class UniqueSolutionCountTests
 {
     private static readonly List<(int, int)> LevelSolutions = new()
     {
@@ -32,7 +32,7 @@ public class UniqueSolutionCountTest
         UniqueSolutionBot solutionBot = GameObject.FindAnyObjectByType<UniqueSolutionBot>();
         levelManager.SetLevelIndex(levelIndex);
 
-        yield return solutionBot.StartCoroutine(solutionBot.SolvePuzzle());
+        yield return solutionBot.SolvePuzzle();
     }
 
     private IEnumerator GetToGame()

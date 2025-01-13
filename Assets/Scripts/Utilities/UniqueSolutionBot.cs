@@ -90,12 +90,12 @@ public class UniqueSolutionBot : MonoBehaviour
                 drivingPiece.IndicatorCell = cell;
                 gridManager.OnPieceIndicatorMoved?.Invoke(drivingPiece.IndicatorCell);
 
-                yield return new WaitForSeconds(MoveDelayTime);
+                yield return WaitForMove;
                 if (drivingPiece.UserDropPiece())
                 {
                     // let events run, make new CurrentGroups
                     yield return WaitForMove;
-                    yield return StartCoroutine(CheckGroups());
+                    yield return CheckGroups();
                 }
             }
         }
