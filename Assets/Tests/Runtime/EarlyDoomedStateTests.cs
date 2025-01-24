@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-public class UniqueSolutionCountTests
+public class EarlyDoomedStateTests
 {
     private static readonly List<(int, int)> LevelSolutions = new()
     {
@@ -19,7 +19,7 @@ public class UniqueSolutionCountTests
     };
 
     [UnityTest]
-    public IEnumerator UniqueSolutionBotFindsCorrectCount([ValueSource(nameof(LevelSolutions))] (int levelIndex, int solutionCount) testCase)
+    public IEnumerator EarlyDoomedStateTest([ValueSource(nameof(LevelSolutions))] (int levelIndex, int solutionCount) testCase)
     {
         yield return RunBot(testCase.levelIndex);
         Assert.AreEqual(testCase.solutionCount, GridManager.Instance.PuzzleConfig.SolutionCount);

@@ -12,7 +12,7 @@ public class GridHistoryManager : MonoBehaviour
 
     [SerializeField] private bool rewindable = true;
 
-    private List<GridPiece[]> gridHistory;
+    private List<GridPiece[]> gridHistory = new();
     private GridManager gridManager;
 
     private int rewindsRemaining;
@@ -32,10 +32,7 @@ public class GridHistoryManager : MonoBehaviour
 
     public void ResetHistory()
     {
-        if (gridHistory == null)
-            gridHistory = new();
-        else
-            gridHistory.Clear();
+        gridHistory.Clear();
 
         HasHistoryBroadcast.Invoke(false);
         rewindsRemaining = maxRewindCount;

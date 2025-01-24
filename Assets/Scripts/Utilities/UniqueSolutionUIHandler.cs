@@ -17,7 +17,7 @@ public class UniqueSolutionUIHandler : MonoBehaviour
 
     private void Awake()
     {
-        if(TryGetComponent(out solutionBot))
+        if(!TryGetComponent(out solutionBot))
         {
             solutionBot = GetComponentInParent<UniqueSolutionBot>();
 
