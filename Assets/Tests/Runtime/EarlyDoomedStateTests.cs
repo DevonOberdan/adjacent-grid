@@ -1,47 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
-using FinishOne.SceneManagement;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.AddressableAssets;
 using UnityEngine.TestTools;
 
 public class EarlyDoomedStateTests
 {
-    private static readonly List<(int, int)> LevelSolutions = new()
+    private static readonly List<(int, bool)> DoomedTestLevels = new()
     {
-        (0, 8),
-        (1, 2),
-        (3, 14),
-        (11, 70),
-        (21, 19),
-        (31, 724)
+        (1, true),
+        (2, true),
+        (3, true)
     };
 
+    private static readonly string UnitTestLevelPath = "Assets/ScriptableObjects/GridConfigs/UnitTests";
+    private static string GetLevelPath(int num) => $"{UnitTestLevelPath}/Test{num}.asset";
+
     [UnityTest]
-    public IEnumerator EarlyDoomedStateTest([ValueSource(nameof(LevelSolutions))] (int levelIndex, int solutionCount) testCase)
+    public IEnumerator EarlyDoomedStateTest([ValueSource(nameof(DoomedTestLevels))] (int levelNum, bool doomed) testCase)
     {
-        yield return RunBot(testCase.levelIndex);
-        Assert.AreEqual(testCase.solutionCount, GridManager.Instance.PuzzleConfig.SolutionCount);
+        yield return TestUtilities.GetToGame();
+
+        var handle = Addressables.LoadAssetAsync<GridPuzzleConfigSO>(GetLevelPath(testCase.levelNum));
+
+        yield return handle;
+
+        GridPuzzleConfigSO level = handle.Result;
+        GridManager.Instance.PuzzleConfig = level;
+
         yield return null;
-    }
 
-    private IEnumerator RunBot(int levelIndex)
-    {
-        yield return GetToGame();
+        AdjacentGridGameManager gameManager = GameObject.FindAnyObjectByType<AdjacentGridGameManager>();
+        Assert.AreEqual(testCase.doomed, gameManager.Doomed);
 
-        GridLevelManager levelManager = GameObject.FindAnyObjectByType<GridLevelManager>();
-        UniqueSolutionBot solutionBot = GameObject.FindAnyObjectByType<UniqueSolutionBot>();
-        levelManager.SetLevelIndex(levelIndex);
-
-        yield return solutionBot.SolvePuzzle();
-    }
-
-    private IEnumerator GetToGame()
-    {
-        yield return SceneManager.LoadSceneAsync(0);
-        yield return new WaitUntil(() => SceneManager.GetSceneByName("MainMenuScene").isLoaded);
-        GameObject.FindAnyObjectByType<SceneLoadRequester>().Request();
-        yield return new WaitUntil(() => SceneManager.GetSceneByName("GameScene").isLoaded);
+        yield return null;
     }
 }
