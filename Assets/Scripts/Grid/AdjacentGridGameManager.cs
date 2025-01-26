@@ -42,7 +42,7 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     public bool GroupPickedUp => activeGrouping != null && activeGrouping.Count > 0;
 
-    public bool DoNotProcess { get; set; }
+    public bool IgnoreGridChange { get; private set; }
 
     public Dictionary<GridPiece, int> HeldGroupOffsets => nonActivelyHeldPieceOffsets;
     #endregion
@@ -180,14 +180,15 @@ public class AdjacentGridGameManager : MonoBehaviour
     #endregion
 
     #region Doomed
+    public void SetIgnoreGridChange(bool ignore)
+    {
+        IgnoreGridChange = ignore;
+    }
+
     private void HandleGridChanged()
     {
-        if (DoNotProcess)
-        {
-            return;
-        }
-
-        CheckDoomed();
+        if(!IgnoreGridChange)
+            CheckDoomed();
     }
 
     private void CheckDoomed()

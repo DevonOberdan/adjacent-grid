@@ -1,12 +1,10 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class AutoPieceMover : MonoBehaviour
 {
-    private GridManager gridManager;
-    private AdjacentGridGameManager adjacentManager;
-
     [SerializeField] private UnityEvent<bool> OnMovingChanged;
     [SerializeField] private float movementYieldTime;
     [SerializeField] private float endDelayTime = 0.5f;
@@ -15,12 +13,29 @@ public class AutoPieceMover : MonoBehaviour
 
     public enum DIR { UP, RIGHT, DOWN, LEFT };
 
-    private float MOVE_DELAY = 0.2f;
+    private GridManager gridManager;
+    private GridHistoryManager historyManager;
+    private AdjacentGridGameManager adjacentManager;
+
+    private const float MOVE_DELAY = 0.2f;
 
     private void Awake()
     {
         gridManager = GetComponent<GridManager>();
+        historyManager = GetComponent<GridHistoryManager>();
         adjacentManager = GetComponent<AdjacentGridGameManager>();
+    }
+
+    private void OnEnable()
+    {
+        OnMovingChanged.AddListener(adjacentManager.SetIgnoreGridChange);
+        OnMovingChanged.AddListener(historyManager.SetFlag);
+    }
+
+    private void OnDisable()
+    {
+        OnMovingChanged.RemoveListener(adjacentManager.SetIgnoreGridChange);
+        OnMovingChanged.RemoveListener(historyManager.SetFlag);
     }
 
     public void MovePieceAllTheWay(GridPiece piece, DIR direction)
@@ -41,7 +56,7 @@ public class AutoPieceMover : MonoBehaviour
 
         yield return null;
 
-        while(nextCell != null && adjacentManager.GroupStaysInGrid(nextCell))
+        while (nextCell != null && adjacentManager.GroupStaysInGrid(nextCell))
         {
             OnMovingChanged.Invoke(true);
             yield return new WaitForSeconds(movementYieldTime);
@@ -59,7 +74,7 @@ public class AutoPieceMover : MonoBehaviour
         DIR oppositeDir = GetOppositeDir(direction);
 
         // see if we end up trying to land on pieces we cant land on.. go back until we can
-        while(finalCell != null && finalCell != piece.CurrentCell && (!adjacentManager.PieceCanLand(piece, finalCell) || !adjacentManager.GroupCanLand(finalCell)))
+        while (finalCell != null && finalCell != piece.CurrentCell && (!adjacentManager.PieceCanLand(piece, finalCell) || !adjacentManager.GroupCanLand(finalCell)))
         {
             OnMovingChanged.Invoke(true);
             piece.IndicatorCell = finalCell;
@@ -86,11 +101,11 @@ public class AutoPieceMover : MonoBehaviour
     {
         if (dir == DIR.UP)
             return DIR.DOWN;
-        else if(dir == DIR.DOWN)
+        else if (dir == DIR.DOWN)
             return DIR.UP;
         else if (dir == DIR.LEFT)
             return DIR.RIGHT;
-        
+
         return DIR.LEFT;
     }
 }

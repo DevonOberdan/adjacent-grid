@@ -157,7 +157,6 @@ MonoBehaviour:
   - {fileID: 6184026729029522652, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
   - {fileID: 0}
   <CellSpacing>k__BackingField: 2.8
-  <ShowVisuals>k__BackingField: 1
 --- !u!114 &4163296485308720121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,30 +318,6 @@ MonoBehaviour:
   OnMovingChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3347833048018567066}
-        m_TargetAssemblyTypeName: AdjacentGridGameManager, Assembly-CSharp
-        m_MethodName: set_DoNotProcess
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 3594112614929953029}
-        m_TargetAssemblyTypeName: GridHistoryManager, Assembly-CSharp
-        m_MethodName: SetFlag
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 11400000, guid: 8473bc842cf89a544bf6314e4cea36e7, type: 2}
         m_TargetAssemblyTypeName: FinishOne.GeneralUtilities.BaseGameEvent`1[[System.Boolean,
           mscorlib
