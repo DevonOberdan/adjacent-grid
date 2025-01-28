@@ -37,6 +37,10 @@ PrefabInstance:
       value: BlankCellPiece
       objectReference: {fileID: 0}
     - target: {fileID: 6184026729029522652, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
+      propertyPath: PrefabContainer
+      value: 
+      objectReference: {fileID: 11400000, guid: 856f69a1b920146418d12f35655fd9f3, type: 2}
+    - target: {fileID: 6184026729029522652, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
       propertyPath: OnCellSet.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}

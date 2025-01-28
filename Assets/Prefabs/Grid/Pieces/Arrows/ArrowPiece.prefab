@@ -160,6 +160,8 @@ MonoBehaviour:
   OnCellSet:
     m_PersistentCalls:
       m_Calls: []
+  pieceColor: {r: 0, g: 0, b: 0, a: 0}
+  PrefabContainer: {fileID: 11400000, guid: 39fd13f4384d6ef4694259feb1b5d545, type: 2}
 --- !u!114 &4429075513357316174
 MonoBehaviour:
   m_ObjectHideFlags: 0
