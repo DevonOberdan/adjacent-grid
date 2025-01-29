@@ -32,17 +32,16 @@ public class ArrowPieceTests
         new(4, 24, 0, AutoPieceMover.DIR.RIGHT),
         new(5, 24, 3, AutoPieceMover.DIR.LEFT),
         new(6, 24, 13, AutoPieceMover.DIR.RIGHT),
-
-        //new(6, 25, 0, AutoPieceMover.DIR.RIGHT),
-        //new(7, 27, 0, AutoPieceMover.DIR.RIGHT),
-        //new(8, 29, 0, AutoPieceMover.DIR.RIGHT),
-        //new(9, 30, 0, AutoPieceMover.DIR.RIGHT)
+        new(7, 25, 11, AutoPieceMover.DIR.UP),
+        new(8, 25, 0, AutoPieceMover.DIR.RIGHT),
+        new(9, 27, 6, AutoPieceMover.DIR.LEFT),
+        new(10, 27, 8, AutoPieceMover.DIR.RIGHT),
     };
 
     private static readonly string UnitTestLevelPath = "Assets/Tests/Runtime/ArrowTestResults/";
     private static string GetLevelPath(int num) => $"{UnitTestLevelPath}/{num}_CorrectResult.asset";
 
-    private const float DELAY = 0.1f;
+    private const float DELAY = 0.05f;
 
     [UnityTest]
     public IEnumerator ArrowPieceTest([ValueSource(nameof(TestCases))] ArrowTestCase testCase)
@@ -50,6 +49,7 @@ public class ArrowPieceTests
         yield return TestUtilities.GetToGame();
 
         AdjacentGridGameManager adjacentManager = GameObject.FindAnyObjectByType<AdjacentGridGameManager>();
+        GridHistoryManager historyManager = GameObject.FindAnyObjectByType<GridHistoryManager>();
         GridLevelManager levelManager = GameObject.FindAnyObjectByType<GridLevelManager>();
         GridManager gridManager = levelManager.GridManager;
 
@@ -71,7 +71,14 @@ public class ArrowPieceTests
 
         piece.UserDropPiece();
 
-        yield return new WaitForSeconds(3f);
+        float startTime = Time.time;
+
+        // history should only be recorded after piece is done being moved by arrow piece
+        while (historyManager.HistoryCount < 2)
+        {
+            if (Time.time > startTime + 3f) break;
+            yield return new WaitForSeconds(DELAY);
+        }
 
         var handle = Addressables.LoadAssetAsync<GridPuzzleConfigSO>(GetLevelPath(testCase.solutionNum));
         
@@ -82,6 +89,6 @@ public class ArrowPieceTests
         List<GridPiece> actualResult = endGridPieces.Select(p => p != null ? p.PrefabContainer.PiecePrefab : null).ToList();
 
         Assert.AreEqual(expectedResult, actualResult);
+        Assert.IsTrue(historyManager.HistoryCount == 2);
     }
-
 }

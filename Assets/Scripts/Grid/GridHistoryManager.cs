@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public class GridHistoryManager : MonoBehaviour
 {
-    [SerializeField] private UnityEvent<bool> HasHistoryBroadcast;
+    [SerializeField] public UnityEvent<bool> HasHistoryBroadcast;
     [SerializeField] private UnityEvent<int> RemainingRewindBroadcast;
 
     [Tooltip("Set to 0 for unlimited attempts")]
@@ -26,6 +26,7 @@ public class GridHistoryManager : MonoBehaviour
         gridManager.OnGridReset += ResetHistory;
     }
 
+    public int HistoryCount => gridHistory.Count;
     public void DisableRewindable(bool disable) => SetRewindable(!disable);
     public void SetRewindable(bool allow) => rewindable = allow;
     public void SetFlag(bool set) => rewindFlag = set;
