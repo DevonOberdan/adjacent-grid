@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,18 +5,13 @@ using UnityEngine.Events;
 public class AutoPieceMover : MonoBehaviour
 {
     [SerializeField] private UnityEvent<bool> OnMovingChanged;
-    [SerializeField] private float movementYieldTime;
     [SerializeField] private float endDelayTime = 0.5f;
-
-    [SerializeField] private bool showIndicators;
 
     public enum DIR { UP, RIGHT, DOWN, LEFT };
 
     private GridManager gridManager;
     private GridHistoryManager historyManager;
     private AdjacentGridGameManager adjacentManager;
-
-    private const float MOVE_DELAY = 0.2f;
 
     private void Awake()
     {
@@ -49,7 +43,7 @@ public class AutoPieceMover : MonoBehaviour
 
         gridManager.PickedUpPiece(piece);
 
-        yield return new WaitForSeconds(MOVE_DELAY);
+        yield return new WaitForSeconds(0.2f);
 
         Cell nextCell = piece.CurrentCell.AdjacentCells[(int)direction];
         adjacentManager.PickupGroupedPieces(piece);
@@ -58,16 +52,7 @@ public class AutoPieceMover : MonoBehaviour
 
         while (nextCell != null && adjacentManager.GroupStaysInGrid(nextCell))
         {
-            OnMovingChanged.Invoke(true);
-            yield return new WaitForSeconds(movementYieldTime);
-
-            piece.IndicatorCell = nextCell;
-            piece.ShowIndicator(false);
-
-            adjacentManager.MoveGroupIndicators(nextCell, showIndicators);
-            nextCell = nextCell.AdjacentCells[(int)direction];
-
-            yield return new WaitForSeconds(movementYieldTime);
+            nextCell = ProcessIndicatorMovement(piece, nextCell, direction);
         }
 
         Cell finalCell = piece.IndicatorCell;
@@ -76,25 +61,25 @@ public class AutoPieceMover : MonoBehaviour
         // see if we end up trying to land on pieces we cant land on.. go back until we can
         while (finalCell != null && finalCell != piece.CurrentCell && (!adjacentManager.PieceCanLand(piece, finalCell) || !adjacentManager.GroupCanLand(finalCell)))
         {
-            OnMovingChanged.Invoke(true);
-            piece.IndicatorCell = finalCell;
-            piece.ShowIndicator(false);
-
-            adjacentManager.MoveGroupIndicators(finalCell, showIndicators);
-
-            finalCell = finalCell.AdjacentCells[(int)oppositeDir];
+            finalCell = ProcessIndicatorMovement(piece, finalCell, oppositeDir);
         }
 
         piece.IndicatorCell = finalCell;
-        piece.ShowIndicator(false);
-
         adjacentManager.MoveGroupIndicators(finalCell, true);
-        piece.ShowIndicator(true);
 
         yield return new WaitForSeconds(endDelayTime);
 
         OnMovingChanged.Invoke(false);
         piece.UserDropPiece();
+
+        Cell ProcessIndicatorMovement(GridPiece piece, Cell nextCell, DIR direction)
+        {
+            OnMovingChanged.Invoke(true);
+            piece.IndicatorCell = nextCell;
+            adjacentManager.MoveGroupIndicators(nextCell, false);
+
+            return nextCell.AdjacentCells[(int)direction];
+        }
     }
 
     private DIR GetOppositeDir(DIR dir)
