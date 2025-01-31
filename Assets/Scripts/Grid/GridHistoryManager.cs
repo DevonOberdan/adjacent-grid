@@ -29,7 +29,6 @@ public class GridHistoryManager : MonoBehaviour
     public int HistoryCount => gridHistory.Count;
     public void DisableRewindable(bool disable) => SetRewindable(!disable);
     public void SetRewindable(bool allow) => rewindable = allow;
-    public void SetFlag(bool set) => rewindFlag = set;
 
     public void ResetHistory()
     {
