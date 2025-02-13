@@ -923,7 +923,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
   m_PrefabInstance: {fileID: 4782282039858939414}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4782282039858939415}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 22d411ecbdd74f14c9ca931c7d53fcca, type: 3}
@@ -3546,98 +3546,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4157748453854324709}
     - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: newPuzzleName
-      value: 1_CorrectResult
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: startingCustom
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: <Id>k__BackingField
-      value: LevelManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: puzzleConfigs.Array.size
-      value: 32
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: puzzleConfigs.Array.data[31]
-      value: 
-      objectReference: {fileID: 11400000, guid: cc30e079b55ac5642806d2342521d47c, type: 2}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
       propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
       objectReference: {fileID: 4157748453854324711}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.data[3].m_Target
-      value: 
-      objectReference: {fileID: 1855414421}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: StartInLevelSelect
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
-      value: LevelSelectController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 7665708657731330073, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      propertyPath: OnNewLevel.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4602324452468202398, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4782282039858939416}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
---- !u!1 &4782282039858939415 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4602324452468202398, guid: 188c76e98858f77449fb1a49fab2ca3b, type: 3}
-  m_PrefabInstance: {fileID: 4782282039858939414}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4782282039858939416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4782282039858939415}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f5eae08e005cda4c8cb0d83ec66be70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventPoint: 0
-  OnStartup:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 4d670de6897ac574280ccc0ae0e48ac4, type: 2}
-        m_TargetAssemblyTypeName: FinishOne.GeneralUtilities.GameEvent, FinishOne.GeneralUtilities.GameEvents
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!224 &6737305392357550719 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8341532033731012107, guid: 93215b3aaae1e0c488d34c7c1f074049, type: 3}
