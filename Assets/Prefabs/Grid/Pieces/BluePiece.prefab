@@ -40,6 +40,10 @@ PrefabInstance:
       propertyPath: pieceColor.r
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6062230035942996689, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
+      propertyPath: PrefabContainer
+      value: 
+      objectReference: {fileID: 11400000, guid: 6a3766b2685be1c4eba2e29c6aa208dc, type: 2}
     - target: {fileID: 6940207122529668420, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
       propertyPath: m_RootOrder
       value: 0

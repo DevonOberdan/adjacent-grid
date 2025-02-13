@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,6 +33,7 @@ public static class CustomExtensionMethods
     {
         Graphic graphic = gameObject.GetComponent<Graphic>();
         Material mat = null;
+        
         if (graphic == null && gameObject.TryGetComponent(out MeshRenderer rend))
         {
             mat = rend.material;
@@ -58,9 +56,7 @@ public static class CustomExtensionMethods
 
     public static Color DarkenedToPercent(this Color color, float perc)
     {
-        float h, s, v;
-
-        Color.RGBToHSV(color, out h, out s, out v);
+        Color.RGBToHSV(color, out float h, out float s, out float v);
         return Color.HSVToRGB(h, s, perc);
     }
 

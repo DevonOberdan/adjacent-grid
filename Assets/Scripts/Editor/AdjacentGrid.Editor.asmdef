@@ -1,0 +1,19 @@
+{
+    "name": "AdjacentGrid.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b4f642e8d1933524e97806e7067ea1cd",
+        "GUID:5f846a1e39c1a9041916abd6bfcd7461"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

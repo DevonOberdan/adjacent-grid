@@ -80,7 +80,7 @@ public class LevelSelectController : MonoBehaviour
 
     private IEnumerator SetArrowSounds(bool lockedLeft, bool lockedRight)
     {
-        yield return new WaitForEndOfFrame();
+        yield return null;
         leftArrowAudio.SetAudio(lockedLeft ? lockAudio : startButtonAudio);
         rightArrowAudio.SetAudio(lockedRight ? lockAudio : startButtonAudio);
     }

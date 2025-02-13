@@ -9,8 +9,6 @@ public class ButtonAudioHelper : MonoBehaviour
 {
     [SerializeField] private AudioConfigSO audioConfig;
 
-    private Button button;
-    private Toggle toggle;
     private AudioPlayRequester audioPlayRequester;
 
     public AudioConfigSO AudioConfig => audioConfig;
@@ -18,26 +16,26 @@ public class ButtonAudioHelper : MonoBehaviour
 
     private void Awake()
     {
-        button = GetComponent<Button>();
-        toggle = GetComponent<Toggle>();
-
         audioPlayRequester = GetComponent<AudioPlayRequester>();
 
-        if (button != null)
+        if (TryGetComponent(out Button button))
         {
             button.onClick.AddListener(Click);
         }
-        else if (toggle != null)
+        else if (TryGetComponent(out Toggle toggle))
         {
             toggle.onValueChanged.AddListener((val) => Click());
         }
         else
         {
-            Debug.LogError($"{nameof(ButtonAudioHelper)} is not attached to a Button of Toggle component.", gameObject);
+            Debug.LogError($"{nameof(ButtonAudioHelper)} is not attached to a Button or Toggle component.", gameObject);
         }
     }
     
-    public void SetAudio(AudioConfigSO newAudio) => audioConfig = newAudio;
+    public void SetAudio(AudioConfigSO newAudio)
+    {
+        audioConfig = newAudio;
+    }
 
     private void Click()
     {

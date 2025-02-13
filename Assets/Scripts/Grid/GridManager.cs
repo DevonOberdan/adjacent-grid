@@ -378,7 +378,6 @@ public class GridManager : MonoBehaviour
     }
     #endregion
 
-
     #region Editor Functions
     private void OnValidate()
     {

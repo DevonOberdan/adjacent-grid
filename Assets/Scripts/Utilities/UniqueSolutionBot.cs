@@ -1,46 +1,41 @@
+using System;
 using System.Collections;
-using TMPro;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class UniqueSolutionBot : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
 
-    [SerializeField] private UnityEvent<bool> OnSetSolving;
-
-    [Header("UI References")]
-    [SerializeField] private Slider delaySlider;
-    [SerializeField] private Button solveButton;
-    [SerializeField] private TMP_Text uniqueSolutionText, delayTimeText;
+    public Action<float> OnSetDelay;
+    public Action<int> OnSetSolutionCount;
+    public UnityEvent<bool> OnSetSolving;
 
     private AdjacentGridGameManager gameManager;
     private GridHistoryManager historyManager;
-
-    private float MOVE_DELAY = 0.005f;
     private bool solving;
     private int uniqueCount;
+
+    private static Dictionary<string, int> gridStateSolutionCountDict = new(); 
+
+    public float MoveDelayTime { get; set; } = 0f;
+
+    private YieldInstruction WaitForMove => MoveDelayTime == 0f ? null : new WaitForSeconds(MoveDelayTime);
 
     private void Awake()
     {
         gameManager = gridManager.GetComponent<AdjacentGridGameManager>();
         historyManager = gridManager.GetComponent<GridHistoryManager>();
 
-        gridManager.OnGridReset += HandleGridReset;
-
-        solveButton.onClick.AddListener(HandleButton);
-        delaySlider.onValueChanged.AddListener(SetTimeDelay);
+        gridManager.OnGridReset += () => SetCount(gridManager.PuzzleConfig.SolutionCount);
     }
 
-    public void SolveSlowly()
-    {
-        SetTimeDelay(1.75f);
-        SolveNewPuzzle();
-    }
-
-    private void HandleButton()
+    public void SolveCurrentGrid()
     {
         if (solving)
         {
@@ -51,54 +46,17 @@ public class UniqueSolutionBot : MonoBehaviour
         }
         else
         {
-            SolveNewPuzzle();
+            StartCoroutine(SolvePuzzle());
         }
     }
 
-    private void HandleGridReset()
+    public IEnumerator SolvePuzzle()
     {
-        SetCount(gridManager.PuzzleConfig.SolutionCount);
-    }
-
-    private void SetCount(int count)
-    {
-        uniqueCount = count;
-        uniqueSolutionText.text = "" + uniqueCount;
-    }
-
-    private void SetSolving(bool enabled)
-    {
-        solving = enabled;
-        solveButton.GetComponentInChildren<TMP_Text>().text = enabled ? "Reset" : "Find Solutions";
-        if(Camera.main.TryGetComponent(out BaseRaycaster raycaster))
-        {
-            raycaster.enabled = !solving;
-        }
-        OnSetSolving.Invoke(solving);
-    }
-
-    private void SetTimeDelay(float value)
-    {
-        delayTimeText.text = "" + value;
-
-        if (!float.TryParse(delayTimeText.text, out MOVE_DELAY))
-        {
-            MOVE_DELAY = 0.05f;
-        }
-    }
-
-    private void SolveNewPuzzle()
-    {
-        SetCount(0);
         SetSolving(true);
-        StartCoroutine(SolvePuzzle());
-    }
+        SetCount(0);
 
-    private IEnumerator SolvePuzzle()
-    {
-        yield return new WaitForSeconds(MOVE_DELAY);
+        yield return WaitForMove;
         yield return StartCoroutine(CheckGroups());
-        uniqueSolutionText.text = "" + uniqueCount;
 
         if (gridManager.GridSameAsConfig())
         {
@@ -114,15 +72,28 @@ public class UniqueSolutionBot : MonoBehaviour
         {
             SetCount(uniqueCount+1);
             historyManager.RewindGrid();
-            yield return new WaitForSeconds(MOVE_DELAY);
+            yield return WaitForMove;
             yield break;
         }
         else if (gameManager.Doomed)
         {
             historyManager.RewindGrid();
-            yield return new WaitForSeconds(MOVE_DELAY);
+            yield return WaitForMove;
             yield break;
         }
+
+        List<GridPiece> gridAsPieces = gridManager.Cells.Select(cell => cell.CurrentPiece).ToList();
+        string hash = ComputeHash(gridAsPieces);
+
+        if (gridStateSolutionCountDict.ContainsKey(hash))
+        {
+            SetCount(uniqueCount + gridStateSolutionCountDict[hash]);
+            historyManager.RewindGrid();
+            yield return WaitForMove;
+            yield break;
+        }
+
+        int startingCount = uniqueCount;
 
         foreach (PieceGroup group in gameManager.CurrentGroups)
         {
@@ -138,17 +109,50 @@ public class UniqueSolutionBot : MonoBehaviour
                 drivingPiece.IndicatorCell = cell;
                 gridManager.OnPieceIndicatorMoved?.Invoke(drivingPiece.IndicatorCell);
 
-                yield return new WaitForSeconds(MOVE_DELAY);
+                yield return WaitForMove;
                 if (drivingPiece.UserDropPiece())
                 {
                     // let events run, make new CurrentGroups
-                    yield return new WaitForSeconds(MOVE_DELAY);
-                    yield return StartCoroutine(CheckGroups());
+                    yield return WaitForMove;
+                    yield return CheckGroups();
                 }
             }
         }
 
+        int subCount = uniqueCount - startingCount;
+        gridStateSolutionCountDict[hash] = subCount;
+
         historyManager.RewindGrid();
-        yield return new WaitForSeconds(MOVE_DELAY);
+        yield return WaitForMove;
+    }
+
+    static string ComputeHash(List<GridPiece> group)
+    {
+        var sb = new StringBuilder();
+        foreach (var piece in group)
+        {
+            sb.Append(piece == null ? "_": piece.PieceColor.ToString()).Append(",");
+        }
+
+        using var sha256 = SHA256.Create();
+        byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
+        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+    }
+
+    private void SetCount(int count)
+    {
+        uniqueCount = count;
+        OnSetSolutionCount?.Invoke(uniqueCount);
+    }
+
+    private void SetSolving(bool enabled)
+    {
+        solving = enabled;
+        if (Camera.main.TryGetComponent(out BaseRaycaster raycaster))
+        {
+            raycaster.enabled = !solving;
+        }
+
+        OnSetSolving.Invoke(solving);
     }
 }

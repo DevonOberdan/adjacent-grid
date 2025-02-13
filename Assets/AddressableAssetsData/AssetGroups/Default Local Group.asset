@@ -32,6 +32,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 075cbbeb8e8063a4d896366a4126e3cb
+    m_Address: Assets/ScriptableObjects/GridConfigs/UnitTests
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PuzzleConfigs
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 272e1901f17ab52439793f076648491b
+    m_Address: Assets/Tests/Runtime/ArrowTestResults
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PuzzleConfigs
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d62f0d67859c7ad45b86288486d8ae9d, type: 2}
   m_SchemaSet:

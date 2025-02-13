@@ -28,6 +28,8 @@ public class MainMenuSaveController : MonoBehaviour
         }
     }
 
+    public Button NewGameButton => newGameButton.GetComponent<Button>();
+
     public void StartNewGame()
     {
         SaveSystem.Instance.NewGame();
