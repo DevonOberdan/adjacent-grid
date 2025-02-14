@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class Cell : MonoBehaviour
 {
@@ -39,6 +38,11 @@ public class Cell : MonoBehaviour
 
     private List<Cell> GrabAdjacentCells()
     {
+        return GetAdjacentCellsFromPosition();
+    }
+
+    private List<Cell> GetAdjacentCellsFromGridList()
+    {
         List<Cell> adjacent = new List<Cell>();
 
         bool topCell = IndexInGrid / grid.Height != grid.Height - 1;
@@ -51,12 +55,30 @@ public class Cell : MonoBehaviour
         adjacent.Add(bottomCell ? grid.Cells[IndexInGrid - grid.Width] : null);
         adjacent.Add(leftCell ? grid.Cells[IndexInGrid - 1] : null);
 
-        //if (leftCell) adjacent.Add(grid.Cells[IndexInGrid - 1]);
-        //if (rightCell) adjacent.Add(grid.Cells[IndexInGrid + 1]);
-        //if (topCell) adjacent.Add(grid.Cells[IndexInGrid + grid.Width]);
-        //if (bottomCell) adjacent.Add(grid.Cells[IndexInGrid - grid.Width]);
-
         return adjacent;
+    }
+
+    private List<Cell> GetAdjacentCellsFromPosition()
+    {
+        return new()
+        {
+            GetCellInDirection(transform.forward),
+            GetCellInDirection(transform.right),
+            GetCellInDirection(-transform.forward),
+            GetCellInDirection(-transform.right)
+        };
+    }
+
+    private Cell GetCellInDirection(Vector3 dir)
+    {
+        Cell cell = null;
+
+        if(Physics.Raycast(transform.position, dir, out RaycastHit hit, 100))
+        {
+            cell = hit.transform.GetComponent<Cell>();
+        }
+
+        return cell;
     }
 
     public void AddPiece(GridPiece newPiece)
@@ -74,12 +96,24 @@ public class Cell : MonoBehaviour
 
     public void ResetCell()
     {
-        transform.position = startPosition;
-        transform.rotation = startRotation;
+        transform.SetPositionAndRotation(startPosition, startRotation);
         if (TryGetComponent(out Rigidbody rb))
         {
             rb.useGravity = false;
             rb.isKinematic = true;
         }
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!Application.isPlaying)
+            return;
+
+        Gizmos.color = Color.red;
+        if (AdjacentCells[0] != null) Gizmos.DrawSphere(AdjacentCells[0].transform.position, 0.25f);
+        if (AdjacentCells[1] != null) Gizmos.DrawSphere(AdjacentCells[1].transform.position, 0.25f);
+        if (AdjacentCells[2] != null) Gizmos.DrawSphere(AdjacentCells[2].transform.position, 0.25f);
+        if (AdjacentCells[3] != null) Gizmos.DrawSphere(AdjacentCells[3].transform.position, 0.25f);
     }
 }
