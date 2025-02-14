@@ -15,17 +15,12 @@ public class GridInspector : Editor
 
     public override VisualElement CreateInspectorGUI()
     {
-        //DrawDefaultInspector();
-
         GridManager manager = target as GridManager;
-
         VisualElement inspector = new VisualElement();
-
         inspectorXML.CloneTree(inspector);
 
         // Get a reference to the default inspector foldout control
         VisualElement inspectorFoldout = inspector.Q("Default_Inspector");
-
 
         Button generateButton = inspector.Q<Button>("Generate_Button");
         generateButton.clicked += () =>
@@ -34,7 +29,6 @@ public class GridInspector : Editor
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         };
 
-
         Button populateButton = inspector.Q<Button>("Populate_Grid");
         populateButton.clicked += () =>
         {
@@ -42,14 +36,12 @@ public class GridInspector : Editor
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         };
 
-
         Button clearGridButton = inspector.Q<Button>("Clear_Grid");
         clearGridButton.clicked += () =>
         {
             manager.ClearPieces();
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         };
-
 
         // Attach a default inspector to the foldout
         InspectorElement.FillDefaultInspector(inspectorFoldout, serializedObject, this);
@@ -60,9 +52,7 @@ public class GridInspector : Editor
     private void GenerateRandomPieces(GridManager manager)
     {
         manager.ClearPieces();
-
         manager.GrabCells();
-
 
         foreach (Cell cell in manager.Cells)
         {
@@ -89,7 +79,6 @@ public class GridInspector : Editor
             DestroyImmediate(cell.gameObject);
         }
 
-        //cells = new List<Cell>();
         // destroy any and all boards
         for (int i = manager.transform.childCount - 1; i >= 0; i--)
         {
@@ -104,7 +93,6 @@ public class GridInspector : Editor
         if (manager.Board != null)
         {
             DestroyImmediate(manager.Board);
-            //board = null;
         }
     }
 
@@ -114,16 +102,7 @@ public class GridInspector : Editor
     {
         ClearGrid(manager);
 
-        Vector3 center = new Vector3(Offset(manager.Width), 0, Offset(manager.Height));
-
-        //if (manager.GridAxes == GridManager.AXES.XY)
-        //{
-        //    center = new Vector3(Offset(manager.Width), Offset(manager.Height), 0);
-        //}
-        //else
-        //{
-        //    center = new Vector3(Offset(manager.Width), 0, Offset(manager.Height));
-        //}
+        Vector3 center = new(Offset(manager.Width), 0, Offset(manager.Height));
 
         manager.transform.position = -center;
 
@@ -131,17 +110,12 @@ public class GridInspector : Editor
         {
             for (int j = 0; j < manager.Width; j++)
             {
-                Cell newCell = CustomMethods.Instantiate(cellPrefab, manager.CellParent);
+                Cell newCell = CustomMethods.Instantiate(manager.DefaultCellPrefab, manager.CellParent);
 
                 float width = j * manager.CellSpacing;
                 float height = i * manager.CellSpacing;
-                newCell.transform.localPosition = new Vector3(width, 0, height);// (manager.GridAxes == GridManager.AXES.XY) ? new Vector2(width, height) : new Vector3(width,0,height);
+                newCell.transform.localPosition = new Vector3(width, 0, height);
             }
         }
-
-        GameObject board = CustomMethods.Instantiate(boardPrefab, manager.transform);
-
-        board.transform.localPosition = center;
-        board.transform.localScale = new Vector2(manager.Width, manager.Width) + new Vector2(0.1f, 0.1f);
     }
 }

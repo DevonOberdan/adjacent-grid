@@ -157,6 +157,7 @@ MonoBehaviour:
   - {fileID: 6184026729029522652, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
   - {fileID: 0}
   <CellSpacing>k__BackingField: 2.8
+  <DefaultCellPrefab>k__BackingField: {fileID: 0}
 --- !u!114 &4163296485308720121
 MonoBehaviour:
   m_ObjectHideFlags: 0

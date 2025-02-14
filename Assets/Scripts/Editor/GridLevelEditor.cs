@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -14,9 +13,7 @@ public class GridLevelEditor : Editor
     public override VisualElement CreateInspectorGUI()
     {
         GridLevelManager levelManager = target as GridLevelManager;
-
         VisualElement inspector = new VisualElement();
-
         inspectorXML.CloneTree(inspector);
 
         // Get a reference to the default inspector foldout control
@@ -33,6 +30,7 @@ public class GridLevelEditor : Editor
     private void GenerateGridConfig(GridLevelManager levelManager)
     {
         List<GridPiece> gridPieceList = new();
+        List<CellConfigData> cellCollection = new();
 
         levelManager.GridManager.GrabCells();
         levelManager.GridManager.GrabPieces();
@@ -42,38 +40,29 @@ public class GridLevelEditor : Editor
 
         foreach (Cell cell in levelManager.GridManager.Cells)
         {
-            if (cell.CurrentPiece != null)
-            {
-                GridPiece prefabPiece=null;
+            GridPiece piecePrefab = cell.CurrentPiece != null ? cell.CurrentPiece.GetPrefabFromSource() : null;
+            gridPieceList.Add(piecePrefab);
 
-                if(!Application.isPlaying)
-                    prefabPiece = PrefabUtility.GetCorrespondingObjectFromSource(cell.CurrentPiece);
-                else if(cell.CurrentPiece != null)
-                    prefabPiece = cell.CurrentPiece.PrefabContainer.PiecePrefab;
-
-                gridPieceList.Add(prefabPiece);
-            }
-            else
-                gridPieceList.Add(null);
+            cellCollection.Add(new(cell.GetPrefabFromSource(), cell.transform.position, cell.transform.rotation));
         }
 
         GridPuzzleConfigSO puzzleConfig = ScriptableObject.CreateInstance<GridPuzzleConfigSO>();
 
-        string name = levelManager.NewPuzzleName;
+        puzzleConfig.name = levelManager.NewPuzzleName;
         puzzleConfig.SetPiecesConfig(gridPieceList);
-        puzzleConfig.name = name;
+        puzzleConfig.SetCellConfig(cellCollection);
 
-        SaveAsset(puzzleConfig, name);
+        SaveAsset(puzzleConfig);
     }
 
-    private void SaveAsset(GridPuzzleConfigSO puzzleConfig, string name)
+    private void SaveAsset(GridPuzzleConfigSO puzzleConfig)
     {
         string path = "Assets/ScriptableObjects/GridConfigs/";
 
-        if (name.Equals(string.Empty))
-            name = "NewGridConfig";
+        if (puzzleConfig.name.Equals(string.Empty))
+            puzzleConfig.name = "NewGridConfig";
 
-        string fullPath = path + name + ".asset";
+        string fullPath = path + puzzleConfig.name + ".asset";
 
         Debug.Log(fullPath);
         AssetDatabase.CreateAsset(puzzleConfig, fullPath);

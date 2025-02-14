@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 public static class CustomExtensionMethods
 {
- 
     public static bool TryGetColor(this GameObject gameObject, out Color color)
     {
         Graphic graphic = gameObject.GetComponent<Graphic>();
@@ -51,7 +50,6 @@ public static class CustomExtensionMethods
         {
             Debug.LogError("Trying to SetColor on an object with no visual component.");
         }
-
     }
 
     public static Color DarkenedToPercent(this Color color, float perc)
@@ -59,5 +57,4 @@ public static class CustomExtensionMethods
         Color.RGBToHSV(color, out float h, out float s, out float v);
         return Color.HSVToRGB(h, s, perc);
     }
-
 }

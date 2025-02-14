@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: OrangePiece
   m_EditorClassIdentifier: 
   PiecePrefab: {fileID: 6062230035942996689, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
+  Prefab: {fileID: 5670743558819339740, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}

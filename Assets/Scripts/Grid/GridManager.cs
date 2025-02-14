@@ -34,17 +34,16 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<GridPiece> piecePrefabs;
 
     [field: SerializeField] public float CellSpacing { get; private set; }
+    [field: SerializeField] public Cell DefaultCellPrefab { get; private set; }
 
     public float CellParentPositionValue => -1 * CellSpacing * 1.5f;
 
     private List<Cell> cells;
     private List<GridPiece> gridPieces;
 
-    private List<GridPiece> gridPiecePool;
     private Vector2 POOL_POSITION = new Vector2(100, 100);
 
     private GridPiece selectedPiece;
-    private bool previouslyInGrid;
 
     public Action<GridPiece> OnPiecePickedUp;
     public Action<GridPiece, bool> OnPieceDropped;
@@ -75,24 +74,9 @@ public class GridManager : MonoBehaviour
 
     public bool PointerInGrid { get; set; }
     public bool HoldingPiece => SelectedPiece != null;
-
-    private bool PiecesNotSet => gridPieces.Any(piece => piece.CurrentCell == null);
-
     #endregion
 
     public bool Interactable { get; set; } = true;
-
-    public Cell CurrentHoveredCell()
-    {
-        Cell hoveredCell = null;
-
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-
-        if (PointerInGrid)
-            hoveredCell = GetClosestCell(mouseWorldPos);
-
-        return hoveredCell;
-    }
 
     public GridPuzzleConfigSO PuzzleConfig
     {
@@ -101,9 +85,10 @@ public class GridManager : MonoBehaviour
         {
             puzzleConfig = value;
 
-            SetupCells();
             ClearPieces();
-            GenerateFromList(puzzleConfig.Pieces);
+            ClearCells();
+
+            GeneratePuzzle();
 
             OnGridReset?.Invoke();
             SetPiecesToGrid();
@@ -111,25 +96,24 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void SetNewPieces(List<GridPiece> newPieces)
-    {
-        ClearPieces();
-        GenerateFromList(puzzleConfig.Pieces);
-        SetPiecesToGrid();
-        SetupPieceEvents();
-    }
+    //public void SetNewPieces(List<GridPiece> newPieces)
+    //{
+    //    ClearPieces();
+    //    ClearCells();
+
+    //    GeneratePuzzle();
+    //    SetPiecesToGrid();
+    //    SetupPieceEvents();
+    //}
 
     private void Awake()
     {
         Instance = this;
 
-        SetupCells();
+        ClearCells();
 
         if(gridPieces == null)
             gridPieces = new();
-
-        if(gridPiecePool == null)
-            gridPiecePool = new();
 
         gameActions.Enable();
         pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");
@@ -162,7 +146,6 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        //HandlePointerInGrid();
         FindHoveredCell(pointerAction.ReadValue<Vector2>());
     }
 
@@ -170,9 +153,7 @@ public class GridManager : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(pointerPosition);
 
-        RaycastHit[] hits = Physics.RaycastAll(ray);
-
-        foreach (RaycastHit hit in hits)
+        foreach (RaycastHit hit in Physics.RaycastAll(ray))
         {
             if (!hit.collider.TryGetComponent(out Cell cell))
                 continue;
@@ -181,53 +162,13 @@ public class GridManager : MonoBehaviour
                 HoveredCell.Hovered = false;
 
             HoveredCell = cell;
-        }
-    }
-
-    private void FindHoveredCell()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-
-        RaycastHit[] hits = Physics.RaycastAll(ray);
-
-        foreach (RaycastHit hit in hits)
-        {
-            if (!hit.collider.TryGetComponent(out Cell cell))
-                continue;
-
-            if (HoveredCell != null && HoveredCell != cell)
-                HoveredCell.Hovered = false;
-
-            HoveredCell = cell;
-        }
-    }
-
-    private void HandlePointerInGrid()
-    {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        Vector3 boardMousePos = pieceParent.transform.InverseTransformDirection(mousePos);
-
-        bool validX = boardMousePos.x.Between(-Width / 2, Width / 2);
-        bool validY = boardMousePos.y.Between(-Height / 2, Height / 2);
-
-        PointerInGrid = validX && validY;
-
-        if (!PointerInGrid && previouslyInGrid)
-            OnPointerLeftGrid?.Invoke();
-
-        previouslyInGrid = PointerInGrid;
-
-        if (!PointerInGrid)
-        {
-            HoveredCell = null;
         }
     }
 
     #region Pieces
-
     public void SetPiecesToGrid()
     {
-        if (gridPieces == null || gridPieces.Count == 0)
+        if (gridPieces == null || gridPieces.Count == 0 || cells == null || cells.Count==0)
             return;
 
         gridPieces.ForEach(piece => piece.CurrentCell = GetClosestCell(piece.transform));
@@ -269,8 +210,7 @@ public class GridManager : MonoBehaviour
 
     private Cell GetClosestCell(Vector3 pos)
     {
-        Cell closestCell = cells.OrderBy(cell => Vector3.Distance(pos, cell.transform.position)).First();
-        return closestCell;
+        return cells.OrderBy(cell => Vector3.Distance(pos, cell.transform.position)).First();
     }
 
     public void ResetToConfig()
@@ -278,30 +218,54 @@ public class GridManager : MonoBehaviour
         PuzzleConfig = puzzleConfig;
     }
 
-    private void GenerateFromList(List<GridPiece> gridList)
+    private void GeneratePuzzle()
     {
-        for (int i = 0; i < cells.Count; i++)
+        if(puzzleConfig == null)
         {
-            if (cells[i] == null)
-                continue;
+            Debug.LogError("puzzleConfig is null");
+            return;
+        }
 
-            GridPiece pieceToSpawn = gridList[i];
-
-            if (pieceToSpawn != null)
+        if(puzzleConfig.CellConfig != null && puzzleConfig.CellConfig.Count > 0)
+        {
+            GenerateCells();
+        }
+        else if(DefaultCellPrefab != null)
+        {
+            for(int i=0; i<Width*Height; i++)
             {
-                GridPiece newPiece = CustomMethods.Instantiate(pieceToSpawn, PieceParent);
-
-                if (newPiece == null)
-                {
-                    return;
-                }
-
-                newPiece.gameObject.name = pieceToSpawn.gameObject.name;
-
-                newPiece.CurrentCell = cells[i];
-                gridPieces.Add(newPiece);
-                gridPiecePool.Add(newPiece);
+                Cell newCell = CustomMethods.Instantiate(DefaultCellPrefab, CellParent);
+                newCell.gameObject.name = DefaultCellPrefab.name;
+                cells.Add(newCell);
             }
+
+            SpaceOutCells();
+        }
+
+        for(int i=0; i< cells.Count; i++)
+        {
+            if (cells[i] == null || puzzleConfig.Pieces[i] == null)
+            {
+                continue;
+            }
+
+            GridPiece newPiece = CustomMethods.Instantiate(puzzleConfig.Pieces[i], PieceParent);
+            newPiece.gameObject.name = puzzleConfig.Pieces[i].gameObject.name;
+            newPiece.CurrentCell = cells[i];
+
+            gridPieces.Add(newPiece);
+        }
+    }
+
+    private void GenerateCells()
+    {
+        foreach (CellConfigData cellConfig in puzzleConfig.CellConfig)
+        {
+            Cell newCell = CustomMethods.Instantiate(cellConfig.Prefab, CellParent);
+            newCell.gameObject.name = cellConfig.Prefab.name;
+            newCell.transform.SetLocalPositionAndRotation(cellConfig.Pos, cellConfig.Rot);
+
+            cells.Add(newCell);
         }
     }
 
@@ -316,12 +280,9 @@ public class GridManager : MonoBehaviour
             GrabPieces();
         }
 
-        foreach(Cell cell in cellParent.GetComponentsInChildren<Cell>())
+        foreach(Cell cell in cellParent.GetComponentsInChildren<Cell>().Where(c => c.CurrentPiece != null))
         {
-            if(cell.CurrentPiece != null)
-            {
-                cell.RemovePiece(cell.CurrentPiece);
-            }
+            cell.RemovePiece(cell.CurrentPiece);
         }
 
         for (int i = pieceParent.childCount - 1; i >= 0; i--)
@@ -353,27 +314,30 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void SetupCells()
+    private void ClearCells()
     {
-        if (cells == null || cells.Count == 0 || Board == null)
+        for (int i = cellParent.childCount - 1; i >= 0; i--)
         {
-            if (cellParent.childCount > 0)
-                GrabCells();
-            else
-                this.enabled = false;
+            if (cellParent.GetChild(i).TryGetComponent(out Cell cell))
+            {
+                cells.Remove(cell);
+
+                if (Application.isPlaying)
+                    Destroy(cell.gameObject);
+                else
+                    DestroyImmediate(cell.gameObject);
+            }
         }
     }
 
     public void GrabPieces()
     {
         gridPieces = new List<GridPiece>();
-        gridPiecePool = new List<GridPiece>();
 
         for (int i = 0; i < pieceParent.childCount; i++)
         {
             GridPiece piece = pieceParent.GetChild(i).GetComponent<GridPiece>();
             gridPieces.Add(piece);
-            gridPiecePool.Add(piece);
         }
     }
     #endregion
@@ -381,24 +345,29 @@ public class GridManager : MonoBehaviour
     #region Editor Functions
     private void OnValidate()
     {
-        if (cells != null && cells.Count >0 && CellParentPositionValue != cellParent.transform.localPosition.x)
-        {
-            SpaceOutCells();
-        }
+        //if (cells != null && cells.Count >0 && CellParentPositionValue != cellParent.transform.localPosition.x)
+        //{
+        //    SpaceOutCells();
+        //}
 
-        cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
-        transform.eulerAngles = Vector3.zero;
+        //cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
+        //transform.eulerAngles = Vector3.zero;
 
         if (puzzleConfig != null)
         {
-            SetupCells();
-            GrabPieces();
-            SetPiecesToGrid();
+            bool sameAsExisting = false;
 
-            bool sameAsExisting = GridSameAsConfig();
+            if(cellParent.childCount > 0)
+            {
+                GrabCells();
+                GrabPieces();
+                SetPiecesToGrid();
+
+                sameAsExisting = GridSameAsConfig();
+            }
 
 #if UNITY_EDITOR
-            if (!sameAsExisting)
+            if (!sameAsExisting || cells == null || cells.Count == 0)
             {
                 print("different config!");
                 UnityEditor.EditorApplication.delayCall += ConfigOnValidate;
@@ -462,14 +431,21 @@ public class GridManager : MonoBehaviour
     private void ConfigOnValidate()
     {
         if (Application.isPlaying)
+        {
             return;
+        }
 
         ClearPieces();
 
         if (puzzleConfig == null || puzzleConfig.Pieces == null || puzzleConfig.Pieces.Count == 0)
+        {
+            Debug.Log("No pieces defined in config");
             return;
+        }
 
-        GenerateFromList(puzzleConfig.Pieces);
+        ClearCells();
+
+        GeneratePuzzle();
     }
     #endregion
 }

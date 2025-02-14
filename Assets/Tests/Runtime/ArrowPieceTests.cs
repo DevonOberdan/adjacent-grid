@@ -86,8 +86,8 @@ public class ArrowPieceTests
 
         IEnumerable<GridPiece> endGridPieces = gridManager.Cells.Select(cell => cell.CurrentPiece);
         List<GridPiece> expectedResult = handle.Result.Pieces;
-        List<GridPiece> actualResult = endGridPieces.Select(p => p != null ? p.PrefabContainer.PiecePrefab : null).ToList();
-
+        List<GridPiece> actualResult = endGridPieces.Select(p => p.GetPrefabFromSource()).ToList();
+        
         Assert.AreEqual(expectedResult, actualResult);
         Assert.IsTrue(historyManager.HistoryCount == 2);
     }

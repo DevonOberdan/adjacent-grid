@@ -73,7 +73,7 @@ public class Cell : MonoBehaviour
     {
         Cell cell = null;
 
-        if(Physics.Raycast(transform.position, dir, out RaycastHit hit, 100))
+        if(Physics.SphereCast(transform.position, 0.2f, dir, out RaycastHit hit))
         {
             cell = hit.transform.GetComponent<Cell>();
         }

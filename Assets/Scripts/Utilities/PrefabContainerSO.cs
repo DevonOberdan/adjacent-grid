@@ -4,4 +4,6 @@ using UnityEngine;
 public class PrefabContainerSO : ScriptableObject
 {
     public GridPiece PiecePrefab;
+
+    public GameObject Prefab;
 }
