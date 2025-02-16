@@ -24,7 +24,7 @@ public class GridPuzzleConfigSO : ScriptableObject
     [SerializeField] List<GridPiece> pieceConfig;
     [SerializeField] private int solutionCount;
 
-    [field: SerializeField, HideInInspector]
+    [field: SerializeField]
     public List<CellConfigData> CellConfig { get; private set; }
 
     public int SolutionCount => solutionCount;

@@ -43,7 +43,7 @@ public class GridLevelEditor : Editor
             GridPiece piecePrefab = cell.CurrentPiece != null ? cell.CurrentPiece.GetPrefabFromSource() : null;
             gridPieceList.Add(piecePrefab);
 
-            cellCollection.Add(new(cell.GetPrefabFromSource(), cell.transform.position, cell.transform.rotation));
+            cellCollection.Add(new(levelManager.GridManager.DefaultCellPrefab, cell.transform.localPosition, cell.transform.localRotation));
         }
 
         GridPuzzleConfigSO puzzleConfig = ScriptableObject.CreateInstance<GridPuzzleConfigSO>();

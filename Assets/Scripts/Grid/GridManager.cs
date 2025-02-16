@@ -1,5 +1,6 @@
 using FinishOne.GeneralUtilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -78,6 +79,8 @@ public class GridManager : MonoBehaviour
 
     public bool Interactable { get; set; } = true;
 
+    private int setupCellCount = 0;
+
     public GridPuzzleConfigSO PuzzleConfig
     {
         get => puzzleConfig;
@@ -87,30 +90,15 @@ public class GridManager : MonoBehaviour
 
             ClearPieces();
             ClearCells();
-
             GeneratePuzzle();
-
-            OnGridReset?.Invoke();
             SetPiecesToGrid();
             SetupPieceEvents();
         }
     }
 
-    //public void SetNewPieces(List<GridPiece> newPieces)
-    //{
-    //    ClearPieces();
-    //    ClearCells();
-
-    //    GeneratePuzzle();
-    //    SetPiecesToGrid();
-    //    SetupPieceEvents();
-    //}
-
     private void Awake()
     {
         Instance = this;
-
-        ClearCells();
 
         if(gridPieces == null)
             gridPieces = new();
@@ -123,6 +111,8 @@ public class GridManager : MonoBehaviour
     {
         if (Pieces.Count == 0)
             GrabPieces();
+
+        GrabCells();
 
         SetPiecesToGrid();
         SetupPieceEvents();
@@ -142,6 +132,22 @@ public class GridManager : MonoBehaviour
             piece.OnIndicatorMoved += (cell) => OnPieceIndicatorMoved?.Invoke(cell);
             piece.OnPieceMoved += () => OnPieceConsumed.Invoke();
         }
+    }
+
+    public void SetCellInitialized()
+    {
+        if (++setupCellCount == cells.Count)
+        {
+            setupCellCount = 0;
+            StartCoroutine(FinalizePuzzleSetup());
+        }
+    }
+
+    private IEnumerator FinalizePuzzleSetup()
+    {
+        yield return null;
+        cells.ForEach(c => c.CalculateAdjacentCells());
+        OnGridChanged?.Invoke();
     }
 
     private void Update()
@@ -172,14 +178,11 @@ public class GridManager : MonoBehaviour
             return;
 
         gridPieces.ForEach(piece => piece.CurrentCell = GetClosestCell(piece.transform));
-        OnGridChanged?.Invoke();
     }
 
     public void PickedUpPiece(GridPiece piece)
     {
         selectedPiece = piece;
-
-        // selecting cancels hovering
         OnPieceHovered?.Invoke(piece, false);
     }
 
@@ -226,23 +229,9 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        if(puzzleConfig.CellConfig != null && puzzleConfig.CellConfig.Count > 0)
-        {
-            GenerateCells();
-        }
-        else if(DefaultCellPrefab != null)
-        {
-            for(int i=0; i<Width*Height; i++)
-            {
-                Cell newCell = CustomMethods.Instantiate(DefaultCellPrefab, CellParent);
-                newCell.gameObject.name = DefaultCellPrefab.name;
-                cells.Add(newCell);
-            }
+        GenerateCells();
 
-            SpaceOutCells();
-        }
-
-        for(int i=0; i< cells.Count; i++)
+        for (int i=0; i< cells.Count; i++)
         {
             if (cells[i] == null || puzzleConfig.Pieces[i] == null)
             {
@@ -259,13 +248,31 @@ public class GridManager : MonoBehaviour
 
     private void GenerateCells()
     {
-        foreach (CellConfigData cellConfig in puzzleConfig.CellConfig)
+        if (puzzleConfig.CellConfig != null && puzzleConfig.CellConfig.Count > 0)
         {
-            Cell newCell = CustomMethods.Instantiate(cellConfig.Prefab, CellParent);
-            newCell.gameObject.name = cellConfig.Prefab.name;
-            newCell.transform.SetLocalPositionAndRotation(cellConfig.Pos, cellConfig.Rot);
+            for (int i = 0; i < puzzleConfig.CellConfig.Count; i++)
+            {
+                CellConfigData cellConfig = puzzleConfig.CellConfig[i];
 
-            cells.Add(newCell);
+                Cell newCell = CustomMethods.Instantiate(cellConfig.Prefab, CellParent);
+                newCell.gameObject.name = cellConfig.Prefab.name;
+                newCell.transform.SetLocalPositionAndRotation(cellConfig.Pos, cellConfig.Rot);
+
+                cells.Add(newCell);
+                newCell.Init(this, i);
+            }
+        }
+        else if (DefaultCellPrefab != null)
+        {
+            for (int i = 0; i < Width * Height; i++)
+            {
+                Cell newCell = CustomMethods.Instantiate(DefaultCellPrefab, CellParent);
+                newCell.gameObject.name = DefaultCellPrefab.name;
+                cells.Add(newCell);
+                newCell.Init(this, i);
+            }
+
+            SpaceOutCells();
         }
     }
 
@@ -290,16 +297,26 @@ public class GridManager : MonoBehaviour
             if(pieceParent.GetChild(i).TryGetComponent(out GridPiece piece))
             {
                 gridPieces.Remove(piece);
-
-                if(Application.isPlaying)
-                    Destroy(piece.gameObject);
-                else
-                    DestroyImmediate(piece.gameObject);
+                DestroyGameObject(piece.gameObject);
             }
         }
 
         gridPieces.Clear();
         gridPieces = new();
+    }
+
+    private void DestroyGameObject(GameObject obj)
+    {
+        obj.SetActive(false);
+
+        if (Application.isPlaying)
+        {
+            Destroy(obj);
+        }
+        else if (obj.scene.IsValid())
+        {
+            DestroyImmediate(obj);
+        }
     }
 
     public void GrabCells()
@@ -321,11 +338,7 @@ public class GridManager : MonoBehaviour
             if (cellParent.GetChild(i).TryGetComponent(out Cell cell))
             {
                 cells.Remove(cell);
-
-                if (Application.isPlaying)
-                    Destroy(cell.gameObject);
-                else
-                    DestroyImmediate(cell.gameObject);
+                DestroyGameObject(cell.gameObject);
             }
         }
     }
@@ -349,7 +362,6 @@ public class GridManager : MonoBehaviour
         //{
         //    SpaceOutCells();
         //}
-
         //cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
         //transform.eulerAngles = Vector3.zero;
 

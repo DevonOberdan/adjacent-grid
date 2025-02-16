@@ -7,11 +7,8 @@ public class Cell : MonoBehaviour
     private GridManager grid;
     private List<Cell> adjacentCells;
 
-    private Vector3 startPosition;
-    private Quaternion startRotation;
-
     public GridPiece CurrentPiece => piece;
-    public List<Cell> AdjacentCells => adjacentCells ??= GrabAdjacentCells();
+    public List<Cell> AdjacentCells => adjacentCells;
     public bool Occupied => piece != null;
     public int IndexInGrid { get; private set; }
 
@@ -25,15 +22,14 @@ public class Cell : MonoBehaviour
         IndexInGrid = index;
     }
 
-    private void Awake()
-    {
-        startPosition = transform.position;
-        startRotation = transform.rotation;
-    }
-
     private void Start()
     {
-        grid.OnGridReset += () => ResetCell();
+        grid.SetCellInitialized();
+    }
+
+    public void CalculateAdjacentCells()
+    {
+        adjacentCells = GrabAdjacentCells();
     }
 
     private List<Cell> GrabAdjacentCells()
@@ -93,17 +89,6 @@ public class Cell : MonoBehaviour
         if (piece == pieceToRemove)
             piece = null;
     }
-
-    public void ResetCell()
-    {
-        transform.SetPositionAndRotation(startPosition, startRotation);
-        if (TryGetComponent(out Rigidbody rb))
-        {
-            rb.useGravity = false;
-            rb.isKinematic = true;
-        }
-    }
-
 
     private void OnDrawGizmosSelected()
     {

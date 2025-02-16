@@ -154,7 +154,7 @@ MonoBehaviour:
   piecePrefabs:
   - {fileID: 6062230035942996689, guid: 8787fcffeedc7dd47a22620ed7f70358, type: 3}
   - {fileID: 2966422860832937793, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
-  - {fileID: 6184026729029522652, guid: cf0ef88c25b54ba40a2aa40f16f2974a, type: 3}
+  - {fileID: 0}
   - {fileID: 0}
   <CellSpacing>k__BackingField: 2.8
   <DefaultCellPrefab>k__BackingField: {fileID: 0}

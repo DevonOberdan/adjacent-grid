@@ -41,7 +41,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     public List<PieceGroup> CurrentGroups { get; private set; }
 
     public bool GroupPickedUp => activeGrouping != null && activeGrouping.Count > 0;
-
     public bool IgnoreGridChange { get; private set; }
 
     public Dictionary<GridPiece, int> HeldGroupOffsets => nonActivelyHeldPieceOffsets;
