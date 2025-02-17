@@ -176,6 +176,24 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void SetColor(Color color) => pieceColor = color;
 
+    public bool TryGetAdjacentIndexOfIndicator(out int index)
+    {
+        if(IndicatorCell == CurrentCell)
+        {
+            index = -1;
+            return false;
+        }
+
+        if(IndicatorCell == CurrentCell || !CurrentCell.AdjacentCells.Contains(IndicatorCell))
+        {
+            index = -1;
+            return true;
+        }
+
+        index = CurrentCell.AdjacentCells.IndexOf(IndicatorCell);
+        return true;
+    }
+
     #endregion
 
     #region Private Helper Methods

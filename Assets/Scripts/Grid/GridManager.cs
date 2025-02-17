@@ -145,7 +145,7 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator FinalizePuzzleSetup()
     {
-        yield return null;
+        yield return new WaitForSeconds(0.1f);
         cells.ForEach(c => c.CalculateAdjacentCells());
         OnGridChanged?.Invoke();
     }
@@ -333,6 +333,11 @@ public class GridManager : MonoBehaviour
 
     private void ClearCells()
     {
+        if(cellParent == null)
+        {
+            return;
+        }
+
         for (int i = cellParent.childCount - 1; i >= 0; i--)
         {
             if (cellParent.GetChild(i).TryGetComponent(out Cell cell))
