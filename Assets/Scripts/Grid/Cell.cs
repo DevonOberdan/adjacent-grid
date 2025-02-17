@@ -11,9 +11,7 @@ public class Cell : MonoBehaviour
     public List<Cell> AdjacentCells => adjacentCells;
     public bool Occupied => piece != null;
     public int IndexInGrid { get; private set; }
-
     public bool CanSetIndicatorColor { get; set; } = true;
-
     public bool Hovered { get; set; }
 
     public void Init(GridManager manager, int index)
@@ -33,28 +31,6 @@ public class Cell : MonoBehaviour
     }
 
     private List<Cell> GrabAdjacentCells()
-    {
-        return GetAdjacentCellsFromPosition();
-    }
-
-    private List<Cell> GetAdjacentCellsFromGridList()
-    {
-        List<Cell> adjacent = new List<Cell>();
-
-        bool topCell = IndexInGrid / grid.Height != grid.Height - 1;
-        bool rightCell = IndexInGrid % grid.Width != grid.Width - 1;
-        bool bottomCell = IndexInGrid / grid.Height != 0;
-        bool leftCell = IndexInGrid % grid.Width != 0;
-
-        adjacent.Add(topCell ? grid.Cells[IndexInGrid + grid.Width] : null);
-        adjacent.Add(rightCell ? grid.Cells[IndexInGrid + 1] : null);
-        adjacent.Add(bottomCell ? grid.Cells[IndexInGrid - grid.Width] : null);
-        adjacent.Add(leftCell ? grid.Cells[IndexInGrid - 1] : null);
-
-        return adjacent;
-    }
-
-    private List<Cell> GetAdjacentCellsFromPosition()
     {
         return new()
         {

@@ -76,7 +76,6 @@ public class AdjacentGridGameManager : MonoBehaviour
     }
 
     #region Grouping Functions
-
     public void PickupGroupedPieces(GridPiece piece)
     {
         List<GridPiece> groupedPieces = GetAdjacentPieces(piece);
@@ -132,17 +131,6 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         return groupedPieces;
     }
-
-    private void ProcessGroupedOffsets()
-    {
-        //foreach (GridPiece piece in activeGrouping)
-        //{
-        //    if (piece != activelyHeldPiece && !nonActivelyHeldPieceOffsets.ContainsKey(piece))
-        //    {
-        //        nonActivelyHeldPieceOffsets.Add(piece, piece.CurrentCell.IndexInGrid - activelyHeldPiece.CurrentCell.IndexInGrid);
-        //    }
-        //}
-    }
     #endregion
 
     #region Handle Dropped
@@ -151,7 +139,9 @@ public class AdjacentGridGameManager : MonoBehaviour
         PlaceGroupedPieces(actuallyDropped);
 
         if (actuallyDropped && WinCondition)
+        {
             OnLevelComplete.Invoke();
+        }
     }
 
     public void PlaceGroupedPieces(bool drop)
@@ -162,10 +152,8 @@ public class AdjacentGridGameManager : MonoBehaviour
             piece.PlaceOnIndicator();
         }
 
-       // nonActivelyHeldPieceOffsets.Clear();
         activeGrouping.Clear();
         activelyHeldPiece = null;
-
         gridManager.OnGridChanged?.Invoke();
     }
 
@@ -266,11 +254,9 @@ public class AdjacentGridGameManager : MonoBehaviour
 
             // override the normal GridPiece Indicator handling, and mark edge pieces as invalid
             activelyHeldPiece.ResetIndicator();
-
-            foreach (GridPiece piece in NonGrabbedGroupMembers)
+            foreach (GridPiece piece in NonGrabbedGroupMembers.Where(p => !p.CanPlaceOnIndicator))
             {
-                if (!piece.CanPlaceOnIndicator)
-                    piece.MarkIndicatorCellInvalid();
+                piece.MarkIndicatorCellInvalid();
             }
         }
     }
@@ -286,9 +272,9 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activeIndicatorCell);
 
-            if (newIndex >=0 && piece.CurrentCell.AdjacentCells[newIndex] != null)
+            if (newIndex == -1 || piece.CurrentCell.AdjacentCells[newIndex] != null)
             {
-                piece.IndicatorCell = piece.CurrentCell;
+               piece.IndicatorCell = piece.CurrentCell;
             }
             // Grouped piece out of bounds
             else
@@ -307,7 +293,7 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activePieceCell);
 
-            if (newIndex >= 0 && piece.CurrentCell.AdjacentCells[newIndex] != null)
+            if (newIndex >= 0 && piece.CurrentCell.AdjacentCells[newIndex] == null)
             {
                 return false;
             }
@@ -322,7 +308,7 @@ public class AdjacentGridGameManager : MonoBehaviour
         {
             int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activePieceCell);
 
-            if (newIndex >= 0 && piece.CurrentCell.AdjacentCells[newIndex] != null)
+            if (newIndex >= 0 && piece.CurrentCell.AdjacentCells[newIndex] == null)
             {
                 return false;
             }
