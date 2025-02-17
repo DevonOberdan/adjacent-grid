@@ -59,7 +59,7 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
 
     private const string LEVEL_TEXT = "Level ";
 
-    private int levelIndex;
+    private int levelIndex = -1;
 
     public int LevelIndex
     {
@@ -95,7 +95,13 @@ public class GridLevelManager : MonoBehaviour, IBind<LevelData>
     private void Start()
     {
         if (startingCustom)
-            levelIndex = -1;
+        {
+            gridManager.PuzzleConfig = gridManager.PuzzleConfig;
+        }
+        else if (levelIndex == -1)
+        {
+            LevelIndex = 0;
+        }
     }
 
     private void Update()

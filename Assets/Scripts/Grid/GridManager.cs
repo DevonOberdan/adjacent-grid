@@ -88,6 +88,9 @@ public class GridManager : MonoBehaviour
         {
             puzzleConfig = value;
 
+            StopAllCoroutines();
+            setupCellCount = 0;
+
             ClearPieces();
             ClearCells();
             GeneratePuzzle();
@@ -111,11 +114,6 @@ public class GridManager : MonoBehaviour
     {
         if (Pieces.Count == 0)
             GrabPieces();
-
-        GrabCells();
-
-        SetPiecesToGrid();
-        SetupPieceEvents();
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += DroppedPiece;
@@ -146,7 +144,12 @@ public class GridManager : MonoBehaviour
     private IEnumerator FinalizePuzzleSetup()
     {
         yield return new WaitForSeconds(0.1f);
-        cells.ForEach(c => c.CalculateAdjacentCells());
+
+        foreach(Cell cell in cells.Where(c => c != null))
+        {
+            cell.CalculateAdjacentCells();
+        }
+
         OnGridChanged?.Invoke();
     }
 
@@ -346,6 +349,8 @@ public class GridManager : MonoBehaviour
                 DestroyGameObject(cell.gameObject);
             }
         }
+
+        cells.Clear();
     }
 
     public void GrabPieces()
