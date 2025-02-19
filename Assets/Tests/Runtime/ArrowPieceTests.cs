@@ -94,28 +94,6 @@ public class ArrowPieceTests
         List<GridPiece> expectedResult = handle.Result.Pieces;
         List<GridPiece> actualResult = endGridPieces.Select(p => p.GetPrefabFromSource()).ToList();
 
-       // foreach (var endPiece in endGridPieces)
-       // {
-       //     GridPiece p = endPiece.GetPrefabFromSource();
-       //     //Debug.Log(p.PieceColor);
-       //     //if (p == null)
-       //     //{
-       //     //    Debug.Log("piece prefab result null");
-       //     //}
-       //     //else
-       //     //{
-       //     //    Debug.Log(p.name);
-       //     //}
-       //     actualResult.Add(p);
-       // }
-       // //endGridPieces.Select(p => p.GetPrefabFromSource()).ToList();
-       //// Debug.Log("-------- ActualResult set --------\n\n");
-       // foreach(var result in actualResult)
-       // {
-       //     string val = result != null ? result.name : "null";
-       //    // Debug.Log(val);
-       // }
-
         Assert.AreEqual(expectedResult, actualResult);
         Assert.IsTrue(historyManager.HistoryCount == 2);
     }

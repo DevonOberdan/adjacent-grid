@@ -45,7 +45,7 @@ public class Cell : MonoBehaviour
     {
         Cell cell = null;
 
-        if(Physics.SphereCast(transform.position, 0.2f, dir, out RaycastHit hit))
+        if(Physics.SphereCast(transform.position, 0.2f, dir, out RaycastHit hit, 5f))
         {
             cell = hit.transform.GetComponent<Cell>();
         }

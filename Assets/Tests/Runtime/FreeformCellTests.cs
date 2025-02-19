@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static ArrowPieceTests;
 using UnityEngine.AddressableAssets;
 using UnityEngine.TestTools;
 
@@ -31,6 +30,8 @@ public class FreeformCellTests
         new(1, 10, new() {14, 11, 6, 9 } ),
         new(1, 2, new() {6, 3, null, 1 } ),
         new(2, 0, new() {null, null, null, 15 } ),
+        new(3, 0, new() {null, null, 4, 3 } ),
+        new(3, 6, new() {7, null, 2, null } )
     };
 
 

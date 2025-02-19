@@ -105,8 +105,12 @@ public class GridManager : MonoBehaviour
     {
         Instance = this;
 
-        if(gridPieces == null)
-            gridPieces = new();
+        gridPieces ??= new();
+
+        if(cells == null || cells.Count == 0 && cellParent.childCount > 0)
+        {
+            GrabCells();
+        }
 
         gameActions.Enable();
         pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");
@@ -260,7 +264,7 @@ public class GridManager : MonoBehaviour
                 CellConfigData cellConfig = puzzleConfig.CellConfig[i];
 
                 Cell newCell = CustomMethods.Instantiate(cellConfig.Prefab, CellParent);
-                newCell.gameObject.name = cellConfig.Prefab.name;
+               // newCell.gameObject.name = cellConfig.Prefab.name;
                 newCell.transform.SetLocalPositionAndRotation(cellConfig.Pos, cellConfig.Rot);
 
                 cells.Add(newCell);
@@ -272,7 +276,7 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < Width * Height; i++)
             {
                 Cell newCell = CustomMethods.Instantiate(DefaultCellPrefab, CellParent);
-                newCell.gameObject.name = DefaultCellPrefab.name;
+               // newCell.gameObject.name = DefaultCellPrefab.name;
                 cells.Add(newCell);
                 newCell.Init(this, i);
             }
