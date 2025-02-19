@@ -44,6 +44,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - PuzzleConfigs
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0a0b58279ea00c742b31018805776365
+    m_Address: Assets/Tests/Runtime/FreeformTestConfigs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d62f0d67859c7ad45b86288486d8ae9d, type: 2}
   m_SchemaSet:
