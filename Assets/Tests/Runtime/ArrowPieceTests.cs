@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.TestTools;
+using UnityEngine.UIElements;
 
 public class ArrowPieceTests
 {
@@ -54,6 +55,9 @@ public class ArrowPieceTests
         GridManager gridManager = levelManager.GridManager;
 
         levelManager.SetLevelIndex(testCase.levelIndex);
+
+        yield return new WaitForSeconds(DELAY);
+
         GridPiece piece = levelManager.GridManager.Cells[testCase.pieceIndex].CurrentPiece;
         gridManager.PickedUpPiece(piece);
 
@@ -65,7 +69,7 @@ public class ArrowPieceTests
 
         Cell nextCell = piece.CurrentCell.AdjacentCells[(int)testCase.direction];
         piece.IndicatorCell = nextCell;
-        adjacentManager.MoveGroupIndicators(nextCell, true);
+        adjacentManager.MoveGroupIndicators((int)testCase.direction, true);
 
         yield return new WaitForSeconds(DELAY);
 
@@ -76,9 +80,11 @@ public class ArrowPieceTests
         // history should only be recorded after piece is done being moved by arrow piece
         while (historyManager.HistoryCount < 2)
         {
-            if (Time.time > startTime + 3f) break;
+            if (Time.time > startTime + 5f) break;
             yield return new WaitForSeconds(DELAY);
         }
+
+        yield return new WaitForSeconds(DELAY);
 
         var handle = Addressables.LoadAssetAsync<GridPuzzleConfigSO>(GetLevelPath(testCase.solutionNum));
         
@@ -87,7 +93,29 @@ public class ArrowPieceTests
         IEnumerable<GridPiece> endGridPieces = gridManager.Cells.Select(cell => cell.CurrentPiece);
         List<GridPiece> expectedResult = handle.Result.Pieces;
         List<GridPiece> actualResult = endGridPieces.Select(p => p.GetPrefabFromSource()).ToList();
-        
+
+       // foreach (var endPiece in endGridPieces)
+       // {
+       //     GridPiece p = endPiece.GetPrefabFromSource();
+       //     //Debug.Log(p.PieceColor);
+       //     //if (p == null)
+       //     //{
+       //     //    Debug.Log("piece prefab result null");
+       //     //}
+       //     //else
+       //     //{
+       //     //    Debug.Log(p.name);
+       //     //}
+       //     actualResult.Add(p);
+       // }
+       // //endGridPieces.Select(p => p.GetPrefabFromSource()).ToList();
+       //// Debug.Log("-------- ActualResult set --------\n\n");
+       // foreach(var result in actualResult)
+       // {
+       //     string val = result != null ? result.name : "null";
+       //    // Debug.Log(val);
+       // }
+
         Assert.AreEqual(expectedResult, actualResult);
         Assert.IsTrue(historyManager.HistoryCount == 2);
     }

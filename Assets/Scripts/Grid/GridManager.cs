@@ -94,6 +94,8 @@ public class GridManager : MonoBehaviour
             ClearPieces();
             ClearCells();
             GeneratePuzzle();
+
+            OnGridReset?.Invoke();
             SetPiecesToGrid();
             SetupPieceEvents();
         }
@@ -143,7 +145,7 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator FinalizePuzzleSetup()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.025f);
 
         foreach(Cell cell in cells.Where(c => c != null))
         {

@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -23,7 +25,7 @@ public static class ExtensionMethods
         }
         else if (obj is Component c)
         {
-            prefab = GetPrefabFromComponent(c) as TObj;
+            prefab = GetPrefabFromComponent(obj as Component) as TObj;
         }
 
         return prefab;
@@ -57,20 +59,27 @@ public static class ExtensionMethods
     {
         GameObject prefabObj = (GameObject)GetPrefabFromGameObject(component.gameObject);
 
+        Debug.Log("prefabObj: " + prefabObj);
+        Debug.Log("type: " + component.GetType());
+
         if (prefabObj == null)
         {
+            Debug.Log("GameObject prefab is null.");
             return null;
         }
 
-        if (!prefabObj.TryGetComponent(out T prefab))
+        T prefabComponent = (T)prefabObj.GetComponent(component.GetType());
+
+        if (prefabComponent == null)
         {
             Debug.LogWarning($"Valid prefab found ({component.gameObject.name}), but it does not contain a component of type {nameof(T)}.\n" +
                              $"Add the desired component to the given prefab, or call " +
                              $"TryGetPrefabAtRuntime(this Component c, out GameObject prefab) instead.");
             return null;
         }
+        Debug.Log("prefab type: " + prefabComponent.GetType());
 
-        return prefab;
+        return prefabComponent;
     }
 
     public static Renderer GrabRenderer(this GameObject go)

@@ -202,25 +202,6 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     #region Group Movement
 
-    public void MoveGroupIndicators(Cell activeIndicatorCell, bool show=true)
-    {
-        foreach (GridPiece piece in NonGrabbedGroupMembers)
-        {
-            int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activeIndicatorCell);
-
-            if (newIndex >= 0)
-            {
-                piece.IndicatorCell = piece.CurrentCell.AdjacentCells[newIndex];
-            }
-        }
-
-        foreach (GridPiece piece in activeGrouping)
-        {
-            piece.CanPlaceOnIndicator = true;
-            piece.ShowIndicator(show);
-        }
-    }
-
     public void ShowGroupIndicators(bool show)
     {
         foreach (GridPiece piece in activeGrouping)
@@ -287,13 +268,26 @@ public class AdjacentGridGameManager : MonoBehaviour
         return allValid;
     }
 
-    public bool GroupStaysInGrid(Cell activePieceCell)
+
+    public void MoveGroupIndicators(int directionIndex, bool show = true)
     {
         foreach (GridPiece piece in NonGrabbedGroupMembers)
         {
-            int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activePieceCell);
+            piece.IndicatorCell = piece.IndicatorCell.AdjacentCells[directionIndex];
+        }
 
-            if (newIndex >= 0 && piece.CurrentCell.AdjacentCells[newIndex] == null)
+        foreach (GridPiece piece in activeGrouping)
+        {
+            piece.CanPlaceOnIndicator = true;
+            piece.ShowIndicator(show);
+        }
+    }
+
+    public bool GroupStaysInGrid(int directionIndex)
+    {
+        foreach (GridPiece piece in NonGrabbedGroupMembers)
+        {
+            if (directionIndex >= 0 && piece.IndicatorCell.AdjacentCells[directionIndex] == null)
             {
                 return false;
             }
@@ -302,18 +296,16 @@ public class AdjacentGridGameManager : MonoBehaviour
         return true;
     }
 
-    public bool GroupCanLand(Cell activePieceCell)
+    public bool GroupCanLand(int directionIndex)
     {
+        if (!GroupStaysInGrid(directionIndex))
+        {
+            return false;
+        }
+
         foreach (GridPiece piece in NonGrabbedGroupMembers)
         {
-            int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activePieceCell);
-
-            if (newIndex >= 0 && piece.CurrentCell.AdjacentCells[newIndex] == null)
-            {
-                return false;
-            }
-
-            if (!PieceCanLand(piece, piece.CurrentCell.AdjacentCells[newIndex]))
+            if (!PieceCanLand(piece, piece.IndicatorCell.AdjacentCells[directionIndex]))
             {
                 return false;
             }

@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 1853768808398797446}
   - component: {fileID: 3334273963769824493}
   - component: {fileID: 4429075513357316174}
+  - component: {fileID: 5318602801967226851}
   m_Layer: 0
   m_Name: ArrowPiece
   m_TagString: Untagged
@@ -175,6 +176,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: 0
+--- !u!114 &5318602801967226851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116081955350915101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00bccf62f38a25b4491fe8007a8eaa3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <PrefabContainer>k__BackingField: {fileID: 11400000, guid: 39fd13f4384d6ef4694259feb1b5d545, type: 2}
 --- !u!1 &7501049803919530693
 GameObject:
   m_ObjectHideFlags: 0

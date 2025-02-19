@@ -41,7 +41,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public GridManager Grid => grid;
 
-    public PrefabContainerSO PrefabContainer;
+   // public PrefabContainerSO PrefabContainer;
 
     public Renderer GetRenderer()
     {

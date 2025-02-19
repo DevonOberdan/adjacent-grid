@@ -68,7 +68,7 @@ public class Cell : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (!Application.isPlaying)
+        if (!Application.isPlaying || AdjacentCells == null || AdjacentCells.Count == 0)
             return;
 
         Gizmos.color = Color.red;
