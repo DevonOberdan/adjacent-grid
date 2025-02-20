@@ -57,9 +57,6 @@ public static class ExtensionMethods
     {
         GameObject prefabObj = (GameObject)GetPrefabFromGameObject(component.gameObject);
 
-        Debug.Log("prefabObj: " + prefabObj);
-        Debug.Log("type: " + component.GetType());
-
         if (prefabObj == null)
         {
             Debug.Log("GameObject prefab is null.");
@@ -75,7 +72,6 @@ public static class ExtensionMethods
                              $"TryGetPrefabAtRuntime(this Component c, out GameObject prefab) instead.");
             return null;
         }
-        Debug.Log("prefab type: " + prefabComponent.GetType());
 
         return prefabComponent;
     }

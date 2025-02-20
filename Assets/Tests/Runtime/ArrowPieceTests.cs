@@ -38,7 +38,7 @@ public class ArrowPieceTests
         new(10, 27, 8, AutoPieceMover.DIR.RIGHT),
     };
 
-    private static readonly string UnitTestLevelPath = "Assets/Tests/Runtime/ArrowTestResults/";
+    private static readonly string UnitTestLevelPath = "Assets/Tests/Runtime/ArrowTestResults";
     private static string GetLevelPath(int num) => $"{UnitTestLevelPath}/{num}_CorrectResult.asset";
 
     private const float DELAY = 0.05f;
