@@ -41,8 +41,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public GridManager Grid => grid;
 
-   // public PrefabContainerSO PrefabContainer;
-
     public Renderer GetRenderer()
     {
         if(rend == null)
@@ -175,25 +173,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public bool IsOfSameType(GridPiece newPiece) => this.gameObject.name.Equals(newPiece.gameObject.name);
 
     public void SetColor(Color color) => pieceColor = color;
-
-    public bool TryGetAdjacentIndexOfIndicator(out int index)
-    {
-        if(IndicatorCell == CurrentCell)
-        {
-            index = -1;
-            return false;
-        }
-
-        if(IndicatorCell == CurrentCell || !CurrentCell.AdjacentCells.Contains(IndicatorCell))
-        {
-            index = -1;
-            return true;
-        }
-
-        index = CurrentCell.AdjacentCells.IndexOf(IndicatorCell);
-        return true;
-    }
-
     #endregion
 
     #region Private Helper Methods

@@ -5,7 +5,6 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.TestTools;
-using UnityEngine.UIElements;
 
 public class ArrowPieceTests
 {
@@ -80,7 +79,7 @@ public class ArrowPieceTests
         // history should only be recorded after piece is done being moved by arrow piece
         while (historyManager.HistoryCount < 2)
         {
-            if (Time.time > startTime + 5f) break;
+            if (Time.time > startTime + 3f) break;
             yield return new WaitForSeconds(DELAY);
         }
 

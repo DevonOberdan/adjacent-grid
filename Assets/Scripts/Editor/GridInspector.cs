@@ -10,9 +10,6 @@ public class GridInspector : Editor
 {
     public VisualTreeAsset inspectorXML;
 
-    [SerializeField] private Cell cellPrefab;
-    [SerializeField] private GameObject boardPrefab;
-
     public override VisualElement CreateInspectorGUI()
     {
         GridManager manager = target as GridManager;
