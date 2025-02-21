@@ -73,10 +73,5 @@ public class Cell : MonoBehaviour
     {
         transform.position = startPosition;
         transform.rotation = startRotation;
-        if (TryGetComponent(out Rigidbody rb))
-        {
-            rb.useGravity = false;
-            rb.isKinematic = true;
-        }
     }
 }
