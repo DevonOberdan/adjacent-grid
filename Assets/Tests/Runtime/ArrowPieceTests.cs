@@ -56,8 +56,6 @@ public class ArrowPieceTests
 
         levelManager.SetLevelIndex(testCase.levelIndex);
 
-        yield return new WaitForSeconds(DELAY);
-
         GridPiece piece = levelManager.GridManager.Cells[testCase.pieceIndex].CurrentPiece;
         gridManager.PickedUpPiece(piece);
 
@@ -69,7 +67,7 @@ public class ArrowPieceTests
 
         Cell nextCell = piece.CurrentCell.AdjacentCells[(int)testCase.direction];
         piece.IndicatorCell = nextCell;
-        adjacentManager.MoveGroupIndicators((int)testCase.direction, true);
+        adjacentManager.MoveGroupIndicators(nextCell, true);
 
         yield return new WaitForSeconds(DELAY);
 
@@ -80,7 +78,7 @@ public class ArrowPieceTests
         // history should only be recorded after piece is done being moved by arrow piece
         while (historyManager.HistoryCount < 2)
         {
-            if (Time.time > startTime + 5f) break;
+            if (Time.time > startTime + 3f) break;
             yield return new WaitForSeconds(DELAY);
         }
 

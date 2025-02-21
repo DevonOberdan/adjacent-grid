@@ -1,6 +1,5 @@
 using FinishOne.GeneralUtilities;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -79,8 +78,6 @@ public class GridManager : MonoBehaviour
 
     public bool Interactable { get; set; } = true;
 
-    private int setupCellCount = 0;
-
     public GridPuzzleConfigSO PuzzleConfig
     {
         get => puzzleConfig;
@@ -88,12 +85,10 @@ public class GridManager : MonoBehaviour
         {
             puzzleConfig = value;
 
-            StopAllCoroutines();
-            setupCellCount = 0;
+            SetupCells();
 
             ClearPieces();
-            ClearCells();
-            GeneratePuzzle();
+            GenerateFromList(puzzleConfig.Pieces);
 
             OnGridReset?.Invoke();
             SetPiecesToGrid();
@@ -105,12 +100,9 @@ public class GridManager : MonoBehaviour
     {
         Instance = this;
 
-        gridPieces ??= new();
+        SetupCells();
 
-        if(cells == null || cells.Count == 0 && cellParent.childCount > 0)
-        {
-            GrabCells();
-        }
+        gridPieces ??= new();
 
         gameActions.Enable();
         pointerAction = gameActions.FindActionMap("Gameplay").FindAction("Hover");
@@ -120,6 +112,9 @@ public class GridManager : MonoBehaviour
     {
         if (Pieces.Count == 0)
             GrabPieces();
+
+        SetPiecesToGrid();
+        SetupPieceEvents();
 
         OnPiecePickedUp += PickedUpPiece;
         OnPieceDropped += DroppedPiece;
@@ -136,27 +131,6 @@ public class GridManager : MonoBehaviour
             piece.OnIndicatorMoved += (cell) => OnPieceIndicatorMoved?.Invoke(cell);
             piece.OnPieceMoved += () => OnPieceConsumed.Invoke();
         }
-    }
-
-    public void SetCellInitialized()
-    {
-        if (++setupCellCount == cells.Count)
-        {
-            setupCellCount = 0;
-            StartCoroutine(FinalizePuzzleSetup());
-        }
-    }
-
-    private IEnumerator FinalizePuzzleSetup()
-    {
-        yield return new WaitForSeconds(0.025f);
-
-        foreach(Cell cell in cells.Where(c => c != null))
-        {
-            cell.CalculateAdjacentCells();
-        }
-
-        OnGridChanged?.Invoke();
     }
 
     private void Update()
@@ -183,10 +157,11 @@ public class GridManager : MonoBehaviour
     #region Pieces
     public void SetPiecesToGrid()
     {
-        if (gridPieces == null || gridPieces.Count == 0 || cells == null || cells.Count==0)
+        if (gridPieces == null || gridPieces.Count == 0)
             return;
 
         gridPieces.ForEach(piece => piece.CurrentCell = GetClosestCell(piece.transform));
+        OnGridChanged?.Invoke();
     }
 
     public void PickedUpPiece(GridPiece piece)
@@ -230,58 +205,29 @@ public class GridManager : MonoBehaviour
         PuzzleConfig = puzzleConfig;
     }
 
-    private void GeneratePuzzle()
+    private void GenerateFromList(List<GridPiece> gridList)
     {
-        if(puzzleConfig == null)
+        for (int i = 0; i < cells.Count; i++)
         {
-            Debug.LogError("puzzleConfig is null");
-            return;
-        }
-
-        GenerateCells();
-
-        for (int i=0; i< cells.Count; i++)
-        {
-            if (cells[i] == null || puzzleConfig.Pieces[i] == null)
-            {
+            if (cells[i] == null)
                 continue;
-            }
 
-            GridPiece newPiece = CustomMethods.Instantiate(puzzleConfig.Pieces[i], PieceParent);
-            newPiece.gameObject.name = puzzleConfig.Pieces[i].gameObject.name;
-            newPiece.CurrentCell = cells[i];
+            GridPiece pieceToSpawn = gridList[i];
 
-            gridPieces.Add(newPiece);
-        }
-    }
-
-    private void GenerateCells()
-    {
-        if (puzzleConfig.CellConfig != null && puzzleConfig.CellConfig.Count > 0)
-        {
-            for (int i = 0; i < puzzleConfig.CellConfig.Count; i++)
+            if (pieceToSpawn != null)
             {
-                CellConfigData cellConfig = puzzleConfig.CellConfig[i];
+                GridPiece newPiece = CustomMethods.Instantiate(pieceToSpawn, PieceParent);
 
-                Cell newCell = CustomMethods.Instantiate(cellConfig.Prefab, CellParent);
-               // newCell.gameObject.name = cellConfig.Prefab.name;
-                newCell.transform.SetLocalPositionAndRotation(cellConfig.Pos, cellConfig.Rot);
+                if (newPiece == null)
+                {
+                    return;
+                }
 
-                cells.Add(newCell);
-                newCell.Init(this, i);
+                newPiece.gameObject.name = pieceToSpawn.gameObject.name;
+
+                newPiece.CurrentCell = cells[i];
+                gridPieces.Add(newPiece);
             }
-        }
-        else if (DefaultCellPrefab != null)
-        {
-            for (int i = 0; i < Width * Height; i++)
-            {
-                Cell newCell = CustomMethods.Instantiate(DefaultCellPrefab, CellParent);
-               // newCell.gameObject.name = DefaultCellPrefab.name;
-                cells.Add(newCell);
-                newCell.Init(this, i);
-            }
-
-            SpaceOutCells();
         }
     }
 
@@ -340,23 +286,15 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void ClearCells()
+    private void SetupCells()
     {
-        if(cellParent == null)
+        if (cells == null || cells.Count == 0 || Board == null)
         {
-            return;
+            if (cellParent.childCount > 0)
+                GrabCells();
+            else
+                this.enabled = false;
         }
-
-        for (int i = cellParent.childCount - 1; i >= 0; i--)
-        {
-            if (cellParent.GetChild(i).TryGetComponent(out Cell cell))
-            {
-                cells.Remove(cell);
-                DestroyGameObject(cell.gameObject);
-            }
-        }
-
-        cells.Clear();
     }
 
     public void GrabPieces()
@@ -374,13 +312,6 @@ public class GridManager : MonoBehaviour
     #region Editor Functions
     private void OnValidate()
     {
-        //if (cells != null && cells.Count >0 && CellParentPositionValue != cellParent.transform.localPosition.x)
-        //{
-        //    SpaceOutCells();
-        //}
-        //cellParent.transform.localPosition = new Vector3(CellParentPositionValue, 0, CellParentPositionValue);
-        //transform.eulerAngles = Vector3.zero;
-
         if (puzzleConfig != null)
         {
             bool sameAsExisting = false;
@@ -459,21 +390,14 @@ public class GridManager : MonoBehaviour
     private void ConfigOnValidate()
     {
         if (Application.isPlaying)
-        {
             return;
-        }
 
         ClearPieces();
 
         if (puzzleConfig == null || puzzleConfig.Pieces == null || puzzleConfig.Pieces.Count == 0)
-        {
-            Debug.Log("No pieces defined in config");
             return;
-        }
 
-        ClearCells();
-
-        GeneratePuzzle();
+        GenerateFromList(puzzleConfig.Pieces);
     }
     #endregion
 }

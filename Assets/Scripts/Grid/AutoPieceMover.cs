@@ -50,34 +50,36 @@ public class AutoPieceMover : MonoBehaviour
 
         yield return null;
 
-        while (nextCell != null && adjacentManager.GroupStaysInGrid((int)direction))
+        while (nextCell != null && adjacentManager.GroupStaysInGrid(nextCell))
         {
-            OnMovingChanged.Invoke(true);
-            piece.IndicatorCell = nextCell;
-            adjacentManager.MoveGroupIndicators((int)direction, false);
-            nextCell = nextCell.AdjacentCells[(int)direction];
+            nextCell = ProcessIndicatorMovement(piece, nextCell, direction);
         }
 
         Cell finalCell = piece.IndicatorCell;
-        int oppositeDir = (int)GetOppositeDir(direction);
+        DIR oppositeDir = GetOppositeDir(direction);
 
         // see if we end up trying to land on pieces we cant land on.. go back until we can
-        while (finalCell != null && finalCell != piece.CurrentCell && 
-              (!adjacentManager.PieceCanLand(piece, finalCell) || !adjacentManager.GroupCanLand(oppositeDir)))
+        while (finalCell != null && finalCell != piece.CurrentCell && (!adjacentManager.PieceCanLand(piece, finalCell) || !adjacentManager.GroupCanLand(finalCell)))
         {
-            OnMovingChanged.Invoke(true);
-
-            finalCell = finalCell.AdjacentCells[oppositeDir];
-            piece.IndicatorCell = finalCell;
-            adjacentManager.MoveGroupIndicators(oppositeDir, false);
+            finalCell = ProcessIndicatorMovement(piece, finalCell, oppositeDir);
         }
 
-        adjacentManager.ShowGroupIndicators(true);
+        piece.IndicatorCell = finalCell;
+        adjacentManager.MoveGroupIndicators(finalCell, true);
 
         yield return new WaitForSeconds(endDelayTime);
 
         OnMovingChanged.Invoke(false);
         piece.UserDropPiece();
+
+        Cell ProcessIndicatorMovement(GridPiece piece, Cell nextCell, DIR direction)
+        {
+            OnMovingChanged.Invoke(true);
+            piece.IndicatorCell = nextCell;
+            adjacentManager.MoveGroupIndicators(nextCell, false);
+
+            return nextCell.AdjacentCells[(int)direction];
+        }
     }
 
     private DIR GetOppositeDir(DIR dir)
