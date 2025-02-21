@@ -264,7 +264,6 @@ public class GridManager : MonoBehaviour
                 CellConfigData cellConfig = puzzleConfig.CellConfig[i];
 
                 Cell newCell = CustomMethods.Instantiate(cellConfig.Prefab, CellParent);
-               // newCell.gameObject.name = cellConfig.Prefab.name;
                 newCell.transform.SetLocalPositionAndRotation(cellConfig.Pos, cellConfig.Rot);
 
                 cells.Add(newCell);
@@ -276,7 +275,6 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < Width * Height; i++)
             {
                 Cell newCell = CustomMethods.Instantiate(DefaultCellPrefab, CellParent);
-               // newCell.gameObject.name = DefaultCellPrefab.name;
                 cells.Add(newCell);
                 newCell.Init(this, i);
             }
@@ -369,6 +367,19 @@ public class GridManager : MonoBehaviour
             gridPieces.Add(piece);
         }
     }
+
+    public void SpaceOutCells()
+    {
+        for (int i = 0; i < Height; i++)
+        {
+            for (int j = 0; j < Width; j++)
+            {
+                float width = j * CellSpacing;
+                float height = i * CellSpacing;
+                cells[(i * Height) + j].transform.localPosition = new Vector3(width, 0, height);
+            }
+        }
+    }
     #endregion
 
     #region Editor Functions
@@ -401,19 +412,6 @@ public class GridManager : MonoBehaviour
                 UnityEditor.EditorApplication.delayCall += ConfigOnValidate;
             }
 #endif
-        }
-    }
-
-    public void SpaceOutCells()
-    {
-        for (int i = 0; i < Height; i++)
-        {
-            for (int j = 0; j < Width; j++)
-            {
-                float width = j * CellSpacing;
-                float height = i * CellSpacing;
-                cells[(i*Height)+j].transform.localPosition = new Vector3(width, 0, height);
-            }
         }
     }
 
