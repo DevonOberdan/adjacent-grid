@@ -12,29 +12,36 @@ using UnityEditor;
 public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [field: SerializeField] public bool Interactable { get; private set; } = true;
+    [field: SerializeField] public bool Consumable { get; private set; } = true;
 
     public UnityEvent<Cell> OnCellSet;
 
+    [SerializeField] private Color pieceColor;
+
     public Action OnPickup, OnSelected;
     public Action<bool> OnDropSuccessful, OnHovered;
+    public Action OnPieceMoved;
     public Action<Cell> OnIndicatorMoved;
 
     private PieceIndicator indicatorHandler;
     private PieceVisualFeedback visualFeedback;
+    private PieceDestroyedFeedback destroyedFeedback;
 
     private GridManager grid;
-    private Cell currentCell, indicatorCell;
+    private Cell currentCell, indicatorCell, previouslyHoveredCell;
 
     private Renderer rend;
     private Collider pieceCollider;
-
-    private Color pieceColor;
     private bool canPlaceOnIndicator;
 
     #region Properties
     public bool IsHeld { get; private set; }
     public bool IsHovered { get; private set; }
     public Color PieceColor => pieceColor;
+
+    public GridManager Grid => grid;
+
+    public PrefabContainerSO PrefabContainer;
 
     public Renderer GetRenderer()
     {
@@ -58,9 +65,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             }
 
             value.AddPiece(this);
-
-            IndicatorCell = value;
-            ShowIndicator(currentCell != null && value != currentCell);
 
             currentCell = value;
             gameObject.SetActive(true);
@@ -86,6 +90,17 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         }
     }
 
+    public void ResetIndicator()
+    {
+        indicatorCell = currentCell;
+
+        if (indicatorHandler != null)
+            indicatorHandler.SetCell(indicatorCell, false);
+
+        CanPlaceOnIndicator = false;
+        ShowIndicator(false);
+    }
+
     public bool CanPlaceOnIndicator
     {
         get => canPlaceOnIndicator;
@@ -107,7 +122,6 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             pieceCollider = GetComponentInChildren<Collider>();
 
         rend = gameObject.GrabRenderer();
-        pieceColor = rend.GetColor();
         pieceCollider.enabled = Interactable;
 
         if(TryGetComponent(out indicatorHandler))
@@ -116,6 +130,7 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         }
 
         visualFeedback = GetComponent<PieceVisualFeedback>();
+        destroyedFeedback = GetComponent<PieceDestroyedFeedback>();
 
         OnHovered += HandleHover;
     }
@@ -129,26 +144,29 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
     #endregion
 
-    public void Destroy()
+    public void Destroy(GridPiece destroyer = null)
     {
         if (grid == null)
             grid = transform.root.GetComponent<GridManager>();
 
         grid.RemovePiece(this);
+
+        if (destroyedFeedback)
+            destroyedFeedback.HandleDestroyed(destroyer);
     }
 
     public void InteractWithPiece(GridPiece otherPiece)
     {
         if (!otherPiece.IsOfSameType(this))
-            otherPiece.Destroy();
+        {
+            otherPiece.Destroy(this);
+        }
     }
 
     #region Public Methods
-
     public void HandleNewCell()
     {
-        visualFeedback = GetComponent<PieceVisualFeedback>();
-        if (visualFeedback != null)
+        if (TryGetComponent(out visualFeedback))
             visualFeedback.HandleNewCell(CurrentCell);
         else
             transform.localPosition = CurrentCell.transform.position;
@@ -163,10 +181,9 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #region Private Helper Methods
     private void HandleIndicator()
     {
-        //Cell hoveredCell = grid.CurrentHoveredCell();
         Cell hoveredCell = grid.HoveredCell;
 
-        if (ValidCell(hoveredCell) && hoveredCell != IndicatorCell)
+        if (ValidCell(hoveredCell) && hoveredCell != previouslyHoveredCell)
         {
             IndicatorCell = hoveredCell;
             OnIndicatorMoved?.Invoke(indicatorCell);
@@ -180,6 +197,8 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
                 ShowIndicator(true);
             }
         }
+
+        previouslyHoveredCell = hoveredCell;
     }
 
     private bool ValidCell(Cell cell)
@@ -194,10 +213,13 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     #region Indicator Methods
     public void HandlePickup()
     {
+        IndicatorCell = CurrentCell;
         ShowIndicator(true);
 
         if (visualFeedback != null)
             visualFeedback.HandlePickup();
+
+        CanPlaceOnIndicator = true;
     }
 
     public void HandleHover(bool hovered)
@@ -214,9 +236,13 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         IsHeld = false;
 
         if (CanPlaceOnIndicator)
+        {
             CurrentCell = indicatorCell;
+        }
         else
+        {
             indicatorHandler.SetColor(indicatorHandler.DefaultColor);
+        }
 
         if (visualFeedback != null)
             visualFeedback.HandleDropped(CurrentCell);
@@ -234,55 +260,97 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void MarkIndicatorCellInvalid()
     {
-        CanPlaceOnIndicator = false;
         IndicatorCell = CurrentCell;
-        ShowIndicator(true);
+        CanPlaceOnIndicator = false;
     }
     #endregion
 
     public bool UserDropPiece()
     {
+        if(CanPlaceOnIndicator && CurrentCell != indicatorCell)
+            OnPieceMoved.Invoke();
+
         PlaceOnIndicator();
         OnDropSuccessful?.Invoke(CanPlaceOnIndicator);
         return CanPlaceOnIndicator;
     }
 
-    #region Input Callbacks
+    public void PlaceOnCell(Cell cell)
+    {
+        IsHeld = false;
 
+        CurrentCell = cell;
+
+        indicatorHandler.SetColor(indicatorHandler.DefaultColor);
+
+        if (visualFeedback != null)
+            visualFeedback.HandleDropped(CurrentCell);
+
+        ShowIndicator(false);
+    }
+
+    #region Input Callbacks
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(!Interactable) return;
+        if(!Interactable || !grid.Interactable) return;
 
         IsHeld = true;
         HandlePickup();
         OnPickup?.Invoke();
+
+        if(CursorHandler.Instance != null)
+        {
+            CursorHandler.Instance.Hold();
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!Interactable) return;
+        if (!Interactable || !grid.Interactable) return;
 
         UserDropPiece();
+
+
+        if(CursorHandler.Instance != null)
+        {
+            if (IsHovered)
+                CursorHandler.Instance.Hover();
+            else
+                CursorHandler.Instance.Default();
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (grid.SelectedPiece != null || !Interactable)
+        IsHovered = true;
+
+        if (grid.SelectedPiece != null || !Interactable || !grid.Interactable)
             return;
 
-        IsHovered = true;
         OnHovered?.Invoke(IsHovered);
+
+        if(CursorHandler.Instance != null)
+        {
+            CursorHandler.Instance.Hover();
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (grid.SelectedPiece != null || !Interactable) 
+        IsHovered = false;
+
+        if (grid.SelectedPiece != null || !Interactable || !grid.Interactable) 
             return;
 
-        IsHovered = false;
+        CursorHandler.Instance.Default();
         OnHovered?.Invoke(IsHovered);
     }
     #endregion
+
+    private void OnDestroy()
+    {
+        grid.RemovePiece(this);
+    }
 
     #region Editor Functions
     private void OnValidate()
@@ -298,9 +366,14 @@ public class GridPiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 #if UNITY_EDITOR
         if (PrefabStageUtility.GetCurrentPrefabStage() == null && !PrefabUtility.IsPartOfPrefabAsset(gameObject))
         {
+            if (transform.parent != null && transform.parent.CompareTag("GridPieceParent"))
+                return;
+
             GameObject parent = GameObject.FindGameObjectWithTag("GridPieceParent");
             if (parent != null)
+            {
                 transform.parent = parent.transform;
+            }
         }
 #endif
     }

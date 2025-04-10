@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5631136791018354813}
   - component: {fileID: 498168598706435398}
-  - component: {fileID: 8955554069160770434}
   - component: {fileID: 2769061763968971583}
   m_Layer: 0
   m_Name: GridCamera
@@ -27,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8525420185245630642}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: -0.25, y: 10, z: -6.5}
+  m_LocalRotation: {x: 0.60876137, y: 0, z: 0, w: 0.7933534}
+  m_LocalPosition: {x: 0, y: 11, z: -4.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -85,14 +84,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &8955554069160770434
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8525420185245630642}
-  m_Enabled: 1
 --- !u!114 &2769061763968971583
 MonoBehaviour:
   m_ObjectHideFlags: 0

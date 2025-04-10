@@ -34,16 +34,22 @@ public class GridLevelEditor : Editor
     {
         List<GridPiece> gridPieceList = new();
 
-
         levelManager.GridManager.GrabCells();
         levelManager.GridManager.GrabPieces();
-        levelManager.GridManager.SetPiecesToGrid();
+
+        if (!Application.isPlaying)
+            levelManager.GridManager.SetPiecesToGrid();
 
         foreach (Cell cell in levelManager.GridManager.Cells)
         {
             if (cell.CurrentPiece != null)
             {
-                GridPiece prefabPiece = PrefabUtility.GetCorrespondingObjectFromSource(cell.CurrentPiece);
+                GridPiece prefabPiece=null;
+
+                if(!Application.isPlaying)
+                    prefabPiece = PrefabUtility.GetCorrespondingObjectFromSource(cell.CurrentPiece);
+                else if(cell.CurrentPiece != null)
+                    prefabPiece = cell.CurrentPiece.PrefabContainer.PiecePrefab;
 
                 gridPieceList.Add(prefabPiece);
             }
@@ -73,5 +79,7 @@ public class GridLevelEditor : Editor
         AssetDatabase.CreateAsset(puzzleConfig, fullPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+
+        Debug.Log("Successful puzzle config created at: "+fullPath);
     }
 }
