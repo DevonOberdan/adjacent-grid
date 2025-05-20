@@ -26,13 +26,11 @@ public class UniqueSolutionCountTests
     {
         yield return TestUtilities.GetToGame();
 
-        yield return new WaitForSeconds(0.05f);
-
         GridLevelManager levelManager = GameObject.FindAnyObjectByType<GridLevelManager>();
         UniqueSolutionBot solutionBot = GameObject.FindAnyObjectByType<UniqueSolutionBot>();
         levelManager.SetLevelIndex(levelIndex);
 
-      // yield return new WaitForSeconds(DELAY);
+        yield return new WaitForSeconds(0.05f);
 
         yield return solutionBot.SolvePuzzle();
     }
