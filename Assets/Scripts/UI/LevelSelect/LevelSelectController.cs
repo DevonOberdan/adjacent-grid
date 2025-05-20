@@ -78,13 +78,6 @@ public class LevelSelectController : MonoBehaviour
         setButtonCoroutine = StartCoroutine(SetArrowSounds(lockedLeft, lockedRight));
     }
 
-    private IEnumerator SetArrowSounds(bool lockedLeft, bool lockedRight)
-    {
-        yield return null;
-        leftArrowAudio.SetAudio(lockedLeft ? lockAudio : startButtonAudio);
-        rightArrowAudio.SetAudio(lockedRight ? lockAudio : startButtonAudio);
-    }
-
     public void MoveToLevelSelect()
     {
         currentLevel = levelManager.LevelIndex;
@@ -121,5 +114,12 @@ public class LevelSelectController : MonoBehaviour
         entered = true;
 
         OnEnterLevelSelect.Raise();
+    }
+
+    private IEnumerator SetArrowSounds(bool lockedLeft, bool lockedRight)
+    {
+        yield return null;
+        leftArrowAudio.SetAudio(lockedLeft ? lockAudio : startButtonAudio);
+        rightArrowAudio.SetAudio(lockedRight ? lockAudio : startButtonAudio);
     }
 }

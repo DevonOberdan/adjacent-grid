@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: UpArrow
   m_EditorClassIdentifier: 
   PiecePrefab: {fileID: 3334273963769824493, guid: 2da0ed6e3f597fc4c9aeb67330bb052f, type: 3}
+  Prefab: {fileID: 6116081955350915101, guid: 2da0ed6e3f597fc4c9aeb67330bb052f, type: 3}

@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: direction
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5318602801967226851, guid: 2da0ed6e3f597fc4c9aeb67330bb052f, type: 3}
+      propertyPath: <PrefabContainer>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: eaa515760ac1a704d81e02cae4ea9dcf, type: 2}
     - target: {fileID: 6116081955350915101, guid: 2da0ed6e3f597fc4c9aeb67330bb052f, type: 3}
       propertyPath: m_Name
       value: ArrowPieceDown

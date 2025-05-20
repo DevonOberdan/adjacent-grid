@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef24c1f6b6f9d8544b9becd2412810d4, type: 3}
   m_Name: BlankPiece
   m_EditorClassIdentifier: 
-  PiecePrefab: {fileID: 3346755923818641423, guid: 469ccc2a1bdeafd4892d103eca356f4e, type: 3}
+  PiecePrefab: {fileID: 3423119813233497602, guid: 469ccc2a1bdeafd4892d103eca356f4e, type: 3}
+  Prefab: {fileID: 3824264670021513487, guid: 469ccc2a1bdeafd4892d103eca356f4e, type: 3}

@@ -1,4 +1,3 @@
-using FinishOne.GeneralUtilities;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -23,14 +22,12 @@ public struct PieceGroup
 public class AdjacentGridGameManager : MonoBehaviour
 {
     [SerializeField] private bool highlightGroup;
-
     [SerializeField] private UnityEvent OnLevelComplete;
     [SerializeField] private UnityEvent<bool> OnDoomed;
 
     private GridManager gridManager;
     private List<GridPiece> activeGrouping;
     private GridPiece activelyHeldPiece;
-    private Dictionary<GridPiece, int> nonActivelyHeldPieceOffsets;
     private bool wasDoomed;
 
     #region Public Properties
@@ -41,15 +38,13 @@ public class AdjacentGridGameManager : MonoBehaviour
     public List<PieceGroup> CurrentGroups { get; private set; }
 
     public bool GroupPickedUp => activeGrouping != null && activeGrouping.Count > 0;
-
     public bool IgnoreGridChange { get; private set; }
 
-    public Dictionary<GridPiece, int> HeldGroupOffsets => nonActivelyHeldPieceOffsets;
+    public IEnumerable<GridPiece> NonGrabbedGroupMembers => activeGrouping.Where(p => p != activelyHeldPiece);
     #endregion
 
     private void Awake()
     {
-        nonActivelyHeldPieceOffsets = new Dictionary<GridPiece, int>();
         activeGrouping = new List<GridPiece>();
         gridManager = GetComponent<GridManager>();
 
@@ -81,15 +76,12 @@ public class AdjacentGridGameManager : MonoBehaviour
     }
 
     #region Grouping Functions
-
     public void PickupGroupedPieces(GridPiece piece)
     {
         List<GridPiece> groupedPieces = GetAdjacentPieces(piece);
 
         activeGrouping = groupedPieces;
         activelyHeldPiece = piece;
-
-        ProcessGroupedOffsets();
 
         foreach (GridPiece groupedPiece in groupedPieces)
         {
@@ -101,7 +93,7 @@ public class AdjacentGridGameManager : MonoBehaviour
     {
         CurrentGroups = new();
 
-        List<GridPiece> checkedPieces = new List<GridPiece>();
+        List<GridPiece> checkedPieces = new();
         foreach (GridPiece piece in gridManager.Pieces)
         {
             List<GridPiece> newPieces = GetAdjacentPieces(piece);
@@ -119,8 +111,7 @@ public class AdjacentGridGameManager : MonoBehaviour
     /// </summary>
     private List<GridPiece> GetAdjacentPieces(GridPiece piece, List<GridPiece> groupedPieces = null)
     {
-        if (groupedPieces == null)
-            groupedPieces = new();
+        groupedPieces ??= new();
 
         groupedPieces.Add(piece);
         Cell currentPieceCell = piece.CurrentCell;
@@ -140,17 +131,6 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         return groupedPieces;
     }
-
-    private void ProcessGroupedOffsets()
-    {
-        foreach (GridPiece piece in activeGrouping)
-        {
-            if (piece != activelyHeldPiece && !nonActivelyHeldPieceOffsets.ContainsKey(piece))
-            {
-                nonActivelyHeldPieceOffsets.Add(piece, piece.CurrentCell.IndexInGrid - activelyHeldPiece.CurrentCell.IndexInGrid);
-            }
-        }
-    }
     #endregion
 
     #region Handle Dropped
@@ -159,21 +139,21 @@ public class AdjacentGridGameManager : MonoBehaviour
         PlaceGroupedPieces(actuallyDropped);
 
         if (actuallyDropped && WinCondition)
+        {
             OnLevelComplete.Invoke();
+        }
     }
 
     public void PlaceGroupedPieces(bool drop)
     {
-        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+        foreach (GridPiece piece in NonGrabbedGroupMembers)
         {
             piece.CanPlaceOnIndicator = drop;
             piece.PlaceOnIndicator();
         }
 
-        nonActivelyHeldPieceOffsets.Clear();
         activeGrouping.Clear();
         activelyHeldPiece = null;
-
         gridManager.OnGridChanged?.Invoke();
     }
 
@@ -222,21 +202,6 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     #region Group Movement
 
-    public void MoveGroupIndicators(Cell activeIndicatorCell, bool show=true)
-    {
-        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
-        {
-            int newIndicatorIndex = activeIndicatorCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
-            piece.IndicatorCell = gridManager.Cells[newIndicatorIndex];
-        }
-
-        foreach (GridPiece piece in activeGrouping)
-        {
-            piece.CanPlaceOnIndicator = true;
-            piece.ShowIndicator(show);
-        }
-    }
-
     public void ShowGroupIndicators(bool show)
     {
         foreach (GridPiece piece in activeGrouping)
@@ -251,10 +216,10 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         if (validMovement)
         {
-            foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+            foreach (GridPiece piece in NonGrabbedGroupMembers)
             {
-                int newIndicatorIndex = activeIndicatorCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
-                piece.IndicatorCell = gridManager.Cells[newIndicatorIndex];
+                int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activeIndicatorCell);
+                piece.IndicatorCell = newIndex >= 0 ? piece.CurrentCell.AdjacentCells[newIndex] : piece.CurrentCell;
             }
 
             bool consumesOtherPiece = AnyHitOpposingPiece();
@@ -270,11 +235,9 @@ public class AdjacentGridGameManager : MonoBehaviour
 
             // override the normal GridPiece Indicator handling, and mark edge pieces as invalid
             activelyHeldPiece.ResetIndicator();
-
-            foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+            foreach (GridPiece piece in NonGrabbedGroupMembers.Where(p => !p.CanPlaceOnIndicator))
             {
-                if (!piece.CanPlaceOnIndicator)
-                    piece.MarkIndicatorCellInvalid();
+                piece.MarkIndicatorCellInvalid();
             }
         }
     }
@@ -286,45 +249,45 @@ public class AdjacentGridGameManager : MonoBehaviour
 
         bool allValid = true;
 
-        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+        foreach (GridPiece piece in NonGrabbedGroupMembers)
         {
-            int newIndicatorIndex = activeIndicatorCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
+            int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activeIndicatorCell);
 
-            // Grouped piece out of bounds
-            if (!gridManager.Cells.IsValidIndex(newIndicatorIndex))
+            if (newIndex == -1 || piece.CurrentCell.AdjacentCells[newIndex] != null)
             {
-                piece.MarkIndicatorCellInvalid();
-                allValid = false;
-            }   // Grouped piece trying to move "out" of the grid left or right
-            else if (!(gridManager.Cells[newIndicatorIndex] == piece.CurrentCell || piece.CurrentCell.AdjacentCells.Contains(gridManager.Cells[newIndicatorIndex])))
-            {
-                piece.MarkIndicatorCellInvalid();
-                allValid = false;
+               piece.IndicatorCell = piece.CurrentCell;
             }
+            // Grouped piece out of bounds
             else
             {
-                piece.IndicatorCell = piece.CurrentCell;
+                piece.MarkIndicatorCellInvalid();
+                allValid = false;
             }
         }
 
         return allValid;
     }
 
-    public bool GroupStaysInGrid(Cell activePieceCell)
+
+    public void MoveGroupIndicators(int directionIndex, bool show = true)
     {
-        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+        foreach (GridPiece piece in NonGrabbedGroupMembers)
         {
-            int newIndicatorIndex = activePieceCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
+            piece.IndicatorCell = piece.IndicatorCell.AdjacentCells[directionIndex];
+        }
 
-            if (!gridManager.Cells.IsValidIndex(newIndicatorIndex))
-            {
-                return false;
-            }
+        foreach (GridPiece piece in activeGrouping)
+        {
+            piece.CanPlaceOnIndicator = true;
+            piece.ShowIndicator(show);
+        }
+    }
 
-            Cell newCell = gridManager.Cells[newIndicatorIndex];
-
-            // Grouped piece trying to move "out" of the grid left or right 
-            if (!(newCell == piece.CurrentCell || piece.IndicatorCell.AdjacentCells.Contains(newCell)))
+    public bool GroupStaysInGrid(int directionIndex)
+    {
+        foreach (GridPiece piece in NonGrabbedGroupMembers)
+        {
+            if (directionIndex >= 0 && piece.IndicatorCell.AdjacentCells[directionIndex] == null)
             {
                 return false;
             }
@@ -333,21 +296,19 @@ public class AdjacentGridGameManager : MonoBehaviour
         return true;
     }
 
-    public bool GroupCanLand(Cell activePieceCell)
+    public bool GroupCanLand(int directionIndex)
     {
-        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+        if (!GroupStaysInGrid(directionIndex))
         {
-            int newIndicatorIndex = activePieceCell.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
+            return false;
+        }
 
-            if (!gridManager.Cells.IsValidIndex(newIndicatorIndex))
+        foreach (GridPiece piece in NonGrabbedGroupMembers)
+        {
+            if (!PieceCanLand(piece, piece.IndicatorCell.AdjacentCells[directionIndex]))
             {
                 return false;
             }
-
-            Cell newCell = gridManager.Cells[newIndicatorIndex];
-
-            if (!PieceCanLand(piece, newCell))
-                return false;
         }
 
         return true;
@@ -368,13 +329,20 @@ public class AdjacentGridGameManager : MonoBehaviour
 
     public void PlaceGroupFromActiveCell(Cell activePieceDestination)
     {
-        foreach (GridPiece piece in nonActivelyHeldPieceOffsets.Keys)
+        foreach (GridPiece piece in NonGrabbedGroupMembers)
         {
-            int newIndicatorIndex = activePieceDestination.IndexInGrid + nonActivelyHeldPieceOffsets[piece];
-            piece.PlaceOnCell(gridManager.Cells[newIndicatorIndex]);
+            int newIndex = activelyHeldPiece.CurrentCell.AdjacentCells.IndexOf(activePieceDestination);
+
+            if (newIndex == -1 || piece.CurrentCell.AdjacentCells[newIndex] == null)
+            {
+                piece.PlaceOnCell(piece.CurrentCell);
+            }
+            else
+            {
+                piece.PlaceOnCell(piece.CurrentCell.AdjacentCells[newIndex]);
+            }
         }
 
-        nonActivelyHeldPieceOffsets.Clear();
         activeGrouping.Clear();
         activelyHeldPiece = null;
 

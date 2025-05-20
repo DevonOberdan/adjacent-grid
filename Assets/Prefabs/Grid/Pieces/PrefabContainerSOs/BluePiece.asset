@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: BluePiece
   m_EditorClassIdentifier: 
   PiecePrefab: {fileID: 2966422860832937793, guid: a703a9ef2879f334ea53fde088af096c, type: 3}
+  Prefab: {fileID: 3727010999805194316, guid: a703a9ef2879f334ea53fde088af096c, type: 3}

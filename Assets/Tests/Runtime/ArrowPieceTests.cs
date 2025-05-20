@@ -38,7 +38,7 @@ public class ArrowPieceTests
         new(10, 27, 8, AutoPieceMover.DIR.RIGHT),
     };
 
-    private static readonly string UnitTestLevelPath = "Assets/Tests/Runtime/ArrowTestResults/";
+    private static readonly string UnitTestLevelPath = "Assets/Tests/Runtime/ArrowTestResults";
     private static string GetLevelPath(int num) => $"{UnitTestLevelPath}/{num}_CorrectResult.asset";
 
     private const float DELAY = 0.05f;
@@ -54,6 +54,9 @@ public class ArrowPieceTests
         GridManager gridManager = levelManager.GridManager;
 
         levelManager.SetLevelIndex(testCase.levelIndex);
+
+        yield return new WaitForSeconds(DELAY);
+
         GridPiece piece = levelManager.GridManager.Cells[testCase.pieceIndex].CurrentPiece;
         gridManager.PickedUpPiece(piece);
 
@@ -65,7 +68,7 @@ public class ArrowPieceTests
 
         Cell nextCell = piece.CurrentCell.AdjacentCells[(int)testCase.direction];
         piece.IndicatorCell = nextCell;
-        adjacentManager.MoveGroupIndicators(nextCell, true);
+        adjacentManager.MoveGroupIndicators((int)testCase.direction, true);
 
         yield return new WaitForSeconds(DELAY);
 
@@ -80,13 +83,15 @@ public class ArrowPieceTests
             yield return new WaitForSeconds(DELAY);
         }
 
+        yield return new WaitForSeconds(DELAY);
+
         var handle = Addressables.LoadAssetAsync<GridPuzzleConfigSO>(GetLevelPath(testCase.solutionNum));
         
         yield return handle;
 
         IEnumerable<GridPiece> endGridPieces = gridManager.Cells.Select(cell => cell.CurrentPiece);
         List<GridPiece> expectedResult = handle.Result.Pieces;
-        List<GridPiece> actualResult = endGridPieces.Select(p => p != null ? p.PrefabContainer.PiecePrefab : null).ToList();
+        List<GridPiece> actualResult = endGridPieces.Select(p => p.GetPrefabFromSource()).ToList();
 
         Assert.AreEqual(expectedResult, actualResult);
         Assert.IsTrue(historyManager.HistoryCount == 2);

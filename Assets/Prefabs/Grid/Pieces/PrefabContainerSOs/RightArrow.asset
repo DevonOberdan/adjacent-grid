@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: RightArrow
   m_EditorClassIdentifier: 
   PiecePrefab: {fileID: 5296363970495002839, guid: 44005be450e60c7419aece9a427815c2, type: 3}
+  Prefab: {fileID: 3685490799665189927, guid: 44005be450e60c7419aece9a427815c2, type: 3}
